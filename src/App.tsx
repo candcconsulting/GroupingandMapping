@@ -15,6 +15,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import { history } from "./history";
 import { GroupingMappingProvider } from "@itwin/grouping-mapping-widget";
+import { documentUIProvider } from "./providers/colourUIProvider";
 
 const App: React.FC = () => {
   const [iModelId, setIModelId] = useState(process.env.IMJS_IMODEL_ID);
@@ -51,7 +52,7 @@ const App: React.FC = () => {
     if (accessToken) {
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.has("iTwinId")) {
-        setITwinId(urlParams.get("iTwinId") as string);
+        /* setITwinId(urlParams.get("iTwinId") as string); */
       } else {
         if (!process.env.IMJS_ITWIN_ID) {
           throw new Error(
@@ -61,7 +62,7 @@ const App: React.FC = () => {
       }
 
       if (urlParams.has("iModelId")) {
-        setIModelId(urlParams.get("iModelId") as string);
+        /* setIModelId(urlParams.get("iModelId") as string); */
       } else {
         if (!process.env.IMJS_IMODEL_ID) {
           throw new Error(
@@ -128,7 +129,7 @@ const App: React.FC = () => {
         authClient={authClient}
         viewCreatorOptions={viewCreatorOptions}
         enablePerformanceMonitors={true} // see description in the README (https://www.npmjs.com/package/@itwin/desktop-viewer-react)
-        uiProviders = {[new GroupingMappingProvider()]}
+        uiProviders = {[new GroupingMappingProvider(), new documentUIProvider()]}
       />
     </div>
   );
