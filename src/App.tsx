@@ -9,7 +9,7 @@ import { BrowserAuthorizationClient } from "@itwin/browser-authorization";
 import type { ScreenViewport } from "@itwin/core-frontend";
 import { FitViewTool, IModelApp, StandardViewId } from "@itwin/core-frontend";
 import { FillCentered } from "@itwin/core-react";
-import { ProgressLinear } from "@itwin/itwinui-react";
+import { Header, HeaderBreadcrumbs, HeaderButton, HeaderLogo, IconButton, MenuItem, ProgressLinear, UserIcon } from "@itwin/itwinui-react";
 import { useAccessToken, Viewer } from "@itwin/web-viewer-react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
