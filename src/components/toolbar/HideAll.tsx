@@ -10,6 +10,7 @@ import { toaster } from "@itwin/itwinui-react";
 import { BentleyAPIFunctions } from "../../helper/BentleyAPIFunctions";
 
 
+/*
 const displayInfoToast = (message: string) => {
   toaster.setSettings({
     placement: "top-end",
@@ -20,7 +21,7 @@ const displayInfoToast = (message: string) => {
     duration: 3000,
   });
 };
-
+*/
 export class HideAllButtonProvider implements UiItemsProvider {
   public readonly id = "HideAllToolBar";
   /** provideToolbarButtonItems() is called for each registered UI provider as the Frontstage is building toolbars. We are adding an action button to the ContentManipulation Horizontal toolbar
@@ -80,7 +81,7 @@ export class HideAllButtonProvider implements UiItemsProvider {
             const queryResult: string[] = await HideAllButtonProvider._executeQuery(vp.iModel, es.groupSQL);
             const ecResult = queryResult.map(x => x[0]);
             const provider = EmphasizeElements.getOrCreate(vp);            
-            provider.emphasizeElements(ecResult,vp);
+            provider.emphasizeElements(ecResult,vp, undefined, false);
           }
         }
       }

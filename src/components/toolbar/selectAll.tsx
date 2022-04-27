@@ -7,7 +7,7 @@ import { EmphasizeElements, IModelApp } from "@itwin/core-frontend";
 
 import { toaster } from "@itwin/itwinui-react";
 
-
+/*
 const displayInfoToast = (message: string) => {
   toaster.setSettings({
     placement: "top-end",
@@ -18,7 +18,7 @@ const displayInfoToast = (message: string) => {
     duration: 3000,
   });
 };
-
+*/
 export class SelectAllButtonProvider implements UiItemsProvider {
   public readonly id = "SelectAllToolBar";
   /** provideToolbarButtonItems() is called for each registered UI provider as the Frontstage is building toolbars. We are adding an action button to the ContentManipulation Horizontal toolbar
