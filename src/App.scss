@@ -3,7 +3,7 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 .viewer-container {
-  height: 100vh;
+  height: calc(100vh - 60px);
 
   .signin-content {
     width: 400px;
