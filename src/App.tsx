@@ -19,6 +19,9 @@ import { GroupingMappingProvider } from "@itwin/grouping-mapping-widget";
 import { documentUIProvider } from "./providers/colourUIProvider";
 import { BentleyAPIFunctions } from "./helper/BentleyAPIFunctions";
 import { ThemeButton } from "./helper/ThemeButton";
+import { OneClickLCAProvider } from "@itwin/one-click-lca-react";
+import { SelectAllButtonProvider } from "./components/toolbar/selectAll";
+import { HideAllButtonProvider } from "./components/toolbar/HideAll";
 
 const App: React.FC = () => {
   const [iModelId, setIModelId] = useState(process.env.IMJS_IMODEL_ID);
@@ -33,8 +36,10 @@ const App: React.FC = () => {
       new BrowserAuthorizationClient({
         scope: process.env.IMJS_AUTH_CLIENT_SCOPES ?? "",
         clientId: process.env.IMJS_AUTH_CLIENT_CLIENT_ID ?? "",
-        redirectUri: process.env.IMJS_AUTH_CLIENT_REDIRECT_URI ?? "",
-        postSignoutRedirectUri: process.env.IMJS_AUTH_CLIENT_LOGOUT_URI,
+        //redirectUri: process.env.IMJS_AUTH_CLIENT_REDIRECT_URI ?? "",
+        //postSignoutRedirectUri: process.env.IMJS_AUTH_CLIENT_LOGOUT_URI,
+        redirectUri: `${window.location.origin}/signin-callback`,
+        postSignoutRedirectUri: `${window.location.origin}/signout-callback`,    
         responseType: "code",
         authority: process.env.IMJS_AUTH_AUTHORITY,
       }),
@@ -72,6 +77,17 @@ const App: React.FC = () => {
     setIsAuthorized(false);
   };
 
+  useEffect(() => {
+    if (!iTwinId) {    
+      setITwinId(process.env.IMJS_ITWIN_ID)
+    }
+  } , [iTwinId])
+  useEffect(() => {
+    if (!iModelId) {    
+      setIModelId(process.env.IMJS_IMODEL_ID)
+    }
+  } , [iTwinId])
+  
   useEffect(() => {
     if (accessToken) {
       setIsAuthorized(true)
@@ -311,7 +327,7 @@ const handleProjectInputChange = useCallback(value => {
         authClient={authClient}
         viewCreatorOptions={viewCreatorOptions}
         enablePerformanceMonitors={true} // see description in the README (https://www.npmjs.com/package/@itwin/desktop-viewer-react)
-        uiProviders = {[new GroupingMappingProvider(), new documentUIProvider()]}
+        uiProviders = {[new GroupingMappingProvider(), new OneClickLCAProvider(), new SelectAllButtonProvider(),new HideAllButtonProvider()]}
       />
     </div>
     </div>

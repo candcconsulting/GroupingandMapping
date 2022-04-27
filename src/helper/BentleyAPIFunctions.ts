@@ -69,5 +69,47 @@ export class BentleyAPIFunctions{
     const info = ({id:projectId, displayName:json.project.displayName, projectNumber:json.project.projectNumber})
     return  info;
   }
+
+  public static async getMappings(authClient : BrowserAuthorizationClient, iModelId: string){
+    const accessToken = await authClient.getAccessToken();
+    const response = await fetch("https://api.bentley.com/insights/reporting/datasources/imodels/" + iModelId + "/mappings", { //https://api.bentley.com/projects/favorites?top=1000
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': accessToken,
+            // 'Access-Control-Allow-Origin' : 'http://localhost:3000',
+            },
+        })
+    const data = await response;
+    const json = await data.json();
+    var info: { id: string; mappingName: string; }[] = [];
+    for (var i = 0; i < json.mappings.length; i++)
+    {
+      info.push({id: json.mappings[i].id, mappingName: json.mappings[i].mappingName});
+    }
+
+    return  info;
+  }
+  public static async getGroups(authClient : BrowserAuthorizationClient, iModelId: string, mappingId : string){
+    const accessToken = await authClient.getAccessToken();
+    const response = await fetch("https://api.bentley.com/insights/reporting/datasources/imodels/" + iModelId + "/mappings/" + mappingId + "/groups", { //https://api.bentley.com/projects/favorites?top=1000
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': accessToken,
+            // 'Access-Control-Allow-Origin' : 'http://localhost:3000',
+            },
+        })
+    const data = await response;
+    const json = await data.json();
+    var info: { id: string; groupName: string; groupSQL: string }[] = [];
+    for (var i = 0; i < json.groups.length; i++)
+    {
+      info.push({id: json.groups[i].id, groupName: json.groups[i].groupName, groupSQL: json.groups[i].query});
+    }
+
+    return  info;
+  }
+
 }
 
