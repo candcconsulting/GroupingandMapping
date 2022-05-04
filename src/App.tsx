@@ -16,7 +16,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import { history } from "./history";
 import { GroupingMappingProvider } from "@itwin/grouping-mapping-widget";
-import { documentUIProvider } from "./providers/colourUIProvider";
+import { createCarbonUIProvider } from "./providers/createCarbonItems";
 import { BentleyAPIFunctions } from "./helper/BentleyAPIFunctions";
 import { ThemeButton } from "./helper/ThemeButton";
 import { OneClickLCAProvider } from "@itwin/one-click-lca-react";
@@ -86,7 +86,7 @@ const App: React.FC = () => {
     if (!iModelId) {    
       setIModelId(process.env.IMJS_IMODEL_ID)
     }
-  } , [iTwinId])
+  } , [iModelId])
   
   useEffect(() => {
     if (accessToken) {
@@ -117,7 +117,7 @@ const App: React.FC = () => {
         }
       }
     }
-  }, [accessToken]);
+  }, [accessToken, authClient, iModelId]);
 
   useEffect(() => {
     if (accessToken && iTwinId && iModelId) {
@@ -129,7 +129,7 @@ const App: React.FC = () => {
           setSelectedIModel({id: iModelId, displayName: iModelData.displayName, name: iModelData.name})
       })
     }
-  }, [accessToken, iTwinId, iModelId]);
+  }, [accessToken, iTwinId, iModelId, authClient]);
 
   /** NOTE: This function will execute the "Fit View" tool after the iModel is loaded into the Viewer.
    * This will provide an "optimal" view of the model. However, it will override any default views that are
@@ -167,7 +167,15 @@ const App: React.FC = () => {
   );
 
   //#region projectMenu
-
+  const handleIModelChange = useCallback(value => {
+    setIModelId(value as string)
+    if (authClient.isAuthorized) {
+      BentleyAPIFunctions.getImodelData(authClient, value).then(iModelData => {
+      setSelectedIModel({id: value, displayName: iModelData.iModel.displayName, name: iModelData.iModel.name})
+      })
+    }
+  }, [authClient]);
+  
   const projectIModels = useCallback((close: () => void) => {
     var menuItemsToReturn : JSX.Element[] = [];
     if (isAuthorized){
@@ -204,20 +212,20 @@ const App: React.FC = () => {
     {
       return ([<MenuItem key="1">Please Login</MenuItem>])
     }
-  },[isAuthorized, selectedProject, authClient])
+  },[isAuthorized, selectedProject, authClient, handleIModelChange, iModelId])
   
-const handleIModelChange = useCallback(value => {
-  setIModelId(value as string)
-  if (authClient.isAuthorized) {
-    BentleyAPIFunctions.getImodelData(authClient, value).then(iModelData => {
-    setSelectedIModel({id: value, displayName: iModelData.iModel.displayName, name: iModelData.iModel.name})
-    })
-  }
-}, [authClient, iModelId, selectedIModel]);
 
 const noProjectChange = useCallback((close: () => void) => {  
   return ([<MenuItem key="1">Project Change not enabled</MenuItem>])
 }, []) ;
+
+const handleProjectInputChange = useCallback(value => {
+  if (isAuthorized) {
+  BentleyAPIFunctions.getProjectData(authClient, value).then(projData => {
+    setSelectedProject({name: projData.projectNumber ,description: projData.displayName , id: projData.id});
+    })
+  }
+}, [ authClient,  isAuthorized]);
 
 const recentProject = useCallback((close: () => void) => {
   var menuItemsToReturn : JSX.Element[] = [];
@@ -254,16 +262,10 @@ const recentProject = useCallback((close: () => void) => {
   {
     return ([<MenuItem key="1">Please Login</MenuItem>])
   }
-},[isAuthorized, selectedProject])
+},[isAuthorized, selectedProject, authClient, handleProjectInputChange])
 
 //handle the change to breadcrumb1
-const handleProjectInputChange = useCallback(value => {
-  if (isAuthorized) {
-  BentleyAPIFunctions.getProjectData(authClient, value).then(projData => {
-    setSelectedProject({name: projData.projectNumber ,description: projData.displayName , id: projData.id});
-    })
-  }
-}, [selectedProject]);
+
 //#endregion
 
 
@@ -327,7 +329,7 @@ const handleProjectInputChange = useCallback(value => {
         authClient={authClient}
         viewCreatorOptions={viewCreatorOptions}
         enablePerformanceMonitors={true} // see description in the README (https://www.npmjs.com/package/@itwin/desktop-viewer-react)
-        uiProviders = {[new GroupingMappingProvider(), new OneClickLCAProvider(), new SelectAllButtonProvider(),new HideAllButtonProvider()]}
+        uiProviders = {[new GroupingMappingProvider(), new OneClickLCAProvider(), new SelectAllButtonProvider(),new HideAllButtonProvider(), new createCarbonUIProvider()]}
       />
     </div>
     </div>
