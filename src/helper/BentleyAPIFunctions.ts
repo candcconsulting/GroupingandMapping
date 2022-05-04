@@ -28,7 +28,7 @@ export class BentleyAPIFunctions{
           'Content-Type': 'application/json',
           'Authorization': accessToken,
           'Prefer': 'return=minimal',
-        },
+        },        
       })
     const data = await response;
     const json = await data.json();
@@ -110,6 +110,42 @@ export class BentleyAPIFunctions{
 
     return  info;
   }
+  public static async createGroup(authClient : BrowserAuthorizationClient, iModelId: string, mappingId : string, body : any){
+    const accessToken = await authClient.getAccessToken();
+    const response = await fetch("https://api.bentley.com/insights/reporting/datasources/imodels/" + iModelId + "/mappings/" + mappingId + "/groups", { //https://api.bentley.com/projects/favorites?top=1000
+        method: "POST",
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': accessToken,
+            // 'Access-Control-Allow-Origin' : 'http://localhost:3000',
+            },
+        body : JSON.stringify(body)
+        })
+    const data = await response;
+    const json = await data.json();
+    return  json;
+  }
+
+  public static async createProperty(authClient : BrowserAuthorizationClient, iModelId: string, mappingId : string, groupId : string, propertyType : string, body : any){
+    const accessToken = await authClient.getAccessToken();
+    const url = "https://api.bentley.com/insights/reporting/datasources/imodels/" + iModelId + "/mappings/" + mappingId + "/groups/" + groupId + "/" + propertyType
+    const response = await fetch(url, { //https://api.bentley.com/projects/favorites?top=1000
+        method: "POST",
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': accessToken,
+            // 'Access-Control-Allow-Origin' : 'http://localhost:3000',
+            },
+        body : JSON.stringify(body)
+        })
+    const data = await response;
+    const json = await data.json();
+    return  json;
+  }
+
+
 
 }
 

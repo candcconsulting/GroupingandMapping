@@ -75,12 +75,14 @@ export class HideAllButtonProvider implements UiItemsProvider {
         console.log(es.id, es.mappingName);
         if (es.mappingName === "CarbonReporting") {
           const groups = await BentleyAPIFunctions.getGroups(authClient,iModelId, es.id);
+          const emph = EmphasizeElements.getOrCreate(vp);            
+          emph.clearEmphasizedElements(vp);
+          emph.clearOverriddenElements(vp);
           for (const es of groups.values()) {
             console.log(es.id, es.groupName, es.groupSQL);
             const queryResult: string[] = await HideAllButtonProvider._executeQuery(vp.iModel, es.groupSQL);
-            const ecResult = queryResult.map(x => x[0]);
-            const provider = EmphasizeElements.getOrCreate(vp);            
-            provider.emphasizeElements(ecResult,vp);
+            const ecResult = queryResult.map(x => x[0]);            
+            emph.emphasizeElements(ecResult,vp, undefined, false);
           }
         }
       }
