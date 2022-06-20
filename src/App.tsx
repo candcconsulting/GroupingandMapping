@@ -22,6 +22,10 @@ import { ThemeButton } from "./helper/ThemeButton";
 import { OneClickLCAProvider } from "@itwin/one-click-lca-react";
 import { SelectAllButtonProvider } from "./components/toolbar/selectAll";
 import { HideAllButtonProvider } from "./components/toolbar/HideAll";
+import { ReportsConfigProvider, ReportsConfigWidget } from "@itwin/reports-config-widget-react";
+import { CerculaProvider } from "./providers/cerculaUI";
+import { toolAdmin } from "./providers/tooltip";
+import { UiItemsProvider } from "@itwin/appui-abstract";
 
 const App: React.FC = () => {
   const [iModelId, setIModelId] = useState(process.env.IMJS_IMODEL_ID);
@@ -125,9 +129,16 @@ const App: React.FC = () => {
       BentleyAPIFunctions.getProjectData(authClient, iTwinId).then(projData => {
         setSelectedProject({name: projData.projectNumber ,description: projData.displayName , id: projData.id});
         })
-      BentleyAPIFunctions.getImodelData(authClient, iModelId).then(iModelData => {
-          setSelectedIModel({id: iModelId, displayName: iModelData.displayName, name: iModelData.name})
-      })
+      try {
+        BentleyAPIFunctions.getImodelData(authClient, iModelId).then(iModelData => {
+            setSelectedIModel({id: iModelId, displayName: iModelData.displayName, name: iModelData.name})
+        })
+      }
+      catch (e) {
+        const error = e as Error;
+        console.log ('Caught Error : ' + error.message)
+        setIModelId(undefined);
+      }
     }
   }, [accessToken, iTwinId, iModelId, authClient]);
 
@@ -168,11 +179,20 @@ const App: React.FC = () => {
 
   //#region projectMenu
   const handleIModelChange = useCallback(value => {
+    if ((!iModelId) || (!value))
+      return
     setIModelId(value as string)
-    if (authClient.isAuthorized) {
-      BentleyAPIFunctions.getImodelData(authClient, value).then(iModelData => {
-      setSelectedIModel({id: value, displayName: iModelData.iModel.displayName, name: iModelData.iModel.name})
-      })
+    try {
+      if (authClient.isAuthorized) {
+        BentleyAPIFunctions.getImodelData(authClient, value).then(iModelData => {
+        setSelectedIModel({id: value, displayName: iModelData.iModel.displayName, name: iModelData.iModel.name})
+        })
+      }
+    }
+    catch(e) {
+      const error = e as Error;      
+      console.log("Caught an error", error.message); 
+      setIModelId(undefined);
     }
   }, [authClient]);
   
@@ -219,13 +239,19 @@ const noProjectChange = useCallback((close: () => void) => {
   return ([<MenuItem key="1">Project Change not enabled</MenuItem>])
 }, []) ;
 
-const handleProjectInputChange = useCallback(value => {
+const handleProjectInputChange = useCallback (value => {
   if (isAuthorized) {
-  BentleyAPIFunctions.getProjectData(authClient, value).then(projData => {
+  BentleyAPIFunctions.getProjectData(authClient, value).then(async projData => {
     setSelectedProject({name: projData.projectNumber ,description: projData.displayName , id: projData.id});
+    setITwinId(projData.id);
+    setIModelId(undefined);
+    await BentleyAPIFunctions.getImodelsMinimalFromProject(authClient, selectedProject.id).then(res => {
+      setIModelId(res.iModels[0].id)
+    })
+
     })
   }
-}, [ authClient,  isAuthorized]);
+}, [ authClient,  isAuthorized, selectedProject.id]);
 
 const recentProject = useCallback((close: () => void) => {
   var menuItemsToReturn : JSX.Element[] = [];
@@ -268,6 +294,27 @@ const recentProject = useCallback((close: () => void) => {
 
 //#endregion
 
+const [reportsConfigInitialized, setReportsConfigInitialized] = useState(false);
+useEffect(() => {
+  const init = async () => {
+    await ReportsConfigWidget.initialize();
+    setReportsConfigInitialized(true);
+  }
+
+  void init();
+}, []);
+
+const uiProviders: UiItemsProvider[] = [];
+if (reportsConfigInitialized) {
+  uiProviders.push(new GroupingMappingProvider());
+  uiProviders.push(new OneClickLCAProvider());
+  uiProviders.push(new SelectAllButtonProvider());
+  uiProviders.push(new HideAllButtonProvider());
+  uiProviders.push(new createCarbonUIProvider());
+  uiProviders.push(new CerculaProvider());
+  uiProviders.push(new ReportsConfigProvider());
+}
+
 
 
   return (
@@ -281,7 +328,8 @@ const recentProject = useCallback((close: () => void) => {
              <HeaderButton
                className="scroll"
                key="projectBreadcrumb"
-               menuItems={noProjectChange}
+               //menuItems={noProjectChange}
+               menuItems={recentProject}
                name={selectedProject.name}
                description={selectedProject.description}
                startIcon={<SvgNetwork />}
@@ -327,9 +375,10 @@ const recentProject = useCallback((close: () => void) => {
         iTwinId={iTwinId}
         iModelId={iModelId}
         authClient={authClient}
+        toolAdmin={toolAdmin}
         viewCreatorOptions={viewCreatorOptions}
         enablePerformanceMonitors={true} // see description in the README (https://www.npmjs.com/package/@itwin/desktop-viewer-react)
-        uiProviders = {[new GroupingMappingProvider(), new OneClickLCAProvider(), new SelectAllButtonProvider(),new HideAllButtonProvider(), new createCarbonUIProvider()]}
+        uiProviders = {uiProviders}
       />
     </div>
     </div>
