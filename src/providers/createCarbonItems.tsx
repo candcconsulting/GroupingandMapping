@@ -88,8 +88,8 @@ const CarbonWidget = () => {
     // todo  
     console.log("Creating ..."); 
     const sql =  "select distinct ca.codevalue as name from bis.geometricelement3d ge join bis.category ca on ca.ecinstanceid = ge.category.id"
-    const userdata = require("../data/categories.json");
-    const properties = require("../data/properties.json")
+    const userdata = require("../data/IFC_categories.json");
+    const properties = require("../data/IFC_properties.json")
     const vp = IModelApp.viewManager.getFirstOpenView();
     if (!vp) { return};
     const authClient = IModelApp.authorizationClient as BrowserAuthorizationClient
@@ -121,7 +121,7 @@ const CarbonWidget = () => {
           description: ca[0].replaceAll("-", "").replaceAll("$", ""),
           query : "select ge.ecinstanceid from bis.geometricelement3d ge join bis.category ca on ca.ecinstanceid = ge.category.id where ca.codevalue = '" + ca[0] + "'"
          }
-         const mappingId = "df213bbb-d784-4473-a2b2-20a09bb96342"
+         const mappingId = "5d6e584e-08cf-4956-89a6-5ae6454c5c08"
          const aGroup = await BentleyAPIFunctions.createGroup(authClient,iModelId,mappingId, body);
          //console.log(aGroup);
          // aGroup.group.id will have the group Id

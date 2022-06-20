@@ -1,0 +1,96 @@
+{
+  "properties" :
+  {
+    "uniclass" : {
+      "name" : "Uniclass",
+      "type" : "property"
+    },
+    "ifcmaterial" : {
+      "name" : "IFCMaterial",
+      "type" : "fixed",
+      "payload" : {
+        "propertyName": "IFCMaterial",
+        "dataType": "String",
+        "quantityType": "Undefined",
+        "ecProperties": [{
+            "ecSchemaName": "ifcdynamic",
+            "ecClassName": "ifcbridgedata",
+            "ecPropertyName": "ifcmaterialname",
+            "ecPropertyType": "string"
+          }]
+      }
+    },
+    "category" : {
+      "name" : "category",
+      "type" : "fixed",
+      "payload" : {
+        "propertyName": "category",
+        "dataType": "string",
+        "quantityType": "Undefined",
+        "ecProperties": [{
+            "ecSchemaName": "*",
+            "ecClassName": "*",
+            "ecPropertyName": "category.codevalue",
+            "ecPropertyType": "string"
+        }]
+      }
+    },
+    "model" : {
+      "name" : "model",
+      "type" : "fixed",
+      "payload" : {
+        "propertyName": "Model",
+        "dataType": "String",
+        "quantityType": "Undefined",
+        "ecProperties": [{
+            "ecSchemaName": "biscore",
+            "ecClassName": "externalaspect",
+            "ecPropertyName": "scope.codevalue",
+            "ecPropertyType": "string"
+        }]
+      }
+    },
+    "material" : {
+      "name" : "material",
+      "type" : "fixed",
+      "payload" : {
+        "propertyName": "Material",
+        "dataType": "String",
+        "quantityType": "Undefined",
+        "ecProperties": [{        
+          "ecSchemaName": "QuantityTakeoffsAspects",
+          "ecClassName": "MaterialAspect",
+          "ecPropertyName": "Material",
+          "ecPropertyType": "String"
+        }]
+      }
+    },    
+    "volume" : {
+      "name" : "volume",
+      "type" : "CalculatedProperty",
+      "payload" :{
+        "propertyName": "Volume",
+        "type": "Volume",
+        "quantityType": "Volume"
+      }
+    },
+    "area" : {
+      "name" : "area",
+      "type" : "CalculatedProperty",
+      "payload" : {
+        "propertyName": "Area",
+        "type": "Area",
+        "quantityType": "Area"
+      }
+    },
+    "length" : {
+      "name" : "length",
+      "type" : "CalculatedProperty",
+      "payload" : {
+        "propertyName": "Length",
+        "type": "Length",
+        "quantityType": "Distance"
+      }
+    }
+  }
+}
