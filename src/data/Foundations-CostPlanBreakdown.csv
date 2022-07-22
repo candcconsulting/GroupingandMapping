@@ -1,0 +1,518 @@
+"description","quantity","unit","matchDescription","gwp","source","tabName","rowNumber"
+"basic wall : foundation - 375mm concrete rc35/45 w_step:208909",2,"m3","Concrete RC35/45 with CEM I cement",772,"ice","foundations",5
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:213950",14,"m3","Concrete RC40/50 with 15% PFA cement",5486,"ice","foundations",21
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:214092",14,"m3","Concrete RC40/50 with 15% PFA cement",5486,"ice","foundations",23
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:214433",14,"m3","Concrete RC40/50 with CEM I cement",5971,"ice","foundations",25
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:214825",14,"m3","Concrete RC40/50 with CEM I cement",5971,"ice","foundations",29
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:215135",14,"m3","Concrete RC40/50 with CEM I cement",5971,"ice","foundations",33
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:215539",14,"m3","Concrete RC40/50 with CEM I cement",5971,"ice","foundations",37
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:216359",14,"m3","Concrete RC40/50 with CEM I cement",5971,"ice","foundations",45
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:214979",14,"m3","Concrete RC40/50 with 15% PFA cement",5486,"ice","foundations",31
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:214639",14,"m3","Concrete RC40/50 with 15% PFA cement",5486,"ice","foundations",27
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:215299",14,"m3","Concrete RC40/50 with 15% PFA cement",5486,"ice","foundations",35
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:215821",14,"m3","Concrete RC40/50 with 15% PFA cement",5486,"ice","foundations",41
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:215667",14,"m3","Concrete RC40/50 with 15% PFA cement",5486,"ice","foundations",39
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:216868",14,"m3","Concrete RC40/50 with 15% PFA cement",5486,"ice","foundations",49
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:216617",14,"m3","Concrete RC40/50 with 15% PFA cement",5486,"ice","foundations",47
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:217587",14,"m3","Concrete RC40/50 with 15% PFA cement",5486,"ice","foundations",55
+"m pile - steel welded pipe:600mm diameter:219641",2,"m3","Steel, welded pipe",37034,"ice","foundations",57
+"m pile - steel welded pipe:600mm diameter:219647",2,"m3","Steel, welded pipe",37034,"ice","foundations",63
+"m pile - steel welded pipe:600mm diameter:219657",2,"m3","Steel, welded pipe",37034,"ice","foundations",73
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:216123",14,"m3","Concrete RC40/50 with CEM I cement",5971,"ice","foundations",43
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:217208",14,"m3","Concrete RC40/50 with CEM I cement",5971,"ice","foundations",53
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:217104",14,"m3","Concrete RC40/50 with CEM I cement",5971,"ice","foundations",51
+"m pile - steel welded pipe:600mm diameter:219643",2,"m3","Steel, welded pipe",37034,"ice","foundations",59
+"m pile - steel welded pipe:600mm diameter:219655",2,"m3","Steel, welded pipe",37034,"ice","foundations",71
+"m pile - steel welded pipe:600mm diameter:219649",2,"m3","Steel, welded pipe",37034,"ice","foundations",65
+"m pile - steel welded pipe:600mm diameter:219645",2,"m3","Steel, welded pipe",37034,"ice","foundations",61
+"m pile - steel welded pipe:600mm diameter:219653",2,"m3","Steel, welded pipe",37034,"ice","foundations",69
+"m pile - steel welded pipe:600mm diameter:219661",2,"m3","Steel, welded pipe",37034,"ice","foundations",77
+"m pile - steel welded pipe:600mm diameter:219694",2,"m3","Steel, welded pipe",37034,"ice","foundations",101
+"m pile - steel welded pipe:600mm diameter:219673",2,"m3","Steel, welded pipe",37034,"ice","foundations",89
+"m pile - steel welded pipe:600mm diameter:219692",2,"m3","Steel, welded pipe",37034,"ice","foundations",99
+"m pile - steel welded pipe:600mm diameter:219696",2,"m3","Steel, welded pipe",37034,"ice","foundations",103
+"m pile - steel welded pipe:600mm diameter:219700",2,"m3","Steel, welded pipe",37034,"ice","foundations",107
+"m pile - steel welded pipe:600mm diameter:219704",2,"m3","Steel, welded pipe",37034,"ice","foundations",111
+"m pile - steel welded pipe:600mm diameter:219710",2,"m3","Steel, welded pipe",37034,"ice","foundations",117
+"m pile - steel welded pipe:600mm diameter:219706",2,"m3","Steel, welded pipe",37034,"ice","foundations",113
+"m pile - steel welded pipe:600mm diameter:219714",2,"m3","Steel, welded pipe",37034,"ice","foundations",121
+"m pile - steel welded pipe:600mm diameter:219716",2,"m3","Steel, welded pipe",37034,"ice","foundations",123
+"m pile - steel welded pipe:600mm diameter:219732",2,"m3","Steel, welded pipe",37034,"ice","foundations",139
+"m pile - steel welded pipe:600mm diameter:219724",2,"m3","Steel, welded pipe",37034,"ice","foundations",131
+"m pile - steel welded pipe:600mm diameter:219726",2,"m3","Steel, welded pipe",37034,"ice","foundations",133
+"m pile - steel welded pipe:600mm diameter:219728",2,"m3","Steel, welded pipe",37034,"ice","foundations",135
+"m pile - steel welded pipe:600mm diameter:219746",2,"m3","Steel, welded pipe",37034,"ice","foundations",153
+"m pile - steel welded pipe:600mm diameter:219740",2,"m3","Steel, welded pipe",37034,"ice","foundations",147
+"m pile - steel welded pipe:600mm diameter:219744",2,"m3","Steel, welded pipe",37034,"ice","foundations",151
+"m pile - steel welded pipe:600mm diameter:219762",2,"m3","Steel, welded pipe",37034,"ice","foundations",169
+"m pile - steel welded pipe:600mm diameter:219754",2,"m3","Steel, welded pipe",37034,"ice","foundations",161
+"m pile - steel welded pipe:600mm diameter:219770",2,"m3","Steel, welded pipe",37034,"ice","foundations",177
+"m pile - steel welded pipe:600mm diameter:219752",2,"m3","Steel, welded pipe",37034,"ice","foundations",159
+"m pile - steel welded pipe:600mm diameter:219772",2,"m3","Steel, welded pipe",37034,"ice","foundations",179
+"m pile - steel welded pipe:600mm diameter:219758",2,"m3","Steel, welded pipe",37034,"ice","foundations",165
+"m pile - steel welded pipe:600mm diameter:219782",2,"m3","Steel, welded pipe",37034,"ice","foundations",189
+"m pile - steel welded pipe:600mm diameter:219768",2,"m3","Steel, welded pipe",37034,"ice","foundations",175
+"m pile - steel welded pipe:600mm diameter:219778",2,"m3","Steel, welded pipe",37034,"ice","foundations",185
+"m pile - steel welded pipe:600mm diameter:219790",2,"m3","Steel, welded pipe",37034,"ice","foundations",197
+"m pile - steel welded pipe:600mm diameter:219786",2,"m3","Steel, welded pipe",37034,"ice","foundations",193
+"m pile - steel welded pipe:600mm diameter:219792",2,"m3","Steel, welded pipe",37034,"ice","foundations",199
+"m pile - steel welded pipe:600mm diameter:219800",2,"m3","Steel, welded pipe",37034,"ice","foundations",207
+"m pile - steel welded pipe:600mm diameter:219804",2,"m3","Steel, welded pipe",37034,"ice","foundations",211
+"m pile - steel welded pipe:600mm diameter:219808",2,"m3","Steel, welded pipe",37034,"ice","foundations",215
+"m pile - steel welded pipe:600mm diameter:219812",2,"m3","Steel, welded pipe",37034,"ice","foundations",219
+"m pile - steel welded pipe:600mm diameter:219814",2,"m3","Steel, welded pipe",37034,"ice","foundations",221
+"m pile - steel welded pipe:600mm diameter:219824",2,"m3","Steel, welded pipe",37034,"ice","foundations",231
+"m pile - steel welded pipe:600mm diameter:219816",2,"m3","Steel, welded pipe",37034,"ice","foundations",223
+"m pile - steel welded pipe:600mm diameter:219830",2,"m3","Steel, welded pipe",37034,"ice","foundations",237
+"m pile - steel welded pipe:600mm diameter:219826",2,"m3","Steel, welded pipe",37034,"ice","foundations",233
+"m pile - steel welded pipe:600mm diameter:219834",2,"m3","Steel, welded pipe",37034,"ice","foundations",241
+"m pile - steel welded pipe:600mm diameter:219840",2,"m3","Steel, welded pipe",37034,"ice","foundations",247
+"m pile - steel welded pipe:600mm diameter:219844",2,"m3","Steel, welded pipe",37034,"ice","foundations",251
+"m pile - steel welded pipe:600mm diameter:219846",2,"m3","Steel, welded pipe",37034,"ice","foundations",253
+"m pile - steel welded pipe:600mm diameter:219852",2,"m3","Steel, welded pipe",37034,"ice","foundations",259
+"m pile - steel welded pipe:600mm diameter:219862",2,"m3","Steel, welded pipe",37034,"ice","foundations",269
+"m pile - steel welded pipe:600mm diameter:219854",2,"m3","Steel, welded pipe",37034,"ice","foundations",261
+"m pile - steel welded pipe:600mm diameter:219870",2,"m3","Steel, welded pipe",37034,"ice","foundations",277
+"m pile - steel welded pipe:600mm diameter:219864",2,"m3","Steel, welded pipe",37034,"ice","foundations",271
+"m pile - steel welded pipe:600mm diameter:219880",2,"m3","Steel, welded pipe",37034,"ice","foundations",287
+"m pile - steel welded pipe:600mm diameter:219868",2,"m3","Steel, welded pipe",37034,"ice","foundations",275
+"m pile - steel welded pipe:600mm diameter:219892",2,"m3","Steel, welded pipe",37034,"ice","foundations",299
+"m pile - steel welded pipe:600mm diameter:219872",2,"m3","Steel, welded pipe",37034,"ice","foundations",279
+"m pile - steel welded pipe:600mm diameter:219900",2,"m3","Steel, welded pipe",37034,"ice","foundations",307
+"m pile - steel welded pipe:600mm diameter:219890",2,"m3","Steel, welded pipe",37034,"ice","foundations",297
+"m pile - steel welded pipe:600mm diameter:219884",2,"m3","Steel, welded pipe",37034,"ice","foundations",291
+"m pile - steel welded pipe:600mm diameter:219912",2,"m3","Steel, welded pipe",37034,"ice","foundations",319
+"m pile - steel welded pipe:600mm diameter:219894",2,"m3","Steel, welded pipe",37034,"ice","foundations",301
+"m pile - steel welded pipe:600mm diameter:219916",2,"m3","Steel, welded pipe",37034,"ice","foundations",323
+"m pile - steel welded pipe:600mm diameter:219910",2,"m3","Steel, welded pipe",37034,"ice","foundations",317
+"m pile - steel welded pipe:600mm diameter:219922",2,"m3","Steel, welded pipe",37034,"ice","foundations",329
+"m pile - steel welded pipe:600mm diameter:219914",2,"m3","Steel, welded pipe",37034,"ice","foundations",321
+"m pile - steel welded pipe:600mm diameter:219940",2,"m3","Steel, welded pipe",37034,"ice","foundations",347
+"m pile - steel welded pipe:600mm diameter:219918",2,"m3","Steel, welded pipe",37034,"ice","foundations",325
+"m pile - steel welded pipe:600mm diameter:219926",2,"m3","Steel, welded pipe",37034,"ice","foundations",333
+"m pile - steel welded pipe:600mm diameter:219975",2,"m3","Steel, welded pipe",37034,"ice","foundations",373
+"m pile - steel welded pipe:600mm diameter:219928",2,"m3","Steel, welded pipe",37034,"ice","foundations",335
+"m pile - steel welded pipe:600mm diameter:219973",2,"m3","Steel, welded pipe",37034,"ice","foundations",371
+"m pile - steel welded pipe:600mm diameter:219936",2,"m3","Steel, welded pipe",37034,"ice","foundations",343
+"m pile - steel welded pipe:600mm diameter:219944",2,"m3","Steel, welded pipe",37034,"ice","foundations",351
+"concrete rc35/45 - cast-in-place concrete rc35/45 - 35 mpa",0,"m3","Concrete RC35/45 with 14% limestone cement",165,"ice","foundations",389
+"m pile - steel welded pipe:600mm diameter:219946",2,"m3","Steel, welded pipe",37034,"ice","foundations",353
+"concrete rc35/45 - cast-in-place concrete rc35/45 - 35 mpa",12,"m3","Concrete RC35/45 with 14% limestone cement",4133,"ice","foundations",391
+"m pile - steel welded pipe:600mm diameter:219950",2,"m3","Steel, welded pipe",37034,"ice","foundations",357
+"concrete rc35/45 - cast-in-place concrete rc35/45 - 35 mpa",0,"m3","Concrete RC35/45 with 14% limestone cement",116,"ice","foundations",393
+"m pile - steel welded pipe:600mm diameter:219954",2,"m3","Steel, welded pipe",37034,"ice","foundations",361
+"m pile - steel welded pipe:400mm diameter:254026",1,"m3","Steel, welded pipe",16454,"ice","foundations",415
+"m pile - steel welded pipe:600mm diameter:219971",2,"m3","Steel, welded pipe",37034,"ice","foundations",369
+"m pile - steel welded pipe:400mm diameter:254071",1,"m3","Steel, welded pipe",16454,"ice","foundations",418
+"m pile - steel welded pipe:600mm diameter:219979",2,"m3","Steel, welded pipe",37034,"ice","foundations",377
+"m pile - steel welded pipe:400mm diameter:254142",1,"m3","Steel, welded pipe",16454,"ice","foundations",435
+"concrete rc35/45 - cast-in-place concrete rc35/45 - 35 mpa",10,"m3","Concrete RC35/45 with 14% limestone cement",3286,"ice","foundations",397
+"m pile - steel welded pipe:400mm diameter:254216",1,"m3","Steel, welded pipe",16454,"ice","foundations",449
+"m pile - steel welded pipe:400mm diameter:253939",1,"m3","Steel, welded pipe",16454,"ice","foundations",407
+"m pile - steel welded pipe:400mm diameter:254203",1,"m3","Steel, welded pipe",16454,"ice","foundations",443
+"concrete rc35/45 - cast-in-place concrete rc35/45 - 35 mpa",10,"m3","Concrete RC35/45 with 14% limestone cement",3286,"ice","foundations",401
+"m pile cap - 6 pile : 2500 x 1800 x 900mm:254246",4,"m3","Concrete RC40/50 with CEM I cement",1675,"ice","foundations",451
+"m pile - steel welded pipe:400mm diameter:254070",1,"m3","Steel, welded pipe",16454,"ice","foundations",417
+"m pile - steel welded pipe:400mm diameter:254320",1,"m3","Steel, welded pipe",16454,"ice","foundations",470
+"m pile - steel welded pipe:400mm diameter:254108",1,"m3","Steel, welded pipe",16454,"ice","foundations",427
+"m pile - steel welded pipe:400mm diameter:254138",1,"m3","Steel, welded pipe",16454,"ice","foundations",431
+"m pile - steel welded pipe:400mm diameter:254391",1,"m3","Steel, welded pipe",16454,"ice","foundations",485
+"m pile - steel welded pipe:400mm diameter:254212",1,"m3","Steel, welded pipe",16454,"ice","foundations",445
+"m pile - steel welded pipe:400mm diameter:254214",1,"m3","Steel, welded pipe",16454,"ice","foundations",447
+"m pile cap - 6 pile : 2500 x 1800 x 900mm:254472",4,"m3","Concrete RC40/50 with CEM I cement",1675,"ice","foundations",493
+"m pile - steel welded pipe:400mm diameter:254479",1,"m3","Steel, welded pipe",16454,"ice","foundations",499
+"m pile - steel welded pipe:400mm diameter:254251",1,"m3","Steel, welded pipe",16454,"ice","foundations",455
+"m pile - steel welded pipe:400mm diameter:254549",1,"m3","Steel, welded pipe",16454,"ice","foundations",513
+"m pile - steel welded pipe:400mm diameter:253937",1,"m3","Steel, welded pipe",16454,"ice","foundations",405
+"m pile cap - 6 pile : 2500 x 1800 x 900mm:254314",4,"m3","Concrete RC40/50 with CEM I cement",1675,"ice","foundations",465
+"m pile - steel welded pipe:400mm diameter:254592",1,"m3","Steel, welded pipe",16454,"ice","foundations",517
+"m pile - steel welded pipe:400mm diameter:254319",1,"m3","Steel, welded pipe",16454,"ice","foundations",469
+"m pile - steel welded pipe:400mm diameter:254590",1,"m3","Steel, welded pipe",16454,"ice","foundations",515
+"m pile - steel welded pipe:400mm diameter:254709",1,"m3","Steel, welded pipe",16454,"ice","foundations",531
+"m pile - steel welded pipe:400mm diameter:254387",1,"m3","Steel, welded pipe",16454,"ice","foundations",481
+"m pile cap - 6 pile : 2500 x 1800 x 900mm:254384",4,"m3","Concrete RC40/50 with CEM I cement",1675,"ice","foundations",479
+"m pile - steel welded pipe:400mm diameter:254389",1,"m3","Steel, welded pipe",16454,"ice","foundations",483
+"m pile - steel welded pipe:600mm diameter:219667",2,"m3","Steel, welded pipe",37034,"ice","foundations",83
+"m pile cap - 6 pile : 2500 x 1800 x 900mm:254419",4,"m3","Concrete RC40/50 with CEM I cement",1675,"ice","foundations",486
+"m pile - steel welded pipe:400mm diameter:254509",1,"m3","Steel, welded pipe",16454,"ice","foundations",501
+"m pile - steel welded pipe:400mm diameter:254513",1,"m3","Steel, welded pipe",16454,"ice","foundations",505
+"m pile - steel welded pipe:400mm diameter:254594",1,"m3","Steel, welded pipe",16454,"ice","foundations",519
+"m pile - steel welded pipe:400mm diameter:254663",1,"m3","Steel, welded pipe",16454,"ice","foundations",523
+"m pile cap - 6 pile : 2500 x 1800 x 900mm:254740",4,"m3","Concrete RC40/50 with CEM I cement",1675,"ice","foundations",535
+"m pile - steel welded pipe:400mm diameter:254745",1,"m3","Steel, welded pipe",16454,"ice","foundations",539
+"m pile - steel welded pipe:600mm diameter:219665",2,"m3","Steel, welded pipe",37034,"ice","foundations",81
+"concrete rc35/45 - cast-in-place concrete block",7,"m3","Concrete RC35/45 with CEM I cement",2567,"ice","foundations",557
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:213839",14,"m3","Concrete RC40/50 with CEM I cement",5971,"ice","foundations",20
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:214540",14,"m3","Concrete RC40/50 with CEM I cement",5971,"ice","foundations",26
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:214906",14,"m3","Concrete RC40/50 with CEM I cement",5971,"ice","foundations",30
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:215738",14,"m3","Concrete RC40/50 with CEM I cement",5971,"ice","foundations",40
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:217520",14,"m3","Concrete RC40/50 with CEM I cement",5971,"ice","foundations",54
+"m pile - steel welded pipe:600mm diameter:219642",2,"m3","Steel, welded pipe",37034,"ice","foundations",58
+"m pile - steel welded pipe:600mm diameter:219646",2,"m3","Steel, welded pipe",37034,"ice","foundations",62
+"m pile - steel welded pipe:600mm diameter:219672",2,"m3","Steel, welded pipe",37034,"ice","foundations",88
+"m pile - steel welded pipe:600mm diameter:219656",2,"m3","Steel, welded pipe",37034,"ice","foundations",72
+"m pile - steel welded pipe:600mm diameter:219664",2,"m3","Steel, welded pipe",37034,"ice","foundations",80
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:215062",14,"m3","Concrete RC40/50 with CEM I cement",5971,"ice","foundations",32
+"m pile - steel welded pipe:600mm diameter:219719",2,"m3","Steel, welded pipe",37034,"ice","foundations",126
+"m pile - steel welded pipe:600mm diameter:219705",2,"m3","Steel, welded pipe",37034,"ice","foundations",112
+"m pile - steel welded pipe:600mm diameter:219701",2,"m3","Steel, welded pipe",37034,"ice","foundations",108
+"m pile - steel welded pipe:600mm diameter:219686",2,"m3","Steel, welded pipe",37034,"ice","foundations",93
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:216963",14,"m3","Concrete RC40/50 with CEM I cement",5971,"ice","foundations",50
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:216534",14,"m3","Concrete RC40/50 with CEM I cement",5971,"ice","foundations",46
+"m pile - steel welded pipe:600mm diameter:219652",2,"m3","Steel, welded pipe",37034,"ice","foundations",68
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:215456",14,"m3","Concrete RC40/50 with CEM I cement",5971,"ice","foundations",36
+"m pile - steel welded pipe:600mm diameter:219689",2,"m3","Steel, welded pipe",37034,"ice","foundations",96
+"m pile - steel welded pipe:600mm diameter:219670",2,"m3","Steel, welded pipe",37034,"ice","foundations",86
+"m pile - steel welded pipe:600mm diameter:219662",2,"m3","Steel, welded pipe",37034,"ice","foundations",78
+"m pile - steel welded pipe:600mm diameter:219650",2,"m3","Steel, welded pipe",37034,"ice","foundations",66
+"m pile - steel welded pipe:600mm diameter:219707",2,"m3","Steel, welded pipe",37034,"ice","foundations",114
+"m pile - steel welded pipe:600mm diameter:219699",2,"m3","Steel, welded pipe",37034,"ice","foundations",106
+"m pile - steel welded pipe:600mm diameter:219697",2,"m3","Steel, welded pipe",37034,"ice","foundations",104
+"m pile - steel welded pipe:600mm diameter:219785",2,"m3","Steel, welded pipe",37034,"ice","foundations",192
+"m pile - steel welded pipe:600mm diameter:219777",2,"m3","Steel, welded pipe",37034,"ice","foundations",184
+"m pile - steel welded pipe:600mm diameter:219745",2,"m3","Steel, welded pipe",37034,"ice","foundations",152
+"m pile - steel welded pipe:600mm diameter:219807",2,"m3","Steel, welded pipe",37034,"ice","foundations",214
+"m pile - steel welded pipe:600mm diameter:219823",2,"m3","Steel, welded pipe",37034,"ice","foundations",230
+"m pile - steel welded pipe:600mm diameter:219813",2,"m3","Steel, welded pipe",37034,"ice","foundations",220
+"m pile - steel welded pipe:600mm diameter:219791",2,"m3","Steel, welded pipe",37034,"ice","foundations",198
+"m pile - steel welded pipe:600mm diameter:219769",2,"m3","Steel, welded pipe",37034,"ice","foundations",176
+"m pile - steel welded pipe:600mm diameter:219801",2,"m3","Steel, welded pipe",37034,"ice","foundations",208
+"m pile - steel welded pipe:600mm diameter:219729",2,"m3","Steel, welded pipe",37034,"ice","foundations",136
+"m pile - steel welded pipe:600mm diameter:219723",2,"m3","Steel, welded pipe",37034,"ice","foundations",130
+"m pile - steel welded pipe:600mm diameter:219765",2,"m3","Steel, welded pipe",37034,"ice","foundations",172
+"m pile - steel welded pipe:600mm diameter:219797",2,"m3","Steel, welded pipe",37034,"ice","foundations",204
+"m pile - steel welded pipe:600mm diameter:219713",2,"m3","Steel, welded pipe",37034,"ice","foundations",120
+"m pile - steel welded pipe:600mm diameter:219781",2,"m3","Steel, welded pipe",37034,"ice","foundations",188
+"m pile - steel welded pipe:600mm diameter:219779",2,"m3","Steel, welded pipe",37034,"ice","foundations",186
+"m pile - steel welded pipe:600mm diameter:219743",2,"m3","Steel, welded pipe",37034,"ice","foundations",150
+"m pile - steel welded pipe:600mm diameter:219759",2,"m3","Steel, welded pipe",37034,"ice","foundations",166
+"m pile - steel welded pipe:600mm diameter:219755",2,"m3","Steel, welded pipe",37034,"ice","foundations",162
+"m pile - steel welded pipe:600mm diameter:219739",2,"m3","Steel, welded pipe",37034,"ice","foundations",146
+"m pile - steel welded pipe:600mm diameter:219751",2,"m3","Steel, welded pipe",37034,"ice","foundations",158
+"m pile - steel welded pipe:600mm diameter:219725",2,"m3","Steel, welded pipe",37034,"ice","foundations",132
+"m pile - steel welded pipe:600mm diameter:219733",2,"m3","Steel, welded pipe",37034,"ice","foundations",140
+"m pile - steel welded pipe:600mm diameter:219881",2,"m3","Steel, welded pipe",37034,"ice","foundations",288
+"m pile - steel welded pipe:600mm diameter:219839",2,"m3","Steel, welded pipe",37034,"ice","foundations",246
+"m pile - steel welded pipe:600mm diameter:219829",2,"m3","Steel, welded pipe",37034,"ice","foundations",236
+"m pile - steel welded pipe:600mm diameter:219835",2,"m3","Steel, welded pipe",37034,"ice","foundations",242
+"m pile - steel welded pipe:600mm diameter:219861",2,"m3","Steel, welded pipe",37034,"ice","foundations",268
+"m pile - steel welded pipe:600mm diameter:219871",2,"m3","Steel, welded pipe",37034,"ice","foundations",278
+"m pile - steel welded pipe:600mm diameter:219811",2,"m3","Steel, welded pipe",37034,"ice","foundations",218
+"m pile - steel welded pipe:600mm diameter:219799",2,"m3","Steel, welded pipe",37034,"ice","foundations",206
+"m pile - steel welded pipe:600mm diameter:219821",2,"m3","Steel, welded pipe",37034,"ice","foundations",228
+"m pile - steel welded pipe:600mm diameter:219845",2,"m3","Steel, welded pipe",37034,"ice","foundations",252
+"m pile - steel welded pipe:600mm diameter:219837",2,"m3","Steel, welded pipe",37034,"ice","foundations",244
+"m pile - steel welded pipe:600mm diameter:219865",2,"m3","Steel, welded pipe",37034,"ice","foundations",272
+"m pile - steel welded pipe:600mm diameter:219851",2,"m3","Steel, welded pipe",37034,"ice","foundations",258
+"m pile - steel welded pipe:600mm diameter:219859",2,"m3","Steel, welded pipe",37034,"ice","foundations",266
+"m pile - steel welded pipe:600mm diameter:219819",2,"m3","Steel, welded pipe",37034,"ice","foundations",226
+"m pile - steel welded pipe:600mm diameter:219757",2,"m3","Steel, welded pipe",37034,"ice","foundations",164
+"m pile - steel welded pipe:600mm diameter:219931",2,"m3","Steel, welded pipe",37034,"ice","foundations",338
+"m pile - steel welded pipe:600mm diameter:219907",2,"m3","Steel, welded pipe",37034,"ice","foundations",314
+"m pile - steel welded pipe:600mm diameter:219911",2,"m3","Steel, welded pipe",37034,"ice","foundations",318
+"m pile - steel welded pipe:600mm diameter:219925",2,"m3","Steel, welded pipe",37034,"ice","foundations",332
+"m pile - steel welded pipe:600mm diameter:219899",2,"m3","Steel, welded pipe",37034,"ice","foundations",306
+"m pile - steel welded pipe:600mm diameter:219897",2,"m3","Steel, welded pipe",37034,"ice","foundations",304
+"m pile - steel welded pipe:600mm diameter:219877",2,"m3","Steel, welded pipe",37034,"ice","foundations",284
+"m pile - steel welded pipe:600mm diameter:219853",2,"m3","Steel, welded pipe",37034,"ice","foundations",260
+"m pile - steel welded pipe:600mm diameter:219919",2,"m3","Steel, welded pipe",37034,"ice","foundations",326
+"m pile - steel welded pipe:600mm diameter:219943",2,"m3","Steel, welded pipe",37034,"ice","foundations",350
+"m pile - steel welded pipe:600mm diameter:219917",2,"m3","Steel, welded pipe",37034,"ice","foundations",324
+"m pile - steel welded pipe:600mm diameter:219915",2,"m3","Steel, welded pipe",37034,"ice","foundations",322
+"m pile - steel welded pipe:600mm diameter:219887",2,"m3","Steel, welded pipe",37034,"ice","foundations",294
+"m pile - steel welded pipe:600mm diameter:219875",2,"m3","Steel, welded pipe",37034,"ice","foundations",282
+"m pile - steel welded pipe:600mm diameter:219893",2,"m3","Steel, welded pipe",37034,"ice","foundations",300
+"m pile - steel welded pipe:600mm diameter:219889",2,"m3","Steel, welded pipe",37034,"ice","foundations",296
+"concrete rc35/45 - cast-in-place concrete rc35/45 - 35 mpa",1,"m3","Concrete RC35/45 with 14% limestone cement",327,"ice","foundations",392
+"m pile - steel welded pipe:600mm diameter:219966",2,"m3","Steel, welded pipe",37034,"ice","foundations",364
+"m pile - steel welded pipe:600mm diameter:219937",2,"m3","Steel, welded pipe",37034,"ice","foundations",344
+"m pile - steel welded pipe:400mm diameter:254075",1,"m3","Steel, welded pipe",16454,"ice","foundations",422
+"m pile - steel welded pipe:400mm diameter:254023",1,"m3","Steel, welded pipe",16454,"ice","foundations",412
+"m pile - steel welded pipe:600mm diameter:219951",2,"m3","Steel, welded pipe",37034,"ice","foundations",358
+"m pile - steel welded pipe:600mm diameter:219980",2,"m3","Steel, welded pipe",37034,"ice","foundations",378
+"m pile - steel welded pipe:400mm diameter:254217",1,"m3","Steel, welded pipe",16454,"ice","foundations",450
+"m pile - steel welded pipe:400mm diameter:254107",1,"m3","Steel, welded pipe",16454,"ice","foundations",426
+"m pile - steel welded pipe:600mm diameter:219968",2,"m3","Steel, welded pipe",37034,"ice","foundations",366
+"m pile - steel welded pipe:600mm diameter:219978",2,"m3","Steel, welded pipe",37034,"ice","foundations",376
+"m pile - steel welded pipe:600mm diameter:219972",2,"m3","Steel, welded pipe",37034,"ice","foundations",370
+"m pile - steel welded pipe:400mm diameter:254202",1,"m3","Steel, welded pipe",16454,"ice","foundations",442
+"m pile - steel welded pipe:600mm diameter:219939",2,"m3","Steel, welded pipe",37034,"ice","foundations",346
+"m pile cap - 6 pile : 2500 x 1800 x 900mm:254136",4,"m3","Concrete RC40/50 with CEM I cement",1675,"ice","foundations",430
+"concrete rc35/45 - cast-in-place concrete rc35/45 - 35 mpa",0,"m3","Concrete RC35/45 with 14% limestone cement",165,"ice","foundations",390
+"m pile - steel welded pipe:600mm diameter:219933",2,"m3","Steel, welded pipe",37034,"ice","foundations",340
+"m pile - steel welded pipe:400mm diameter:254664",1,"m3","Steel, welded pipe",16454,"ice","foundations",524
+"m pile - steel welded pipe:400mm diameter:254248",1,"m3","Steel, welded pipe",16454,"ice","foundations",452
+"m pile - steel welded pipe:400mm diameter:254548",1,"m3","Steel, welded pipe",16454,"ice","foundations",512
+"m pile - steel welded pipe:400mm diameter:254478",1,"m3","Steel, welded pipe",16454,"ice","foundations",498
+"m pile - steel welded pipe:400mm diameter:254105",1,"m3","Steel, welded pipe",16454,"ice","foundations",424
+"m pile - steel welded pipe:400mm diameter:254072",1,"m3","Steel, welded pipe",16454,"ice","foundations",419
+"m pile - steel welded pipe:400mm diameter:254198",1,"m3","Steel, welded pipe",16454,"ice","foundations",438
+"m pile - steel welded pipe:400mm diameter:254591",1,"m3","Steel, welded pipe",16454,"ice","foundations",516
+"m pile - steel welded pipe:400mm diameter:254318",1,"m3","Steel, welded pipe",16454,"ice","foundations",468
+"m pile - steel welded pipe:400mm diameter:254284",1,"m3","Steel, welded pipe",16454,"ice","foundations",462
+"concrete rc35/45 - cast-in-place concrete rc35/45 - 35 mpa",4,"m3","Concrete RC35/45 with 14% limestone cement",1493,"ice","foundations",399
+"m pile - steel welded pipe:400mm diameter:254514",1,"m3","Steel, welded pipe",16454,"ice","foundations",506
+"m pile - steel welded pipe:400mm diameter:254426",1,"m3","Steel, welded pipe",16454,"ice","foundations",492
+"m pile - steel welded pipe:400mm diameter:253940",1,"m3","Steel, welded pipe",16454,"ice","foundations",408
+"m pile - steel welded pipe:400mm diameter:254141",1,"m3","Steel, welded pipe",16454,"ice","foundations",434
+"m pile - steel welded pipe:400mm diameter:254421",1,"m3","Steel, welded pipe",16454,"ice","foundations",487
+"m pile - steel welded pipe:400mm diameter:253936",1,"m3","Steel, welded pipe",16454,"ice","foundations",404
+"m pile - steel welded pipe:400mm diameter:254390",1,"m3","Steel, welded pipe",16454,"ice","foundations",484
+"m pile - steel welded pipe:400mm diameter:253938",1,"m3","Steel, welded pipe",16454,"ice","foundations",406
+"m pile - steel welded pipe:400mm diameter:254595",1,"m3","Steel, welded pipe",16454,"ice","foundations",520
+"m pile - steel welded pipe:400mm diameter:254746",1,"m3","Steel, welded pipe",16454,"ice","foundations",540
+"m pile - steel welded pipe:400mm diameter:254662",1,"m3","Steel, welded pipe",16454,"ice","foundations",522
+"m pile - steel welded pipe:400mm diameter:254512",1,"m3","Steel, welded pipe",16454,"ice","foundations",504
+"m pile - steel welded pipe:400mm diameter:254544",1,"m3","Steel, welded pipe",16454,"ice","foundations",508
+"m pile - steel welded pipe:400mm diameter:254424",1,"m3","Steel, welded pipe",16454,"ice","foundations",490
+"m pile - steel welded pipe:400mm diameter:254386",1,"m3","Steel, welded pipe",16454,"ice","foundations",480
+"m pile - steel welded pipe:400mm diameter:254282",1,"m3","Steel, welded pipe",16454,"ice","foundations",460
+"concrete rc35/45 - cast-in-place concrete block",12,"m3","Concrete RC35/45 with CEM I cement",4784,"ice","foundations",552
+"m pile - steel welded pipe:400mm diameter:254354",1,"m3","Steel, welded pipe",16454,"ice","foundations",476
+"m pile - steel welded pipe:400mm diameter:254316",1,"m3","Steel, welded pipe",16454,"ice","foundations",466
+"m pile - steel welded pipe:400mm diameter:254742",1,"m3","Steel, welded pipe",16454,"ice","foundations",536
+"m pile - steel welded pipe:400mm diameter:254710",1,"m3","Steel, welded pipe",16454,"ice","foundations",532
+"m pile - steel welded pipe:600mm diameter:219651",2,"m3","Steel, welded pipe",37034,"ice","foundations",67
+"m pile - steel welded pipe:600mm diameter:219659",2,"m3","Steel, welded pipe",37034,"ice","foundations",75
+"m pile - steel welded pipe:600mm diameter:219663",2,"m3","Steel, welded pipe",37034,"ice","foundations",79
+"m pile - steel welded pipe:400mm diameter:254665",1,"m3","Steel, welded pipe",16454,"ice","foundations",525
+"m pile - steel welded pipe:600mm diameter:219687",2,"m3","Steel, welded pipe",37034,"ice","foundations",94
+"m pile - steel welded pipe:600mm diameter:219675",2,"m3","Steel, welded pipe",37034,"ice","foundations",91
+"m pile - steel welded pipe:600mm diameter:219688",2,"m3","Steel, welded pipe",37034,"ice","foundations",95
+"m pile - steel welded pipe:600mm diameter:219698",2,"m3","Steel, welded pipe",37034,"ice","foundations",105
+"m pile - steel welded pipe:600mm diameter:219690",2,"m3","Steel, welded pipe",37034,"ice","foundations",97
+"m pile - steel welded pipe:600mm diameter:219702",2,"m3","Steel, welded pipe",37034,"ice","foundations",109
+"m pile - steel welded pipe:600mm diameter:219708",2,"m3","Steel, welded pipe",37034,"ice","foundations",115
+"m pile - steel welded pipe:600mm diameter:219712",2,"m3","Steel, welded pipe",37034,"ice","foundations",119
+"m pile - steel welded pipe:600mm diameter:219718",2,"m3","Steel, welded pipe",37034,"ice","foundations",125
+"m pile - steel welded pipe:600mm diameter:219720",2,"m3","Steel, welded pipe",37034,"ice","foundations",127
+"m pile - steel welded pipe:600mm diameter:219734",2,"m3","Steel, welded pipe",37034,"ice","foundations",141
+"m pile - steel welded pipe:600mm diameter:219722",2,"m3","Steel, welded pipe",37034,"ice","foundations",129
+"m pile - steel welded pipe:600mm diameter:219736",2,"m3","Steel, welded pipe",37034,"ice","foundations",143
+"m pile - steel welded pipe:600mm diameter:219730",2,"m3","Steel, welded pipe",37034,"ice","foundations",137
+"m pile - steel welded pipe:600mm diameter:219738",2,"m3","Steel, welded pipe",37034,"ice","foundations",145
+"m pile - steel welded pipe:600mm diameter:219760",2,"m3","Steel, welded pipe",37034,"ice","foundations",167
+"m pile - steel welded pipe:600mm diameter:219742",2,"m3","Steel, welded pipe",37034,"ice","foundations",149
+"m pile - steel welded pipe:600mm diameter:219764",2,"m3","Steel, welded pipe",37034,"ice","foundations",171
+"m pile - steel welded pipe:600mm diameter:219748",2,"m3","Steel, welded pipe",37034,"ice","foundations",155
+"m pile - steel welded pipe:600mm diameter:219750",2,"m3","Steel, welded pipe",37034,"ice","foundations",157
+"m pile - steel welded pipe:600mm diameter:219776",2,"m3","Steel, welded pipe",37034,"ice","foundations",183
+"m pile - steel welded pipe:600mm diameter:219756",2,"m3","Steel, welded pipe",37034,"ice","foundations",163
+"m pile - steel welded pipe:600mm diameter:219780",2,"m3","Steel, welded pipe",37034,"ice","foundations",187
+"m pile - steel welded pipe:600mm diameter:219766",2,"m3","Steel, welded pipe",37034,"ice","foundations",173
+"m pile - steel welded pipe:600mm diameter:219784",2,"m3","Steel, welded pipe",37034,"ice","foundations",191
+"m pile - steel welded pipe:600mm diameter:219774",2,"m3","Steel, welded pipe",37034,"ice","foundations",181
+"m pile - steel welded pipe:600mm diameter:219788",2,"m3","Steel, welded pipe",37034,"ice","foundations",195
+"m pile - steel welded pipe:600mm diameter:219796",2,"m3","Steel, welded pipe",37034,"ice","foundations",203
+"m pile - steel welded pipe:600mm diameter:219798",2,"m3","Steel, welded pipe",37034,"ice","foundations",205
+"m pile - steel welded pipe:600mm diameter:219794",2,"m3","Steel, welded pipe",37034,"ice","foundations",201
+"m pile - steel welded pipe:600mm diameter:219802",2,"m3","Steel, welded pipe",37034,"ice","foundations",209
+"m pile - steel welded pipe:600mm diameter:219810",2,"m3","Steel, welded pipe",37034,"ice","foundations",217
+"m pile - steel welded pipe:600mm diameter:219806",2,"m3","Steel, welded pipe",37034,"ice","foundations",213
+"m pile - steel welded pipe:600mm diameter:219822",2,"m3","Steel, welded pipe",37034,"ice","foundations",229
+"m pile - steel welded pipe:600mm diameter:219820",2,"m3","Steel, welded pipe",37034,"ice","foundations",227
+"m pile - steel welded pipe:600mm diameter:219818",2,"m3","Steel, welded pipe",37034,"ice","foundations",225
+"m pile - steel welded pipe:600mm diameter:219828",2,"m3","Steel, welded pipe",37034,"ice","foundations",235
+"m pile - steel welded pipe:600mm diameter:219832",2,"m3","Steel, welded pipe",37034,"ice","foundations",239
+"m pile - steel welded pipe:600mm diameter:219836",2,"m3","Steel, welded pipe",37034,"ice","foundations",243
+"m pile - steel welded pipe:600mm diameter:219838",2,"m3","Steel, welded pipe",37034,"ice","foundations",245
+"m pile - steel welded pipe:600mm diameter:219842",2,"m3","Steel, welded pipe",37034,"ice","foundations",249
+"m pile - steel welded pipe:600mm diameter:219848",2,"m3","Steel, welded pipe",37034,"ice","foundations",255
+"m pile - steel welded pipe:600mm diameter:219856",2,"m3","Steel, welded pipe",37034,"ice","foundations",263
+"m pile - steel welded pipe:600mm diameter:219850",2,"m3","Steel, welded pipe",37034,"ice","foundations",257
+"m pile - steel welded pipe:600mm diameter:219866",2,"m3","Steel, welded pipe",37034,"ice","foundations",273
+"m pile - steel welded pipe:600mm diameter:219858",2,"m3","Steel, welded pipe",37034,"ice","foundations",265
+"m pile - steel welded pipe:600mm diameter:219874",2,"m3","Steel, welded pipe",37034,"ice","foundations",281
+"m pile - steel welded pipe:600mm diameter:219860",2,"m3","Steel, welded pipe",37034,"ice","foundations",267
+"m pile - steel welded pipe:600mm diameter:219882",2,"m3","Steel, welded pipe",37034,"ice","foundations",289
+"m pile - steel welded pipe:600mm diameter:219876",2,"m3","Steel, welded pipe",37034,"ice","foundations",283
+"m pile - steel welded pipe:600mm diameter:219898",2,"m3","Steel, welded pipe",37034,"ice","foundations",305
+"m pile - steel welded pipe:600mm diameter:219878",2,"m3","Steel, welded pipe",37034,"ice","foundations",285
+"m pile - steel welded pipe:600mm diameter:219902",2,"m3","Steel, welded pipe",37034,"ice","foundations",309
+"m pile - steel welded pipe:600mm diameter:219886",2,"m3","Steel, welded pipe",37034,"ice","foundations",293
+"m pile - steel welded pipe:600mm diameter:219908",2,"m3","Steel, welded pipe",37034,"ice","foundations",315
+"m pile - steel welded pipe:600mm diameter:219888",2,"m3","Steel, welded pipe",37034,"ice","foundations",295
+"m pile - steel welded pipe:600mm diameter:219904",2,"m3","Steel, welded pipe",37034,"ice","foundations",311
+"m pile - steel welded pipe:600mm diameter:219896",2,"m3","Steel, welded pipe",37034,"ice","foundations",303
+"m pile - steel welded pipe:600mm diameter:219906",2,"m3","Steel, welded pipe",37034,"ice","foundations",313
+"m pile - steel welded pipe:600mm diameter:219932",2,"m3","Steel, welded pipe",37034,"ice","foundations",339
+"m pile - steel welded pipe:600mm diameter:219920",2,"m3","Steel, welded pipe",37034,"ice","foundations",327
+"m pile - steel welded pipe:600mm diameter:219965",2,"m3","Steel, welded pipe",37034,"ice","foundations",363
+"m pile - steel welded pipe:600mm diameter:219924",2,"m3","Steel, welded pipe",37034,"ice","foundations",331
+"m pile - steel welded pipe:600mm diameter:219969",2,"m3","Steel, welded pipe",37034,"ice","foundations",367
+"m pile - steel welded pipe:600mm diameter:219930",2,"m3","Steel, welded pipe",37034,"ice","foundations",337
+"m pile - steel welded pipe:600mm diameter:219934",2,"m3","Steel, welded pipe",37034,"ice","foundations",341
+"m pile - steel welded pipe:600mm diameter:219977",2,"m3","Steel, welded pipe",37034,"ice","foundations",375
+"m pile - steel welded pipe:600mm diameter:219938",2,"m3","Steel, welded pipe",37034,"ice","foundations",345
+"m pile - steel welded pipe:600mm diameter:219942",2,"m3","Steel, welded pipe",37034,"ice","foundations",349
+"m pile - steel welded pipe:600mm diameter:219948",2,"m3","Steel, welded pipe",37034,"ice","foundations",355
+"concrete rc35/45 - cast-in-place concrete rc35/45 - 35 mpa",18,"m3","Concrete RC35/45 with 14% limestone cement",6125,"ice","foundations",395
+"m pile - steel welded pipe:600mm diameter:219952",2,"m3","Steel, welded pipe",37034,"ice","foundations",359
+"concrete rc35/45 - cast-in-place concrete rc35/45 - 35 mpa",1,"m3","Concrete RC35/45 with 14% limestone cement",250,"ice","foundations",400
+"m pile - steel welded pipe:600mm diameter:219967",2,"m3","Steel, welded pipe",37034,"ice","foundations",365
+"m pile cap - 6 pile : 2500 x 1800 x 900mm:254103",4,"m3","Concrete RC40/50 with 15% PFA cement",1539,"ice","foundations",423
+"m pile - steel welded pipe:600mm diameter:219981",2,"m3","Steel, welded pipe",37034,"ice","foundations",379
+"m pile - steel welded pipe:400mm diameter:254110",1,"m3","Steel, welded pipe",16454,"ice","foundations",429
+"m pile - steel welded pipe:400mm diameter:254140",1,"m3","Steel, welded pipe",16454,"ice","foundations",433
+"m pile - steel welded pipe:400mm diameter:254201",1,"m3","Steel, welded pipe",16454,"ice","foundations",441
+"m pile - steel welded pipe:400mm diameter:253935",1,"m3","Steel, welded pipe",16454,"ice","foundations",403
+"m pile cap - 6 pile : 2500 x 1800 x 900mm:254019",4,"m3","Concrete RC40/50 with 15% PFA cement",1539,"ice","foundations",409
+"m pile - steel welded pipe:400mm diameter:254249",1,"m3","Steel, welded pipe",16454,"ice","foundations",453
+"m pile - steel welded pipe:400mm diameter:254074",1,"m3","Steel, welded pipe",16454,"ice","foundations",421
+"m pile - steel welded pipe:400mm diameter:254281",1,"m3","Steel, welded pipe",16454,"ice","foundations",459
+"m pile - steel welded pipe:400mm diameter:254022",1,"m3","Steel, welded pipe",16454,"ice","foundations",411
+"m pile cap - 6 pile : 2500 x 1800 x 900mm:254349",4,"m3","Concrete RC40/50 with 15% PFA cement",1539,"ice","foundations",472
+"m pile - steel welded pipe:400mm diameter:254024",1,"m3","Steel, welded pipe",16454,"ice","foundations",413
+"m pile cap - 6 pile : 2500 x 1800 x 900mm:254196",4,"m3","Concrete RC40/50 with 15% PFA cement",1539,"ice","foundations",437
+"m pile - steel welded pipe:400mm diameter:254425",1,"m3","Steel, welded pipe",16454,"ice","foundations",491
+"m pile - steel welded pipe:400mm diameter:254106",1,"m3","Steel, welded pipe",16454,"ice","foundations",425
+"m pile - steel welded pipe:400mm diameter:254477",1,"m3","Steel, welded pipe",16454,"ice","foundations",497
+"m pile - steel welded pipe:400mm diameter:254199",1,"m3","Steel, welded pipe",16454,"ice","foundations",439
+"m pile - steel welded pipe:400mm diameter:254253",1,"m3","Steel, welded pipe",16454,"ice","foundations",457
+"m pile - steel welded pipe:400mm diameter:254547",1,"m3","Steel, welded pipe",16454,"ice","foundations",511
+"m pile cap - 6 pile : 2500 x 1800 x 900mm:254542",4,"m3","Concrete RC40/50 with 15% PFA cement",1539,"ice","foundations",507
+"m pile - steel welded pipe:400mm diameter:254285",1,"m3","Steel, welded pipe",16454,"ice","foundations",463
+"m pile - steel welded pipe:400mm diameter:254283",1,"m3","Steel, welded pipe",16454,"ice","foundations",461
+"m pile cap - 6 pile : 2500 x 1800 x 900mm:254660",4,"m3","Concrete RC40/50 with 15% PFA cement",1539,"ice","foundations",521
+"m pile - steel welded pipe:400mm diameter:254317",1,"m3","Steel, welded pipe",16454,"ice","foundations",467
+"m pile - steel welded pipe:400mm diameter:254707",1,"m3","Steel, welded pipe",16454,"ice","foundations",529
+"m pile - steel welded pipe:400mm diameter:254355",1,"m3","Steel, welded pipe",16454,"ice","foundations",477
+"m pile - steel welded pipe:400mm diameter:254711",1,"m3","Steel, welded pipe",16454,"ice","foundations",533
+"m pile - steel welded pipe:400mm diameter:254352",1,"m3","Steel, welded pipe",16454,"ice","foundations",474
+"m pile - steel welded pipe:400mm diameter:254423",1,"m3","Steel, welded pipe",16454,"ice","foundations",489
+"m pile - steel welded pipe:600mm diameter:219669",2,"m3","Steel, welded pipe",37034,"ice","foundations",85
+"m pile - steel welded pipe:400mm diameter:254475",1,"m3","Steel, welded pipe",16454,"ice","foundations",495
+"m pile - steel welded pipe:400mm diameter:254511",1,"m3","Steel, welded pipe",16454,"ice","foundations",503
+"m pile - steel welded pipe:400mm diameter:254545",1,"m3","Steel, welded pipe",16454,"ice","foundations",509
+"m pile - steel welded pipe:400mm diameter:254667",1,"m3","Steel, welded pipe",16454,"ice","foundations",527
+"m pile - steel welded pipe:400mm diameter:254743",1,"m3","Steel, welded pipe",16454,"ice","foundations",537
+"m pile - steel welded pipe:400mm diameter:254747",1,"m3","Steel, welded pipe",16454,"ice","foundations",541
+"m pile - steel welded pipe:600mm diameter:219671",2,"m3","Steel, welded pipe",37034,"ice","foundations",87
+"concrete rc35/45 - cast-in-place concrete block",10,"m3","Concrete RC35/45 with CEM I cement",3869,"ice","foundations",551
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:214322",14,"m3","Concrete RC40/50 with 15% PFA cement",5486,"ice","foundations",24
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:214722",14,"m3","Concrete RC40/50 with 15% PFA cement",5486,"ice","foundations",28
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:215602",14,"m3","Concrete RC40/50 with 15% PFA cement",5486,"ice","foundations",38
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:216264",14,"m3","Concrete RC40/50 with 15% PFA cement",5486,"ice","foundations",44
+"m pile - steel welded pipe:600mm diameter:219640",2,"m3","Steel, welded pipe",37034,"ice","foundations",56
+"m pile - steel welded pipe:600mm diameter:219644",2,"m3","Steel, welded pipe",37034,"ice","foundations",60
+"m pile - steel welded pipe:600mm diameter:219648",2,"m3","Steel, welded pipe",37034,"ice","foundations",64
+"m pile - steel welded pipe:600mm diameter:219658",2,"m3","Steel, welded pipe",37034,"ice","foundations",74
+"m pile - steel welded pipe:600mm diameter:219668",2,"m3","Steel, welded pipe",37034,"ice","foundations",84
+"m pile - steel welded pipe:600mm diameter:219674",2,"m3","Steel, welded pipe",37034,"ice","foundations",90
+"m pile - steel welded pipe:600mm diameter:219693",2,"m3","Steel, welded pipe",37034,"ice","foundations",100
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:214010",14,"m3","Concrete RC40/50 with 15% PFA cement",5486,"ice","foundations",22
+"m pile - steel welded pipe:600mm diameter:219711",2,"m3","Steel, welded pipe",37034,"ice","foundations",118
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:217145",14,"m3","Concrete RC40/50 with 15% PFA cement",5486,"ice","foundations",52
+"m pile - steel welded pipe:600mm diameter:219691",2,"m3","Steel, welded pipe",37034,"ice","foundations",98
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:216712",14,"m3","Concrete RC40/50 with 15% PFA cement",5486,"ice","foundations",48
+"m pile - steel welded pipe:600mm diameter:219685",2,"m3","Steel, welded pipe",37034,"ice","foundations",92
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:216038",14,"m3","Concrete RC40/50 with 15% PFA cement",5486,"ice","foundations",42
+"m pile - steel welded pipe:600mm diameter:219703",2,"m3","Steel, welded pipe",37034,"ice","foundations",110
+"m pile cap - 9 pile : 3800 x 3800 x 600mm:215224",14,"m3","Concrete RC40/50 with 15% PFA cement",5486,"ice","foundations",34
+"m pile - steel welded pipe:600mm diameter:219695",2,"m3","Steel, welded pipe",37034,"ice","foundations",102
+"m pile - steel welded pipe:600mm diameter:219660",2,"m3","Steel, welded pipe",37034,"ice","foundations",76
+"m pile - steel welded pipe:600mm diameter:219666",2,"m3","Steel, welded pipe",37034,"ice","foundations",82
+"m pile - steel welded pipe:600mm diameter:219654",2,"m3","Steel, welded pipe",37034,"ice","foundations",70
+"m pile - steel welded pipe:600mm diameter:219709",2,"m3","Steel, welded pipe",37034,"ice","foundations",116
+"m pile - steel welded pipe:600mm diameter:219787",2,"m3","Steel, welded pipe",37034,"ice","foundations",194
+"m pile - steel welded pipe:600mm diameter:219789",2,"m3","Steel, welded pipe",37034,"ice","foundations",196
+"m pile - steel welded pipe:600mm diameter:219809",2,"m3","Steel, welded pipe",37034,"ice","foundations",216
+"m pile - steel welded pipe:600mm diameter:219775",2,"m3","Steel, welded pipe",37034,"ice","foundations",182
+"m pile - steel welded pipe:600mm diameter:219771",2,"m3","Steel, welded pipe",37034,"ice","foundations",178
+"m pile - steel welded pipe:600mm diameter:219817",2,"m3","Steel, welded pipe",37034,"ice","foundations",224
+"m pile - steel welded pipe:600mm diameter:219805",2,"m3","Steel, welded pipe",37034,"ice","foundations",212
+"m pile - steel welded pipe:600mm diameter:219741",2,"m3","Steel, welded pipe",37034,"ice","foundations",148
+"m pile - steel welded pipe:600mm diameter:219735",2,"m3","Steel, welded pipe",37034,"ice","foundations",142
+"m pile - steel welded pipe:600mm diameter:219793",2,"m3","Steel, welded pipe",37034,"ice","foundations",200
+"m pile - steel welded pipe:600mm diameter:219767",2,"m3","Steel, welded pipe",37034,"ice","foundations",174
+"m pile - steel welded pipe:600mm diameter:219715",2,"m3","Steel, welded pipe",37034,"ice","foundations",122
+"m pile - steel welded pipe:600mm diameter:219717",2,"m3","Steel, welded pipe",37034,"ice","foundations",124
+"m pile - steel welded pipe:600mm diameter:219783",2,"m3","Steel, welded pipe",37034,"ice","foundations",190
+"m pile - steel welded pipe:600mm diameter:219761",2,"m3","Steel, welded pipe",37034,"ice","foundations",168
+"m pile - steel welded pipe:600mm diameter:219763",2,"m3","Steel, welded pipe",37034,"ice","foundations",170
+"m pile - steel welded pipe:600mm diameter:219727",2,"m3","Steel, welded pipe",37034,"ice","foundations",134
+"m pile - steel welded pipe:600mm diameter:219773",2,"m3","Steel, welded pipe",37034,"ice","foundations",180
+"m pile - steel welded pipe:600mm diameter:219747",2,"m3","Steel, welded pipe",37034,"ice","foundations",154
+"m pile - steel welded pipe:600mm diameter:219753",2,"m3","Steel, welded pipe",37034,"ice","foundations",160
+"m pile - steel welded pipe:600mm diameter:219737",2,"m3","Steel, welded pipe",37034,"ice","foundations",144
+"m pile - steel welded pipe:600mm diameter:219731",2,"m3","Steel, welded pipe",37034,"ice","foundations",138
+"m pile - steel welded pipe:600mm diameter:219749",2,"m3","Steel, welded pipe",37034,"ice","foundations",156
+"m pile - steel welded pipe:600mm diameter:219721",2,"m3","Steel, welded pipe",37034,"ice","foundations",128
+"m pile - steel welded pipe:600mm diameter:219849",2,"m3","Steel, welded pipe",37034,"ice","foundations",256
+"m pile - steel welded pipe:600mm diameter:219879",2,"m3","Steel, welded pipe",37034,"ice","foundations",286
+"m pile - steel welded pipe:600mm diameter:219815",2,"m3","Steel, welded pipe",37034,"ice","foundations",222
+"m pile - steel welded pipe:600mm diameter:219873",2,"m3","Steel, welded pipe",37034,"ice","foundations",280
+"m pile - steel welded pipe:600mm diameter:219833",2,"m3","Steel, welded pipe",37034,"ice","foundations",240
+"m pile - steel welded pipe:600mm diameter:219867",2,"m3","Steel, welded pipe",37034,"ice","foundations",274
+"m pile - steel welded pipe:600mm diameter:219869",2,"m3","Steel, welded pipe",37034,"ice","foundations",276
+"m pile - steel welded pipe:600mm diameter:219831",2,"m3","Steel, welded pipe",37034,"ice","foundations",238
+"m pile - steel welded pipe:600mm diameter:219827",2,"m3","Steel, welded pipe",37034,"ice","foundations",234
+"m pile - steel welded pipe:600mm diameter:219803",2,"m3","Steel, welded pipe",37034,"ice","foundations",210
+"m pile - steel welded pipe:600mm diameter:219841",2,"m3","Steel, welded pipe",37034,"ice","foundations",248
+"m pile - steel welded pipe:600mm diameter:219825",2,"m3","Steel, welded pipe",37034,"ice","foundations",232
+"m pile - steel welded pipe:600mm diameter:219855",2,"m3","Steel, welded pipe",37034,"ice","foundations",262
+"m pile - steel welded pipe:600mm diameter:219847",2,"m3","Steel, welded pipe",37034,"ice","foundations",254
+"m pile - steel welded pipe:600mm diameter:219795",2,"m3","Steel, welded pipe",37034,"ice","foundations",202
+"m pile - steel welded pipe:600mm diameter:219843",2,"m3","Steel, welded pipe",37034,"ice","foundations",250
+"m pile - steel welded pipe:600mm diameter:219857",2,"m3","Steel, welded pipe",37034,"ice","foundations",264
+"m pile - steel welded pipe:600mm diameter:219921",2,"m3","Steel, welded pipe",37034,"ice","foundations",328
+"m pile - steel welded pipe:600mm diameter:219901",2,"m3","Steel, welded pipe",37034,"ice","foundations",308
+"m pile - steel welded pipe:600mm diameter:219903",2,"m3","Steel, welded pipe",37034,"ice","foundations",310
+"m pile - steel welded pipe:600mm diameter:219895",2,"m3","Steel, welded pipe",37034,"ice","foundations",302
+"m pile - steel welded pipe:600mm diameter:219947",2,"m3","Steel, welded pipe",37034,"ice","foundations",354
+"m pile - steel welded pipe:600mm diameter:219923",2,"m3","Steel, welded pipe",37034,"ice","foundations",330
+"m pile - steel welded pipe:600mm diameter:219909",2,"m3","Steel, welded pipe",37034,"ice","foundations",316
+"m pile - steel welded pipe:600mm diameter:219905",2,"m3","Steel, welded pipe",37034,"ice","foundations",312
+"m pile - steel welded pipe:600mm diameter:219863",2,"m3","Steel, welded pipe",37034,"ice","foundations",270
+"m pile - steel welded pipe:600mm diameter:219945",2,"m3","Steel, welded pipe",37034,"ice","foundations",352
+"m pile - steel welded pipe:600mm diameter:219913",2,"m3","Steel, welded pipe",37034,"ice","foundations",320
+"m pile - steel welded pipe:600mm diameter:219891",2,"m3","Steel, welded pipe",37034,"ice","foundations",298
+"m pile - steel welded pipe:600mm diameter:219885",2,"m3","Steel, welded pipe",37034,"ice","foundations",292
+"m pile - steel welded pipe:600mm diameter:219927",2,"m3","Steel, welded pipe",37034,"ice","foundations",334
+"m pile - steel welded pipe:600mm diameter:219883",2,"m3","Steel, welded pipe",37034,"ice","foundations",290
+"m pile - steel welded pipe:400mm diameter:254252",1,"m3","Steel, welded pipe",16454,"ice","foundations",456
+"m pile - steel welded pipe:400mm diameter:254109",1,"m3","Steel, welded pipe",16454,"ice","foundations",428
+"m pile - steel welded pipe:600mm diameter:219964",2,"m3","Steel, welded pipe",37034,"ice","foundations",362
+"m pile - steel welded pipe:400mm diameter:254139",1,"m3","Steel, welded pipe",16454,"ice","foundations",432
+"m pile - steel welded pipe:600mm diameter:219941",2,"m3","Steel, welded pipe",37034,"ice","foundations",348
+"m pile - steel welded pipe:600mm diameter:219935",2,"m3","Steel, welded pipe",37034,"ice","foundations",342
+"m pile - steel welded pipe:600mm diameter:219970",2,"m3","Steel, welded pipe",37034,"ice","foundations",368
+"m pile - steel welded pipe:600mm diameter:219976",2,"m3","Steel, welded pipe",37034,"ice","foundations",374
+"m pile - steel welded pipe:400mm diameter:254215",1,"m3","Steel, welded pipe",16454,"ice","foundations",448
+"m pile - steel welded pipe:600mm diameter:219974",2,"m3","Steel, welded pipe",37034,"ice","foundations",372
+"m pile cap - 6 pile : 2500 x 1800 x 900mm:254210",4,"m3","Concrete RC40/50 with 15% PFA cement",1539,"ice","foundations",444
+"m pile - steel welded pipe:600mm diameter:219949",2,"m3","Steel, welded pipe",37034,"ice","foundations",356
+"m pile - steel welded pipe:600mm diameter:219929",2,"m3","Steel, welded pipe",37034,"ice","foundations",336
+"m pile - steel welded pipe:400mm diameter:254025",1,"m3","Steel, welded pipe",16454,"ice","foundations",414
+"m pile - steel welded pipe:600mm diameter:219953",2,"m3","Steel, welded pipe",37034,"ice","foundations",360
+"concrete rc35/45 - cast-in-place concrete rc35/45 - 35 mpa",1,"m3","Concrete RC35/45 with 14% limestone cement",331,"ice","foundations",398
+"m pile - steel welded pipe:400mm diameter:254351",1,"m3","Steel, welded pipe",16454,"ice","foundations",473
+"m pile cap - 6 pile : 2500 x 1800 x 900mm:254588",4,"m3","Concrete RC40/50 with 15% PFA cement",1539,"ice","foundations",514
+"m pile cap - 6 pile : 2500 x 1800 x 900mm:254507",4,"m3","Concrete RC40/50 with 15% PFA cement",1539,"ice","foundations",500
+"m pile - steel welded pipe:400mm diameter:254200",1,"m3","Steel, welded pipe",16454,"ice","foundations",440
+"m pile - steel welded pipe:400mm diameter:254073",1,"m3","Steel, welded pipe",16454,"ice","foundations",420
+"m pile - steel welded pipe:400mm diameter:254474",1,"m3","Steel, welded pipe",16454,"ice","foundations",494
+"m pile - steel welded pipe:400mm diameter:254250",1,"m3","Steel, welded pipe",16454,"ice","foundations",454
+"m pile - steel welded pipe:400mm diameter:254143",1,"m3","Steel, welded pipe",16454,"ice","foundations",436
+"m pile cap - 6 pile : 2500 x 1800 x 900mm:254068",4,"m3","Concrete RC40/50 with 15% PFA cement",1539,"ice","foundations",416
+"m pile - steel welded pipe:400mm diameter:254286",1,"m3","Steel, welded pipe",16454,"ice","foundations",464
+"concrete rc35/45 - cast-in-place concrete rc35/45 - 35 mpa",0,"m3","Concrete RC35/45 with 14% limestone cement",116,"ice","foundations",394
+"m pile - steel welded pipe:400mm diameter:254708",1,"m3","Steel, welded pipe",16454,"ice","foundations",530
+"m pile - steel welded pipe:400mm diameter:254321",1,"m3","Steel, welded pipe",16454,"ice","foundations",471
+"m pile - steel welded pipe:400mm diameter:254213",1,"m3","Steel, welded pipe",16454,"ice","foundations",446
+"m pile - steel welded pipe:400mm diameter:254388",1,"m3","Steel, welded pipe",16454,"ice","foundations",482
+"concrete rc35/45 - cast-in-place concrete rc35/45 - 35 mpa",18,"m3","Concrete RC35/45 with 14% limestone cement",6125,"ice","foundations",396
+"m pile cap - 6 pile : 2500 x 1800 x 900mm:253933",4,"m3","Concrete RC40/50 with 15% PFA cement",1539,"ice","foundations",402
+"m pile - steel welded pipe:400mm diameter:254021",1,"m3","Steel, welded pipe",16454,"ice","foundations",410
+"m pile - steel welded pipe:400mm diameter:254476",1,"m3","Steel, welded pipe",16454,"ice","foundations",496
+"m pile cap - 6 pile : 2500 x 1800 x 900mm:254705",4,"m3","Concrete RC40/50 with 15% PFA cement",1539,"ice","foundations",528
+"m pile - steel welded pipe:400mm diameter:254546",1,"m3","Steel, welded pipe",16454,"ice","foundations",510
+"m pile - steel welded pipe:400mm diameter:254353",1,"m3","Steel, welded pipe",16454,"ice","foundations",475
+"m pile cap - 6 pile : 2500 x 1800 x 900mm:254279",4,"m3","Concrete RC40/50 with 15% PFA cement",1539,"ice","foundations",458
+"m pile - steel welded pipe:400mm diameter:254666",1,"m3","Steel, welded pipe",16454,"ice","foundations",526
+"m pile - steel welded pipe:400mm diameter:254422",1,"m3","Steel, welded pipe",16454,"ice","foundations",488
+"m pile - steel welded pipe:400mm diameter:254356",1,"m3","Steel, welded pipe",16454,"ice","foundations",478
+"m pile - steel welded pipe:400mm diameter:254712",1,"m3","Steel, welded pipe",16454,"ice","foundations",534
+"m pile - steel welded pipe:400mm diameter:254510",1,"m3","Steel, welded pipe",16454,"ice","foundations",502
+"m pile - steel welded pipe:400mm diameter:254593",1,"m3","Steel, welded pipe",16454,"ice","foundations",518
+"m pile - steel welded pipe:400mm diameter:254744",1,"m3","Steel, welded pipe",16454,"ice","foundations",538
