@@ -69,8 +69,10 @@ export const visualizeElementsByLabel = async (elementsIds: string[], label: str
 
     clearEmphasizeElements(vp, emph)
 
-    for (const elementId of elementsIds)
-        emph.overrideElements(elementId, vp, getLabelColor(label), FeatureOverrideType.ColorOnly, false);
+    elementsIds.forEach(elementId => {
+      emph.overrideElements(elementId, vp, getLabelColor(label), FeatureOverrideType.ColorOnly, false);
+    }); 
+        
 
     emphasizeElements(vp, emph, elementsIds)
     zoomElements(vp, elementsIds);
@@ -127,7 +129,7 @@ const clearEmphasizeElements = (vp: ScreenViewport, emph: EmphasizeElements) => 
 
 const emphasizeElements = (vp: ScreenViewport, emph: EmphasizeElements, elementsIds: string[]) => {
     emph.wantEmphasis = true;
-    emph.emphasizeElements(elementsIds, vp, undefined, false);
+    // emph.emphasizeElements(elementsIds, vp, undefined, false);
 }
 
 const zoomElements = (vp: ScreenViewport, elementsIds: string[]) => {
@@ -149,15 +151,21 @@ const loadToolTipData = () => {
         return []
     for (const _costIndexKey of Object.keys(_costIndex.costs)) {
         const aCost = _costIndex.costs[_costIndexKey];
-        const aToolTip : IToolTipElement = {
-            ecInstanceId : Object.keys(_elements.Elements)[aCost.rowNumber],
-            material: aCost.matchDescription,
-            gwp: aCost.gwp,
-            userLabel : _elements.Elements[Object.keys(_elements.Elements)[aCost.rowNumber]].UserLabel,
-            volume : _elements.Elements[Object.keys(_elements.Elements)[aCost.rowNumber]].Volume,
-            category : _elements.Elements[Object.keys(_elements.Elements)[aCost.rowNumber]].category
+        const ecInstanceId = ( Object.keys(_elements.Elements)[aCost.rowNumber])
+        try {
+            const aToolTip : IToolTipElement = {
+                ecInstanceId : Object.keys(_elements.Elements)[aCost.rowNumber],
+                material: aCost.matchDescription,
+                gwp: aCost.gwp,
+                userLabel : _elements.Elements[Object.keys(_elements.Elements)[aCost.rowNumber]].UserLabel,
+                volume : _elements.Elements[Object.keys(_elements.Elements)[aCost.rowNumber]].Volume,
+                category : _elements.Elements[Object.keys(_elements.Elements)[aCost.rowNumber]].category
+            }
+            toolTips.push(aToolTip);
         }
-        toolTips.push(aToolTip);
+        catch(e) {
+            console.log("Error creating tooltip for " + ecInstanceId + " referenced in " + aCost)
+        }
     }
     return toolTips;
 }

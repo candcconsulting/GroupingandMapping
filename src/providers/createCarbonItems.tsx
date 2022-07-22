@@ -87,9 +87,9 @@ const CarbonWidget = () => {
   async function createGroupHandler(): Promise<void> {
     // todo  
     console.log("Creating ..."); 
-    const sql =  "select distinct ca.codevalue as name from bis.geometricelement3d ge join bis.category ca on ca.ecinstanceid = ge.category.id"
-    const userdata = require("../data/IFC_categories.json");
-    const properties = require("../data/IFC_properties.json")
+    const sql =  "select distinct ca.codevalue as name from bis.geometricelement3d ge join bis.category ca on ca.ecinstanceid = ge.category.id and ca.codevalue not like ('%ZZ%') order by ca.codevalue"
+    const userdata = require("../data/categories.json");
+    const properties = require("../data/properties.json")
     const vp = IModelApp.viewManager.getFirstOpenView();
     if (!vp) { return};
     const authClient = IModelApp.authorizationClient as BrowserAuthorizationClient
@@ -100,57 +100,63 @@ const CarbonWidget = () => {
       setCreateProgressRadial(0);
       var i = 0;
       for (const ca of categories.values()) {
-        console.log(userdata.categories[ca[0]].name, "=", userdata.categories[ca[0]].status, userdata.categories[ca[0]].process)
-        if ("TRUE" === userdata.categories[ca[0]].process.toUpperCase()) {
-          // progressRadial = progressRadial + 1;
-          /* 
-          For each category
-            create a group with SQL = select ecinstanceid from bis.geometricelement where ca.codevalue = ca[0]
-            for each group
-              create all properties
-              Uniclass = search for uniclass for all classes in geometric elements
-              Category
-              Model
-              Material
-              Volume
-              Area
-              Length                
-          */
-         var body : IGroup = {
-          groupName:  ca[0].replaceAll("-", "").replaceAll("$", "").replaceAll(" ", ""),
-          description: ca[0].replaceAll("-", "").replaceAll("$", ""),
-          query : "select ge.ecinstanceid from bis.geometricelement3d ge join bis.category ca on ca.ecinstanceid = ge.category.id where ca.codevalue = '" + ca[0] + "'"
-         }
-         const mappingId = "5d6e584e-08cf-4956-89a6-5ae6454c5c08"
-         const aGroup = await BentleyAPIFunctions.createGroup(authClient,iModelId,mappingId, body);
-         //console.log(aGroup);
-         // aGroup.group.id will have the group Id
-         const groupId = aGroup.group.id
-         for (const key in properties.properties) {
-           const aProperty = properties.properties[key];
-           console.log(aProperty)
-           switch (aProperty.type) {
-             case "CalculatedProperty"  : {
-               const newProperty = await BentleyAPIFunctions.createProperty(authClient, iModelId, mappingId, groupId, "calculatedProperties", aProperty.payload);
-             }
-             break;
-             case "fixed"  : {
-              const newProperty = await BentleyAPIFunctions.createProperty(authClient, iModelId, mappingId, groupId, "properties", aProperty.payload)
-              break;
+        try {
+          console.log(userdata.categories[ca[0]].name, "=", userdata.categories[ca[0]].status, userdata.categories[ca[0]].process)
+          if ("TRUE" === userdata.categories[ca[0]].process.toUpperCase()) {
+            // progressRadial = progressRadial + 1;
+            /* 
+            For each category
+              create a group with SQL = select ecinstanceid from bis.geometricelement where ca.codevalue = ca[0]
+              for each group
+                create all properties
+                Uniclass = search for uniclass for all classes in geometric elements
+                Category
+                Model
+                Material
+                Volume
+                Area
+                Length                
+            */
+            var body : IGroup = {
+              groupName:  ca[0].replaceAll("-", "").replaceAll("$", "").replaceAll(" ", ""),
+              description: ca[0].replaceAll("-", "").replaceAll("$", ""),
+              query : "select ge.ecinstanceid from bis.geometricelement3d ge join bis.category ca on ca.ecinstanceid = ge.category.id where ca.codevalue = '" + ca[0] + "'"
             }
-            case  "property" : {
-              // search for the properties that have the class with the description in description
-              const query = "select ";
-              break;
+            const mappingId = "dadc3919-972a-4f9d-9946-81aa58db9956"
+            const aGroup = await BentleyAPIFunctions.createGroup(authClient,iModelId,mappingId, body);
+            //console.log(aGroup);
+            // aGroup.group.id will have the group Id
+            const groupId = aGroup.group.id
+            for (const key in properties.properties) {
+              const aProperty = properties.properties[key];
+              console.log(aProperty)
+              switch (aProperty.type) {
+                case "CalculatedProperty"  : {
+                  const newProperty = await BentleyAPIFunctions.createProperty(authClient, iModelId, mappingId, groupId, "calculatedProperties", aProperty.payload);
+                }
+                break;
+                case "fixed"  : {
+                  const newProperty = await BentleyAPIFunctions.createProperty(authClient, iModelId, mappingId, groupId, "properties", aProperty.payload)
+                  break;
+                }
+                case  "property" : {
+                  // search for the properties that have the class with the description in description
+                  const query = "select ";
+                  break;
+                }
+                default : 
+                  console.log ("Property Type not recognised");
+                  console.log (aProperty)            
+              }
             }
-            default : 
-              console.log ("Property Type not recognised");
-              console.log (aProperty)
-         }
-         i = i + 1 ;
-         setListProgressRadial(i / categories.length * 100);
-         }
+          }
         }
+        catch(e) {
+          const err = e as Error
+          console.log ("Skipping " + ca + " : Error : " + err.message)
+        }
+        i = i + 1 ;
+        setListProgressRadial(i / categories.length * 100);
       }
     }
     let status = 'positive' as progressStatus

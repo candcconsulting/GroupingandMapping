@@ -12,3 +12,9 @@
 "select ge.ecInstanceId, ge.ecclassid,  ge.UserLabel,  ca.userlabel as category, ifcmaterialName as Material, ifcgrossVolume as Volume, 'm3' as unit from bis.geometricelement3d ge join ifcdynamic.ifcbridgedata bd on ge.typeDefinition.id = bd.ecinstanceid join ifcdynamic.ifcaspect_basequantities qu on ge.ecinstanceid = qu.element.id join bis.category ca on ge.category.id = ca.ecinstanceid"
 
 "select * from bis.geometricelement3d"
+
+"select * from bis.repositorylink "
+
+"select distinct ca.codevalue as name, rl.userlabel as model from bis.geometricelement3d ge join bis.category ca on ca.ecinstanceid = ge.category.id join bis.externalsourceaspect esa on esa.element.id = ge.ecinstanceid join bis.externalsource es on esa.source.id = es.ecinstanceid join bis.repositorylink rl on rl.ecinstanceid = es.repository.id where ca.codevalue not like ('%ZZ%')"
+
+"select * from bis.externalsourceaspect ea join bis.repositorylink rl on ea.source.id = rl.ecinstanceid where kind like 'Level'"
