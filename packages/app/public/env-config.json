@@ -1,0 +1,19 @@
+{
+  "//At Dev Time, all elements are expected to be null and will be filled by octopus": "",
+  "envConfig": {
+    "auth": {
+      "authority": null,
+      "clientId": null,
+      "whitelistedIds": null
+    },
+    "buddi": {
+      "region": null
+    },
+    "launchDarkly": {
+      "clientId": null
+    },
+    "appInsights": {
+      "key": null
+    }
+  }
+}
