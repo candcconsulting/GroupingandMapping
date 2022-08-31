@@ -1,68 +1,74 @@
 {
-  "name": "gwgrouping",
-  "version": "0.1.0",
+  "name": "@itwin/demo-portal-repo",
   "private": true,
-  "dependencies": {
-    "@bentley/icons-generic": "^1.0.34",
-    "@bentley/react-scripts": "^4.0.5",
-    "@itwin/appui-abstract": "^3.0.0",
-    "@itwin/appui-layout-react": "^3.0.0",
-    "@itwin/appui-react": "^3.0.0",
-    "@itwin/browser-authorization": "^0.5.1",
-    "@itwin/components-react": "^3.0.0",
-    "@itwin/core-bentley": "^3.0.0",
-    "@itwin/core-common": "^3.0.0",
-    "@itwin/core-frontend": "^3.0.0",
-    "@itwin/core-geometry": "^3.0.0",
-    "@itwin/core-i18n": "^3.0.0",
-    "@itwin/core-markup": "^3.0.0",
-    "@itwin/core-orbitgt": "^3.0.0",
-    "@itwin/core-quantity": "^3.0.0",
-    "@itwin/core-react": "^3.0.0",
-    "@itwin/core-telemetry": "^3.0.0",
-    "@itwin/grouping-mapping-widget": "^0.3.2",
-    "@itwin/imodel-components-react": "^3.0.0",
-    "@itwin/imodels-access-frontend": "^1.0.1",
-    "@itwin/imodels-client-management": "^1.0.1",
-    "@itwin/itwinui-react": "^1.29.3",
-    "@itwin/one-click-lca-react": "^0.1.1",
-    "@itwin/presentation-common": "^3.0.0",
-    "@itwin/presentation-frontend": "^3.0.0",
-    "@itwin/reality-data-client": "^0.7.0",
-    "@itwin/reports-config-widget-react": "^0.0.1",
-    "@itwin/web-viewer-react": "^2.0.3",
-    "@itwin/webgl-compatibility": "^3.0.0",
-    "@types/history": "^4.7.11",
-    "@types/node": "^14.18.10",
-    "@types/react": "^17.0.39",
-    "@types/react-dom": "^17.0.11",
-    "csvtojson": "^2.0.10",
-    "history": "^4.10.1",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-redux": "^7.2.6",
-    "typescript": "~4.3.0"
-  },
-  "scripts": {
-    "start": "react-scripts --max_old_space_size=4096 start",
-    "build": "react-scripts --max_old_space_size=4096 build",
-    "test": "react-scripts --max_old_space_size=4096 test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
+  "workspaces": {
+    "packages": [
+      "packages/**"
+    ],
+    "nohoist": [
+      "**"
     ]
   },
-  "browserslist": [
-    "last 4 chrome version",
-    "last 4 firefox version",
-    "last 4 safari version",
-    "last 4 ios version",
-    "last 4 ChromeAndroid version",
-    "last 4 edge version",
-    "not dead",
-    "not <0.2%"
-  ]
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.1.1",
+    "@typescript-eslint/parser": "^4.1.1",
+    "cross-env": "7.0.3",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb": "^17.1.1",
+    "eslint-config-prettier": "^6.9.0",
+    "eslint-config-react-app": "^5.2.1",
+    "eslint-plugin-flowtype": "^5.2.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-prettier": "^3.1.0",
+    "eslint-plugin-react": "^7.14.3",
+    "eslint-plugin-react-hooks": "^2.3.0",
+    "eslint-plugin-simple-import-sort": "^4.0.0",
+    "husky": "^6.0.0",
+    "lint-staged": "^10.2.0",
+    "prettier": "1.19.1",
+    "serve": "^12.0.0",
+    "start-server-and-test": "^1.12.6",
+    "stylelint": "^13.2.0",
+    "stylelint-config-prettier": "^6.0.0",
+    "stylelint-config-sass-guidelines": "^6.1.0",
+    "stylelint-prettier": "^1.1.1",
+    "stylelint-scss": "^3.12.1",
+    "typescript": "^3.8.0",
+    "yarn": "^1.22.10"
+  },
+  "scripts": {
+    "build": "yarn --cwd packages/app build",
+    "start": "yarn --cwd packages/app start",
+    "test": "yarn --cwd packages/app test",
+    "optest": "yarn --cwd packages/opTestsApp test",
+    "optest:ci": "cross-env NODE_ENV=test start-server-and-test serve:static http://localhost:3000 optest",
+    "serve:static": "serve -s packages/app/build -l 3000 --cors",
+    "lint": "lint-staged --verbose",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "node --max_old_space_size=4096 ./node_modules/eslint/bin/eslint.js --config ./.eslintrc.ts.autofix.json --ignore-path ./.eslintignore --fix",
+      "node --max_old_space_size=4096 ./node_modules/eslint/bin/eslint.js --config ./.eslintrc.ts.json --ignore-path ./.eslintignore --color",
+      "node ./scripts/copyright-linter.js --"
+    ],
+    "*.{md,json}": [
+      "prettier --write --config .prettierrc --ignore-path .prettierignore"
+    ],
+    "*.{scss,css}": [
+      "stylelint --fix --config .stylelintrc --allow-empty-input",
+      "node ./scripts/copyright-linter.js --"
+    ]
+  },
+  "resolutions": {
+    "faye-websocket": "^0.11.0",
+    "ua-parser-js": "^0.7.22",
+    "dompurify": "^2.1.0",
+    "object-path": "^0.11.5",
+    "axios": "0.21.2",
+    "immer": "^9.0.6",
+    "@itwin/itwinui-css": "0.58.0",
+    "@itwin/itwinui-react": "1.38.1"
+  }
 }

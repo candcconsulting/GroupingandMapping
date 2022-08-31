@@ -1,0 +1,2069 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Synchronization",
+    "description": "iModel Connections API is a cloud-based synchronization API meant to synchronize the data in Input Files and iModels. It allows users to establish links from their design files to iModels, hosted in Bentley's iModelHub. Users can synchronize updates to their design files.",
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "https://api.bentley.com/synchronization"
+    }
+  ],
+  "paths": {
+    "/imodels/storageConnections/{connectionId}/run": {
+      "post": {
+        "summary": "Run StorageConnection",
+        "description": "---\r\n\r\nRuns the specified StorageConnection.\r\n\r\n### Notes\r\n\r\nOn successful run, operation returns http status code 202/accepted - the request is accepted for processing and will execute in background. It returns location header pointing to the run to check it's status via property 'State'(NotStarted, Idle, WaitingToExecute, WaitingToRetry, Executing, Completed, Queued). In the event that multiple run requests are being made simultaneously, 409/conflict is returned and only the first request is processed. If the run is already initiated and active, a new run is not initiated, instead 303/see other is returned along with location header pointing to the active run. There can only be one active run per iModel and another run can be initated only once the active run is complete.\r\n\r\n### Authentication\r\n\r\nRequires Authorization header with valid Bearer token for scope *connection:modify*.\r\n\r\n---",
+        "operationId": "run-storage-connection",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": ""
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "OAuth access token with scope `synchronization:modify`",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Setting to `application/vnd.bentley.itwin-platform.v1+json` is recommended.",
+            "schema": {
+              "enum": ["application/vnd.bentley.itwin-platform.v1+json"],
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/"
+              },
+              "example": ""
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/"
+                },
+                "example": ""
+              }
+            }
+          },
+          "303": {
+            "description": "This response indicates that an active run is in progress and link is provided in location header."
+          },
+          "401": {
+            "description": "This response indicates that request lacks valid authentication credentials. Access token might not been provided, issued by the wrong issuer, does not have required scopes or request headers were malformed.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "statusCode": 401,
+                  "message": "Access denied due to invalid access_token. Make sure to provide a valid token for this API endpoint."
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "This response indicates that user does not have required permissions to run specified connection."
+          },
+          "404": {
+            "description": "This response indicates that the specified connection not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": {
+                    "code": "ConnectionNotFound",
+                    "message": "Requested Connection not available."
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "A run request is already being processed.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": {
+                    "code": "IModelAlreadyProcessingRequest",
+                    "message": "The iModel is already processing this request."
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid request to get run connection.",
+            "content": {
+              "application/json": {
+                "example": ""
+              }
+            }
+          },
+          "429": {
+            "description": "This response indicates that the user has sent too many requests in a given amount of time.",
+            "headers": {
+              "retry-after": {
+                "description": "The number of requests exceeds the rate-limit for the client subscription.",
+                "required": true,
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "code": "TooManyRequests",
+                  "message": "More requests were received than the subscription rate-limit allows."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/imodels/storageConnections/{connectionId}/sourcefiles/{sourceFileId}": {
+      "get": {
+        "summary": "Get StorageConnection SourceFile",
+        "description": "---\r\n\r\nRetrieves StorageConnection's SourceFile with the specified ID.\r\n\r\n### Authentication\r\n\r\nRequires `Authorization` header with valid Bearer token for scope `synchronization:read`.\r\n\r\n---",
+        "operationId": "get-storage-connection-sourcefile",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": ""
+            }
+          },
+          {
+            "name": "sourceFileId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": ""
+            }
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "description": "The [$top](https://www.odata.org/getting-started/basic-tutorial/#topskip) system query option requests the number of items in the queried collection to be included in the result.",
+            "schema": {
+              "type": "int"
+            }
+          },
+          {
+            "name": "$skip",
+            "in": "query",
+            "description": "The [$skip](https://www.odata.org/getting-started/basic-tutorial/#topskip) query option requests the number of items in the queried collection that are to be skipped and not included in the result.",
+            "schema": {
+              "type": "int"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "OAuth access token with scope `synchronization:read`",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Setting to `application/vnd.bentley.itwin-platform.v1+json` is recommended.",
+            "schema": {
+              "enum": ["application/vnd.bentley.itwin-platform.v1+json"],
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/"
+              },
+              "example": ""
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/storage-file-response"
+                },
+                "example": ""
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request to get connection sourceFile"
+          },
+          "401": {
+            "description": "This response indicates that request lacks valid authentication credentials. Access token might not been provided, issued by the wrong issuer, does not have required scopes or request headers were malformed.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "statusCode": 401,
+                  "message": "Access denied due to invalid access_token. Make sure to provide a valid token for this API endpoint."
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "This response indicates that user does not have required permissions to get specified connection sourceFile."
+          },
+          "404": {
+            "description": "This response indicates that the specified connection sourceFile not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": {
+                    "code": "ConnectionSourceFileNotFound",
+                    "message": "Requested Connection SourceFile not available."
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid request to get connection sourcefile.",
+            "content": {
+              "application/json": {
+                "example": ""
+              }
+            }
+          },
+          "429": {
+            "description": "This response indicates that the user has sent too many requests in a given amount of time.",
+            "headers": {
+              "retry-after": {
+                "description": "The number of requests exceeds the rate-limit for the client subscription.",
+                "required": true,
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "code": "TooManyRequests",
+                  "message": "More requests were received than the subscription rate-limit allows."
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove StorageConnection SourceFile",
+        "description": "---\r\n\r\nDelete StorageConnection SourceFile\r\n\r\n### Authentication\r\n\r\nRequires `Authorization` header with valid Bearer token for scope `synchronization:modify`.\r\n\r\n\r\n---\r\n",
+        "operationId": "remove-storage-connection-sourcefile",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "description": "Connection Id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sourceFileId",
+            "in": "path",
+            "description": "SourceFile Id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "OAuth access token with scope `synchronization:modify`",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Setting to `application/vnd.bentley.itwin-platform.v1+json` is recommended.",
+            "schema": {
+              "enum": ["application/vnd.bentley.itwin-platform.v1+json"],
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/"
+              },
+              "example": ""
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "This response indicates that request lacks valid authentication credentials. Access token might not been provided, issued by the wrong issuer, does not have required scopes or request headers were malformed.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "statusCode": 401,
+                  "message": "Access denied due to invalid access_token. Make sure to provide a valid token for this API endpoint."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "This response indicates that one of the associated entities could not be found.",
+            "content": {
+              "application/json": {
+                "example": ""
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid request to remove connection sourcefile.",
+            "content": {
+              "application/json": {
+                "example": ""
+              }
+            }
+          },
+          "429": {
+            "description": "This response indicates that the user has sent too many requests in a given amount of time.",
+            "headers": {
+              "retry-after": {
+                "description": "The number of requests exceeds the rate-limit for the client subscription.",
+                "required": true,
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "code": "TooManyRequests",
+                  "message": "More requests were received than the subscription rate-limit allows."
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update StorageConnection SourceFile",
+        "description": "---\r\n\r\nUpdate an existing StorageConnection SourceFile.\r\n\r\n### Authentication\r\n\r\nRequires `Authorization` header with valid Bearer token for scope `synchronization:modify`.\r\n\r\n#### ConnectorType\r\n\r\nValid ConnectorType values are:\r\n\r\n-NotSet\r\n-AFFINITYCHECKER\r\n-MSTN\r\n-AVEVAPID\r\n-AUTOPLANT\r\n-REVIT\r\n-DWG\r\n-SPXREVIEW\r\n-IFC\r\n-SPPID\r\n-AVEVADIAGRAMS\r\n-CIVIL\r\n-CIVIL3D\r\n-GEOSPATIAL\r\n-OBD\r\n-OPENTOWER\r\n-SHELLEDWCSV\r\n-NWD\r\n\r\n### Associated entities\r\nSourceFile is related to a Connection. The path must contain a valid Connection ID.\r\n\r\n---\r\n",
+        "operationId": "update-storage-connection-sourcefile",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": ""
+            }
+          },
+          {
+            "name": "sourceFileId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": ""
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "OAuth access token with scope `synchronization:modify`",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Setting to `application/vnd.bentley.itwin-platform.v1+json` is recommended.",
+            "schema": {
+              "enum": ["application/vnd.bentley.itwin-platform.v1+json"],
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/storage-file-create"
+              },
+              "example": ""
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Connection sourceFile successfully updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/storage-file-response"
+                },
+                "example": ""
+              }
+            }
+          },
+          "401": {
+            "description": "This response indicates that request lacks valid authentication credentials. Access token might not been provided, issued by the wrong issuer, does not have required scopes or request headers were malformed.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "statusCode": 401,
+                  "message": "Access denied due to invalid access_token. Make sure to provide a valid token for this API endpoint."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "This response indicates that one of the associated entities could not be found.",
+            "content": {
+              "application/json": {
+                "example": ""
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid request to update connection sourcefile. Request payload might be missing some of the required properties.",
+            "content": {
+              "application/json;InvalidStorageConnectionSourceFileRequest": {
+                "example": "InvalidStorageConnectionSourceFileRequest"
+              },
+              "application/json;MissingRequestBody": {
+                "example": "MissingRequestBody"
+              }
+            }
+          },
+          "429": {
+            "description": "This response indicates that the user has sent too many requests in a given amount of time.",
+            "headers": {
+              "retry-after": {
+                "description": "The number of requests exceeds the rate-limit for the client subscription.",
+                "required": true,
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "code": "TooManyRequests",
+                  "message": "More requests were received than the subscription rate-limit allows."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/imodels/storageConnections/{connectionId}/runs": {
+      "get": {
+        "summary": "Get StorageConnection Runs",
+        "description": "---\r\n\r\nRetrieves all Runs for the specified connection.\r\n\r\n### Notes\r\n\r\nThe `Prefer` header can be used to specify how much result metadata is desired by the client. The `Prefer` request header field is used to indicate that particular server behaviors are preferred by the client but are not required for successful completion of the request.\r\n\r\nThis operation supports `\"return=representation\"` and `\"return=minimal\"` preferences.\r\n\r\nThe `\"return=representation\"` preference indicates that the client prefers that the server include an entity representing the current state of the resource in the response to a successful request.\r\nThe `\"return=minimal\"` preference indicates that the client wishes the server to return only a minimal response to a successful request. This is the default preference if `Prefer` header is not specified.\r\n\r\n### Authentication\r\n\r\nRequires `Authorization` header with valid Bearer token for scope `synchronization:read`.\r\n\r\n---",
+        "operationId": "get-storage-connection-runs",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": ""
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "OAuth access token with scope `synchronization:read`",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Setting to `application/vnd.bentley.itwin-platform.v1+json` is recommended.",
+            "schema": {
+              "enum": ["application/vnd.bentley.itwin-platform.v1+json"],
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/"
+              },
+              "example": ""
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json;minimal": {
+                "schema": {
+                  "$ref": "#/components/schemas/runs-prefer-return-minimal"
+                },
+                "example": "minimal"
+              },
+              "application/json;representation": {
+                "schema": {
+                  "$ref": "#/components/schemas/runs-prefer-return-representation"
+                },
+                "example": "representation"
+              }
+            }
+          },
+          "401": {
+            "description": "This response indicates that request lacks valid authentication credentials. Access token might not been provided, issued by the wrong issuer, does not have required scopes or request headers were malformed.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "statusCode": 401,
+                  "message": "Access denied due to invalid access_token. Make sure to provide a valid token for this API endpoint."
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "This response indicates that user does not have required permissions to get specified connection runs."
+          },
+          "422": {
+            "description": "Invalid request to get connection.",
+            "content": {
+              "application/json": {
+                "example": ""
+              }
+            }
+          },
+          "429": {
+            "description": "This response indicates that the user has sent too many requests in a given amount of time.",
+            "headers": {
+              "retry-after": {
+                "description": "The number of requests exceeds the rate-limit for the client subscription.",
+                "required": true,
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "code": "TooManyRequests",
+                  "message": "More requests were received than the subscription rate-limit allows."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/imodels/connections/authorizationInformation": {
+      "get": {
+        "summary": "Get AuthorizationInformation",
+        "description": "---\r\n\r\nRetrieves the calling user's AuthorizationInformation.\r\n\r\n### Authentication\r\n\r\nRequires `Authorization` header with valid Bearer token for scope `synchronization:read`.\r\n\r\n---",
+        "operationId": "get-authorization-information",
+        "parameters": [
+          {
+            "name": "redirectUrl",
+            "in": "query",
+            "description": "URL to redirect back to after authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "OAuth access token with scope `synchronization:read`",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Setting to `application/vnd.bentley.itwin-platform.v1+json` is recommended.",
+            "schema": {
+              "enum": ["application/vnd.bentley.itwin-platform.v1+json"],
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/"
+              },
+              "example": ""
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorizationInformation"
+                },
+                "example": ""
+              }
+            }
+          },
+          "401": {
+            "description": "This response indicates that request lacks valid authentication credentials. Access token might not been provided, issued by the wrong issuer, does not have required scopes or request headers were malformed.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "statusCode": 401,
+                  "message": "Access denied due to invalid access_token. Make sure to provide a valid token for this API endpoint."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid request to get a connection.",
+            "content": {
+              "application/json": {
+                "example": ""
+              }
+            }
+          },
+          "429": {
+            "description": "This response indicates that the user has sent too many requests in a given amount of time.",
+            "headers": {
+              "retry-after": {
+                "description": "The number of requests exceeds the rate-limit for the client subscription.",
+                "required": true,
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "code": "TooManyRequests",
+                  "message": "More requests were received than the subscription rate-limit allows."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/imodels/storageConnections": {
+      "post": {
+        "summary": "Create StorageConnection",
+        "description": "---\r\n\r\nCreate a StorageConnection that describes files from Storage to synchronize to the iModel.\r\n\r\n### Authentication\r\n\r\nRequires `Authorization` header with valid Bearer token for scope `synchronization:modify`.\r\n\r\n### Associated entities\r\n\r\nA connection is linked with an iModel. An iModel ID is required to be set when creating a StorageConnection.\r\n\r\n---\r\n",
+        "operationId": "create-storage-connection",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "OAuth access token with scope `synchronization:modify`",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Setting to `application/vnd.bentley.itwin-platform.v1+json` is recommended.",
+            "schema": {
+              "enum": ["application/vnd.bentley.itwin-platform.v1+json"],
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/storage-connection-create"
+              },
+              "example": ""
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Connection successfully created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StorageConnection"
+                },
+                "example": ""
+              }
+            }
+          },
+          "401": {
+            "description": "This response indicates that request lacks valid authentication credentials. Access token might not been provided, issued by the wrong issuer, does not have required scopes or request headers were malformed.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "statusCode": 401,
+                  "message": "Access denied due to invalid access_token. Make sure to provide a valid token for this API endpoint."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid request to create connection. Request payload might be missing some of the required properties.",
+            "content": {
+              "application/json;InvalidStorageConnectionRequest": {
+                "example": "InvalidStorageConnectionRequest"
+              },
+              "application/json;MissingRequestBody": {
+                "example": "MissingRequestBody"
+              }
+            }
+          },
+          "429": {
+            "description": "This response indicates that the user has sent too many requests in a given amount of time.",
+            "headers": {
+              "retry-after": {
+                "description": "The number of requests exceeds the rate-limit for the client subscription.",
+                "required": true,
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "code": "TooManyRequests",
+                  "message": "More requests were received than the subscription rate-limit allows."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/imodels/storageConnections/{connectionId}": {
+      "delete": {
+        "summary": "Delete StorageConnection",
+        "description": "---\r\n\r\nDelete connection\r\n\r\n### Authentication\r\n\r\nRequires `Authorization` header with valid Bearer token for scope `synchronization:modify`.\r\n\r\n\r\n---\r\n",
+        "operationId": "delete-storage-connection",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": ""
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "OAuth access token with scope `synchronization:modify`",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Setting to `application/vnd.bentley.itwin-platform.v1+json` is recommended.",
+            "schema": {
+              "enum": ["application/vnd.bentley.itwin-platform.v1+json"],
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/"
+              },
+              "example": ""
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "This response indicates that request lacks valid authentication credentials. Access token might not been provided, issued by the wrong issuer, does not have required scopes or request headers were malformed.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "statusCode": 401,
+                  "message": "Access denied due to invalid access_token. Make sure to provide a valid token for this API endpoint."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "This response indicates that the specified connection not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": {
+                    "code": "ConnectionNotFound",
+                    "message": "Requested Connection not available."
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid request to delete connection.",
+            "content": {
+              "application/json": {
+                "example": ""
+              }
+            }
+          },
+          "429": {
+            "description": "This response indicates that the user has sent too many requests in a given amount of time.",
+            "headers": {
+              "retry-after": {
+                "description": "The number of requests exceeds the rate-limit for the client subscription.",
+                "required": true,
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "code": "TooManyRequests",
+                  "message": "More requests were received than the subscription rate-limit allows."
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update StorageConnection",
+        "description": "---\r\n\r\nUpdate an existing StorageConnection.\r\n\r\n### Authentication\r\n\r\nRequires `Authorization` header with valid Bearer token for scope `synchronization:modify`.\r\n\r\n### Associated entities\r\n\r\nA connection is linked with an iModel. The iModel ID is required to be set when updating a StorageConnection.\r\n\r\n---\r\n",
+        "operationId": "update-storage-connection",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": ""
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "OAuth access token with scope `synchronization:modify`",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Setting to `application/vnd.bentley.itwin-platform.v1+json` is recommended.",
+            "schema": {
+              "enum": ["application/vnd.bentley.itwin-platform.v1+json"],
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/storage-connection-create"
+              },
+              "example": ""
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Connection successfully updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StorageConnection"
+                },
+                "example": ""
+              }
+            }
+          },
+          "401": {
+            "description": "This response indicates that request lacks valid authentication credentials. Access token might not been provided, issued by the wrong issuer, does not have required scopes or request headers were malformed.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "statusCode": 401,
+                  "message": "Access denied due to invalid access_token. Make sure to provide a valid token for this API endpoint."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "This response indicates that the specified connection not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": {
+                    "code": "ConnectionNotFound",
+                    "message": "Requested Connection not available."
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid request to update connection. Request payload might be missing some of the required properties.",
+            "content": {
+              "application/json;InvalidStorageConnectionRequest": {
+                "example": "InvalidStorageConnectionRequest"
+              },
+              "application/json;MissingRequestBody": {
+                "example": "MissingRequestBody"
+              }
+            }
+          },
+          "429": {
+            "description": "This response indicates that the user has sent too many requests in a given amount of time.",
+            "headers": {
+              "retry-after": {
+                "description": "The number of requests exceeds the rate-limit for the client subscription.",
+                "required": true,
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "code": "TooManyRequests",
+                  "message": "More requests were received than the subscription rate-limit allows."
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get Storage Connection",
+        "description": "---\r\n\r\nRetrieves a StorageConnection with the specified ID.\r\n\r\n### Authentication\r\n\r\nRequires `Authorization` header with valid Bearer token for scope `synchronization:read`.\r\n\r\n---",
+        "operationId": "get-storage-connection",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": ""
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "OAuth access token with scope `synchronization:read`",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Setting to `application/vnd.bentley.itwin-platform.v1+json` is recommended.",
+            "schema": {
+              "enum": ["application/vnd.bentley.itwin-platform.v1+json"],
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/"
+              },
+              "example": ""
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StorageConnection"
+                },
+                "example": ""
+              }
+            }
+          },
+          "401": {
+            "description": "This response indicates that request lacks valid authentication credentials. Access token might not been provided, issued by the wrong issuer, does not have required scopes or request headers were malformed.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "statusCode": 401,
+                  "message": "Access denied due to invalid access_token. Make sure to provide a valid token for this API endpoint."
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "This response indicates that user does not have required permissions to get specified connection."
+          },
+          "404": {
+            "description": "This response indicates that the specified connection not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": {
+                    "code": "ConnectionNotFound",
+                    "message": "Requested Connection not available."
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid request to get a connection.",
+            "content": {
+              "application/json": {
+                "example": ""
+              }
+            }
+          },
+          "429": {
+            "description": "This response indicates that the user has sent too many requests in a given amount of time.",
+            "headers": {
+              "retry-after": {
+                "description": "The number of requests exceeds the rate-limit for the client subscription.",
+                "required": true,
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "code": "TooManyRequests",
+                  "message": "More requests were received than the subscription rate-limit allows."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/imodels/connections": {
+      "get": {
+        "summary": "Get Connections",
+        "description": "---\r\n\r\nRetrieves connections for the specified iModel.\r\n\r\n### Notes\r\n\r\nThe `Prefer` header can be used to specify how much result metadata is desired by the client. The `Prefer` request header field is used to indicate that particular server behaviors are preferred by the client but are not required for successful completion of the request.\r\n\r\nThis operation supports `\"return=representation\"` and `\"return=minimal\"` preferences.\r\n\r\nThe `\"return=representation\"` preference indicates that the client prefers that the server include an entity representing the current state of the resource in the response to a successful request.\r\nThe `\"return=minimal\"` preference indicates that the client wishes the server to return only a minimal response to a successful request. This is the default preference if `Prefer` header is not specified.\r\n\r\n### Authentication\r\n\r\nRequires `Authorization` header with valid Bearer token for scope `synchronization:read`.\r\n\r\n---",
+        "operationId": "get-connections",
+        "parameters": [
+          {
+            "name": "imodelId",
+            "in": "query",
+            "description": "iModel Id",
+            "required": true,
+            "schema": {
+              "type": ""
+            }
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "description": "The [$top](https://www.odata.org/getting-started/basic-tutorial/#topskip) system query option requests the number of items in the queried collection to be included in the result.",
+            "schema": {
+              "type": "int"
+            }
+          },
+          {
+            "name": "$skip",
+            "in": "query",
+            "description": "The [$skip](https://www.odata.org/getting-started/basic-tutorial/#topskip) query option requests the number of items in the queried collection that are to be skipped and not included in the result.",
+            "schema": {
+              "type": "int"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "OAuth access token with scope `synchronization:read`",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Setting to `application/vnd.bentley.itwin-platform.v1+json` is recommended.",
+            "schema": {
+              "enum": ["application/vnd.bentley.itwin-platform.v1+json"],
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/"
+              },
+              "example": ""
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json;minimal": {
+                "schema": {
+                  "$ref": "#/components/schemas/connections-prefer-return-minimal"
+                },
+                "example": "minimal"
+              },
+              "application/json;representation": {
+                "schema": {
+                  "$ref": "#/components/schemas/connections-prefer-return-representation"
+                },
+                "example": "representation"
+              }
+            }
+          },
+          "401": {
+            "description": "This response indicates that request lacks valid authentication credentials. Access token might not been provided, issued by the wrong issuer, does not have required scopes or request headers were malformed.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "statusCode": 401,
+                  "message": "Access denied due to invalid access_token. Make sure to provide a valid token for this API endpoint."
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "This response indicates that user does not have required permissions to get specified connections."
+          },
+          "422": {
+            "description": "Invalid request to get connections.",
+            "content": {
+              "application/json": {
+                "example": ""
+              }
+            }
+          },
+          "429": {
+            "description": "This response indicates that the user has sent too many requests in a given amount of time.",
+            "headers": {
+              "retry-after": {
+                "description": "The number of requests exceeds the rate-limit for the client subscription.",
+                "required": true,
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "code": "TooManyRequests",
+                  "message": "More requests were received than the subscription rate-limit allows."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/imodels/storageConnections/{connectionId}/runs/{runId}": {
+      "get": {
+        "summary": "Get Storage Connection Run",
+        "description": "---\r\n\r\nRetrieves a StorageConnection Run with the specified ID.\r\n\r\n### Authentication\r\n\r\nRequires `Authorization` header with valid Bearer token for scope `synchronization:read`.\r\n\r\n---",
+        "operationId": "get-storage-connection-run",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": ""
+            }
+          },
+          {
+            "name": "runId",
+            "in": "path",
+            "description": "Run Id",
+            "required": true,
+            "schema": {
+              "type": ""
+            }
+          },
+          {
+            "name": "$top",
+            "in": "query",
+            "description": "The [$top](https://www.odata.org/getting-started/basic-tutorial/#topskip) system query option requests the number of items in the queried collection to be included in the result.",
+            "schema": {
+              "type": "int"
+            }
+          },
+          {
+            "name": "$skip",
+            "in": "query",
+            "description": "The [$skip](https://www.odata.org/getting-started/basic-tutorial/#topskip) query option requests the number of items in the queried collection that are to be skipped and not included in the result.",
+            "schema": {
+              "type": "int"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "OAuth access token with scope `synchronization:read`",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Setting to `application/vnd.bentley.itwin-platform.v1+json` is recommended.",
+            "schema": {
+              "enum": ["application/vnd.bentley.itwin-platform.v1+json"],
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/"
+              },
+              "example": ""
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/run-response"
+                },
+                "example": ""
+              }
+            }
+          },
+          "401": {
+            "description": "This response indicates that request lacks valid authentication credentials. Access token might not been provided, issued by the wrong issuer, does not have required scopes or request headers were malformed.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "statusCode": 401,
+                  "message": "Access denied due to invalid access_token. Make sure to provide a valid token for this API endpoint."
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "This response indicates that user does not have required permissions to get specified connection run."
+          },
+          "404": {
+            "description": "This response indicates that the specified connection run not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": {
+                    "code": "ConnectionRunNotFound",
+                    "message": "Requested Connection Run not available."
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid request to get connection run.",
+            "content": {
+              "application/json": {
+                "example": ""
+              }
+            }
+          },
+          "429": {
+            "description": "This response indicates that the user has sent too many requests in a given amount of time.",
+            "headers": {
+              "retry-after": {
+                "description": "The number of requests exceeds the rate-limit for the client subscription.",
+                "required": true,
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "code": "TooManyRequests",
+                  "message": "More requests were received than the subscription rate-limit allows."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/imodels/storageConnections/{connectionId}/sourcefiles": {
+      "post": {
+        "summary": "Add StorageConnection SourceFile",
+        "description": "---\r\n\r\nAdd a new Storage Source File to a Storage Connection\r\n\r\n### Authentication\r\n\r\nRequires `Authorization` header with valid Bearer token for scope `synchronization:modify`.\r\n\r\n#### ConnectorType\r\n\r\nValid ConnectorType values are:\r\n\r\n-NotSet\r\n-AFFINITYCHECKER\r\n-MSTN\r\n-AVEVAPID\r\n-AUTOPLANT\r\n-REVIT\r\n-DWG\r\n-SPXREVIEW\r\n-IFC\r\n-SPPID\r\n-AVEVADIAGRAMS\r\n-CIVIL\r\n-CIVIL3D\r\n-GEOSPATIAL\r\n-OBD\r\n-OPENTOWER\r\n-SHELLEDWCSV\r\n-NWD\r\n\r\n### Associated entities\r\nSourceFile is added to a Connection. The reuqest path must contain a valid Connection ID\r\n\r\n---\r\n",
+        "operationId": "add-storage-connection-sourcefile",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": ""
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "OAuth access token with scope `synchronization:modify`",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Setting to `application/vnd.bentley.itwin-platform.v1+json` is recommended.",
+            "schema": {
+              "enum": ["application/vnd.bentley.itwin-platform.v1+json"],
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/storage-file-create"
+              },
+              "example": ""
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Storage Connection sourceFile successfully added.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/storage-file-response"
+                },
+                "example": ""
+              }
+            }
+          },
+          "401": {
+            "description": "This response indicates that request lacks valid authentication credentials. Access token might not been provided, issued by the wrong issuer, does not have required scopes or request headers were malformed.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "statusCode": 401,
+                  "message": "Access denied due to invalid access_token. Make sure to provide a valid token for this API endpoint."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid request to add connection sourcefile. Request payload might be missing some of the required properties.",
+            "content": {
+              "application/json;InvalidStorageConnectionSourceFileRequest": {
+                "example": "InvalidStorageConnectionSourceFileRequest"
+              },
+              "application/json;MissingRequestBody": {
+                "example": "MissingRequestBody"
+              }
+            }
+          },
+          "429": {
+            "description": "This response indicates that the user has sent too many requests in a given amount of time.",
+            "headers": {
+              "retry-after": {
+                "description": "The number of requests exceeds the rate-limit for the client subscription.",
+                "required": true,
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "code": "TooManyRequests",
+                  "message": "More requests were received than the subscription rate-limit allows."
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get StorageConnection SourceFiles",
+        "description": "---\r\n\r\nRetrieves SourceFiles for specified StorageConnection.\r\n\r\n### Notes\r\n\r\nThe `Prefer` header can be used to specify how much result metadata is desired by the client. The `Prefer` request header field is used to indicate that particular server behaviors are preferred by the client but are not required for successful completion of the request.\r\n\r\nThis operation supports `\"return=representation\"` and `\"return=minimal\"` preferences.\r\n\r\nThe `\"return=representation\"` preference indicates that the client prefers that the server include an entity representing the current state of the resource in the response to a successful request.\r\nThe `\"return=minimal\"` preference indicates that the client wishes the server to return only a minimal response to a successful request. This is the default preference if `Prefer` header is not specified.\r\n\r\n### Authentication\r\n\r\nRequires `Authorization` header with valid Bearer token for scope `synchronization:read`.\r\n\r\n---",
+        "operationId": "get-storage-connection-sourcefiles",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": ""
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "OAuth access token with scope `synchronization:read`",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Setting to `application/vnd.bentley.itwin-platform.v1+json` is recommended.",
+            "schema": {
+              "enum": ["application/vnd.bentley.itwin-platform.v1+json"],
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/"
+              },
+              "example": ""
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json;minimal": {
+                "schema": {
+                  "$ref": "#/components/schemas/storage-file-prefer-return-minimal"
+                },
+                "example": "minimal"
+              },
+              "application/json;representation": {
+                "schema": {
+                  "$ref": "#/components/schemas/storage-file-prefer-return-representation"
+                },
+                "example": "representation"
+              }
+            }
+          },
+          "401": {
+            "description": "This response indicates that request lacks valid authentication credentials. Access token might not been provided, issued by the wrong issuer, does not have required scopes or request headers were malformed.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "statusCode": 401,
+                  "message": "Access denied due to invalid access_token. Make sure to provide a valid token for this API endpoint."
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "This response indicates that user does not have required permissions to get specified connection sourceFiles."
+          },
+          "422": {
+            "description": "Invalid request to get connection sourcefiles.",
+            "content": {
+              "application/json": {
+                "example": ""
+              }
+            }
+          },
+          "429": {
+            "description": "This response indicates that the user has sent too many requests in a given amount of time.",
+            "headers": {
+              "retry-after": {
+                "description": "The number of requests exceeds the rate-limit for the client subscription.",
+                "required": true,
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "code": "TooManyRequests",
+                  "message": "More requests were received than the subscription rate-limit allows."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AuthorizationInformation": {
+        "title": "AuthorizationInformation",
+        "type": "object",
+        "properties": {
+          "isUserAuthorized": {
+            "type": "boolean"
+          },
+          "_links": {
+            "$ref": "#/components/schemas/authorization-information-links"
+          }
+        }
+      },
+      "authorization-information-links": {
+        "title": "AuthorizationInformationLinks",
+        "type": "object",
+        "properties": {
+          "authorizationUrl": {
+            "$ref": "#/components/schemas/Link"
+          }
+        }
+      },
+      "connections-prefer-return-minimal": {
+        "title": "Connections (prefer return=minimal)",
+        "type": "object",
+        "properties": {
+          "connections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/connection-summary"
+            }
+          },
+          "_links": {
+            "$ref": "#/components/schemas/Links"
+          }
+        }
+      },
+      "connections-prefer-return-representation": {
+        "title": "Connections (prefer return=representation)",
+        "type": "object",
+        "properties": {
+          "connections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Connection"
+            }
+          },
+          "_links": {
+            "$ref": "#/components/schemas/Links"
+          }
+        }
+      },
+      "Connection": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "iModelId": {
+            "type": "string"
+          },
+          "_links": {
+            "$ref": "#/components/schemas/connection-links"
+          }
+        }
+      },
+      "connection-summary": {
+        "title": "Connection (summary)",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": ""
+          },
+          "displayName": {
+            "type": "string",
+            "description": ""
+          }
+        }
+      },
+      "StorageConnection": {
+        "title": "Storage Connection",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "iModelId": {
+            "type": "string"
+          },
+          "_links": {
+            "$ref": "#/components/schemas/connection-links"
+          }
+        }
+      },
+      "storage-connection-summary": {
+        "title": "StorageConnection (summary)",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": ""
+          },
+          "displayName": {
+            "type": "string",
+            "description": ""
+          }
+        }
+      },
+      "storage-connection-create": {
+        "title": "StorageConnection (create)",
+        "required": ["sourceFiles", "iModelId"],
+        "type": "object",
+        "properties": {
+          "displayName": {
+            "type": "string"
+          },
+          "iModelId": {
+            "type": "string"
+          },
+          "sourceFiles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/storage-file-create"
+            }
+          }
+        }
+      },
+      "runs-prefer-return-minimal": {
+        "title": "Runs (prefer return=minimal)",
+        "type": "object",
+        "properties": {
+          "runs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/run-summary"
+            }
+          }
+        }
+      },
+      "runs-prefer-return-representation": {
+        "title": "Runs (prefer return=representation)",
+        "type": "object",
+        "properties": {
+          "runs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Run"
+            }
+          }
+        }
+      },
+      "run-response": {
+        "title": "Run response",
+        "type": "object",
+        "properties": {
+          "run": {
+            "$ref": "#/components/schemas/Run"
+          }
+        }
+      },
+      "Run": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "connectionId": {
+            "type": "string"
+          },
+          "startDateTime": {
+            "type": "string"
+          },
+          "endDateTime": {
+            "type": "string"
+          },
+          "phase": {
+            "$ref": "#/components/schemas/job-phase"
+          },
+          "state": {
+            "$ref": "#/components/schemas/execution-state"
+          },
+          "result": {
+            "$ref": "#/components/schemas/execution-result"
+          },
+          "jobs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Job"
+            }
+          }
+        }
+      },
+      "job-phase": {
+        "title": "Job Phase",
+        "enum": ["Preprocessor", "MasterFile", "ReferenceFile"],
+        "type": "string",
+        "description": "One of 'Preprocessor', 'MasterFile', 'ReferenceFile'."
+      },
+      "execution-state": {
+        "title": "Execution State",
+        "enum": [
+          "NotStarted",
+          "Idle",
+          "WaitingToExecute",
+          "WaitingToRetry",
+          "Executing",
+          "Finalizing",
+          "Completed",
+          "Queued"
+        ],
+        "type": "string",
+        "description": "One of 'NotStarted', 'Idle', 'WaitingToExecute', 'WaitingToRetry', 'Executing', 'Finalizing', 'Completed', 'Queued'."
+      },
+      "execution-result": {
+        "title": "Execution Result",
+        "enum": [
+          "Undetermined",
+          "Success",
+          "Error",
+          "PartialSuccess",
+          "Skipped",
+          "Cancelled",
+          "TimedOut"
+        ],
+        "type": "string",
+        "description": "One of 'Undetermined', 'Success', 'Error', 'PartialSuccess', 'Skipped', 'Cancelled', 'TimedOut'."
+      },
+      "run-summary": {
+        "title": "Run (summary)",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": ""
+          },
+          "state": {
+            "type": "string",
+            "description": ""
+          },
+          "result": {
+            "type": "string",
+            "description": ""
+          }
+        }
+      },
+      "Job": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "startDateTime": {
+            "type": "string"
+          },
+          "endDateTime": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string"
+          },
+          "connectorType": {
+            "$ref": "#/components/schemas/connector-type"
+          },
+          "tasks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Task"
+            }
+          }
+        }
+      },
+      "Task": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "startDateTime": {
+            "type": "string"
+          },
+          "endDateTime": {
+            "type": "string"
+          },
+          "retryAttempts": {
+            "type": "integer"
+          },
+          "storageFileId": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string"
+          }
+        }
+      },
+      "storage-file-prefer-return-minimal": {
+        "title": "StorageFile (prefer return=minimal)",
+        "type": "object",
+        "properties": {
+          "sourceFiles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StorageFile (summary)"
+            }
+          }
+        }
+      },
+      "storage-file-prefer-return-representation": {
+        "title": "StorageFile (prefer return=representation)",
+        "type": "object",
+        "properties": {
+          "sourceFiles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StorageFile"
+            }
+          }
+        }
+      },
+      "storage-file-response": {
+        "title": "StorageFile response",
+        "type": "object",
+        "properties": {
+          "sourceFile": {
+            "$ref": "#/components/schemas/StorageFile"
+          }
+        }
+      },
+      "StorageFile": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "storageFileId": {
+            "type": "string"
+          },
+          "connectorType": {
+            "$ref": "#/components/schemas/connector-type"
+          },
+          "lastKnownFileName": {
+            "type": "string"
+          },
+          "_links": {
+            "$ref": "#/components/schemas/file-links"
+          }
+        }
+      },
+      "storage-file-summary": {
+        "title": "StorageFile (summary)",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": ""
+          },
+          "storageFileId": {
+            "type": "string",
+            "description": ""
+          }
+        }
+      },
+      "storage-file-create": {
+        "title": "StorageFile (create)",
+        "required": ["storageFileId", "connectorType"],
+        "type": "object",
+        "properties": {
+          "storageFileId": {
+            "type": "string"
+          },
+          "connectorType": {
+            "$ref": "#/components/schemas/connector-type"
+          }
+        }
+      },
+      "connection-links": {
+        "title": "Connection Links",
+        "type": "object",
+        "properties": {
+          "iModel": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "project": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "lastRun": {
+            "$ref": "#/components/schemas/Link"
+          }
+        }
+      },
+      "file-links": {
+        "title": "File Links",
+        "type": "object",
+        "properties": {
+          "file": {
+            "$ref": "#/components/schemas/Link"
+          }
+        }
+      },
+      "Link": {
+        "type": "object",
+        "properties": {
+          "href": {
+            "type": "string"
+          }
+        }
+      },
+      "Links": {
+        "type": "object",
+        "properties": {
+          "self": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "next": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "prev": {
+            "$ref": "#/components/schemas/Link"
+          }
+        }
+      },
+      "connector-type": {
+        "title": "Connector type",
+        "enum": [
+          "NotSet",
+          "AFFINITYCHECKER",
+          "MSTN",
+          "AVEVAPID",
+          "AUTOPLANT",
+          "REVIT",
+          "DWG",
+          "SPXREVIEW",
+          "IFC",
+          "SPPID",
+          "AVEVADIAGRAMS",
+          "CIVIL",
+          "CIVIL3D",
+          "GEOSPATIAL",
+          "OBD",
+          "OPENTOWER",
+          "SHELLEDWCSV",
+          "NWD"
+        ],
+        "type": "string",
+        "description": "One of 'NotSet', 'AFFINITYCHECKER, 'MSTN', 'AVEVAPID', 'AUTOPLANT', 'REVIT', 'DWG', 'SPXREVIEW', 'IFC', 'SPPID', 'AVEVADIAGRAMS', 'CIVIL', 'CIVIL3D', 'GEOSPATIAL', 'OBD', 'OPENTOWER', 'SHELLEDWCSV', 'NWD'. Name of the Connector that is used for synchronization."
+      }
+    },
+    "securitySchemes": {
+      "apiKeyHeader": {
+        "type": "apiKey",
+        "name": "X-Api-Subscription-Key",
+        "in": "header"
+      },
+      "apiKeyQuery": {
+        "type": "apiKey",
+        "name": "subscription-key",
+        "in": "query"
+      }
+    }
+  },
+  "security": [
+    {
+      "apiKeyHeader": []
+    },
+    {
+      "apiKeyQuery": []
+    }
+  ]
+}
