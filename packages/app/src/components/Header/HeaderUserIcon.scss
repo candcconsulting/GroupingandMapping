@@ -1,0 +1,19 @@
+/*---------------------------------------------------------------------------------------------
+ * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+ * See LICENSE.md in the project root for license terms and full copyright notice.
+ *
+ * This code is for demonstration purposes and should not be considered production ready.
+ *--------------------------------------------------------------------------------------------*/
+@import "@itwin/itwinui-css/scss/variables";
+
+.user-icon-code-order-fix.iui-user-icon.iui-user-icon {
+  width: 32px;
+  height: 32px;
+}
+
+.user-panel {
+  padding: $iui-component-padding-vertical-small $iui-sm;
+  @include themed {
+    border-bottom: 1px solid t(iui-color-background-5);
+  }
+}

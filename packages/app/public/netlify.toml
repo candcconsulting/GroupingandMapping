@@ -1,0 +1,4 @@
+[[redirects]]
+  from = "/signin-callback"
+  to = "/"
+  status = 200

@@ -1,0 +1,37 @@
+/*---------------------------------------------------------------------------------------------
+ * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+ * See LICENSE.md in the project root for license terms and full copyright notice.
+ *
+ * This code is for demonstration purposes and should not be considered production ready.
+ *--------------------------------------------------------------------------------------------*/
+
+.full-page-container {
+  display: block;
+  height: 100%;
+  min-height: 100vh;
+}
+
+.full-height-column {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.full-height-row {
+  height: 100%;
+  overflow: auto;
+  display: flex;
+  flex-direction: row;
+}
+
+.full-page-content {
+  position: relative;
+  display: grid;
+  height: 100%;
+  overflow: auto;
+  width: 100%;
+
+  > .iui-text-block {
+    margin: 0;
+  }
+}
