@@ -4,14 +4,21 @@
  *
  * This code is for demonstration purposes and should not be considered production ready.
  *--------------------------------------------------------------------------------------------*/
+import { UiItemsProvider } from "@itwin/appui-abstract";
+import { GroupingMappingProvider } from "@itwin/grouping-mapping-widget";
 import {
   MeasureTools,
   MeasureToolsUiItemsProvider,
 } from "@itwin/measure-tools-react";
+import { OneClickLCAProvider } from "@itwin/one-click-lca-react";
 import {
   PropertyGridManager,
   PropertyGridUiItemsProvider,
 } from "@itwin/property-grid-react";
+import {
+  ReportsConfigProvider,
+  ReportsConfigWidget,
+} from "@itwin/reports-config-widget-react";
 import {
   TreeWidget,
   TreeWidgetUiItemsProvider,
@@ -27,12 +34,9 @@ import React, { useCallback, useEffect, useState } from "react";
 
 import { useApiData } from "../../api/useApiData";
 import { useApiPrefix } from "../../api/useApiPrefix";
+import { CarbonUIProvider } from "../../components/Providers/CarbonUIProvider";
 import AuthClient from "../../services/auth/AuthClient";
 import { SelectionRouter } from "../SelectionRouter/SelectionRouter";
-import { GroupingMappingProvider } from "@itwin/grouping-mapping-widget";
-import { OneClickLCAProvider } from "@itwin/one-click-lca-react";
-import { ReportsConfigProvider, ReportsConfigWidget } from "@itwin/reports-config-widget-react";
-import { UiItemsProvider } from "@itwin/appui-abstract";
 
 const useThemeWatcher = () => {
   const [theme, setTheme] = React.useState(() =>
@@ -80,36 +84,41 @@ const View = (props: ViewProps) => {
     await PropertyGridManager.initialize();
     await MeasureTools.startup();
   }, []);
-  const [reportsConfigInitialized, setReportsConfigInitialized] = useState(false);
+  const [reportsConfigInitialized, setReportsConfigInitialized] = useState(
+    false
+  );
   useEffect(() => {
     const init = async () => {
       await ReportsConfigWidget.initialize();
       setReportsConfigInitialized(true);
-    }
-  
+    };
+
     void init();
   }, []);
-  
+
   const uiProviders: UiItemsProvider[] = [];
   if (reportsConfigInitialized) {
     uiProviders.push(new GroupingMappingProvider());
     uiProviders.push(new OneClickLCAProvider());
     uiProviders.push(new ReportsConfigProvider());
     uiProviders.push(new ViewerNavigationToolsProvider());
-    uiProviders.push(new ViewerContentToolsProvider({
-      vertical: {
-        measureGroup: false,
-      },
-    }));
+    uiProviders.push(
+      new ViewerContentToolsProvider({
+        vertical: {
+          measureGroup: false,
+        },
+      })
+    );
     uiProviders.push(new ViewerStatusbarItemsProvider());
     uiProviders.push(new TreeWidgetUiItemsProvider());
-    uiProviders.push(new PropertyGridUiItemsProvider({
-      enableCopyingPropertyText: true,
-    }));
+    uiProviders.push(
+      new PropertyGridUiItemsProvider({
+        enableCopyingPropertyText: true,
+      })
+    );
     uiProviders.push(new MeasureToolsUiItemsProvider());
-
+    uiProviders.push(new CarbonUIProvider());
   }
-  
 
   return (state || !props.versionId) && AuthClient.client ? (
     <Viewer

@@ -7,6 +7,7 @@
 import { Redirect, Router } from "@reach/router";
 import React from "react";
 
+import { CarbonRouter } from "./CarbonRouter/CarbonRouter";
 import { ManageVersionsRouter } from "./ManageVersionsRouter/ManageVersionsRouter";
 import { MembersRouter } from "./MembersRouter/MembersRouter";
 import { SynchronizationRouter } from "./SynchronizationRouter/SynchronizationRouter";
@@ -20,6 +21,7 @@ export const MainRouter = ({ accessToken }: MainRouterProps) => {
   return (
     <Router className={"full-height-container"}>
       <ViewRouter accessToken={accessToken} path="view/*" />
+      <CarbonRouter path="esg/*" accessToken={accessToken} />
       <SynchronizationRouter path="synchronize/*" accessToken={accessToken} />
       <ManageVersionsRouter
         path="manage-versions/*"
