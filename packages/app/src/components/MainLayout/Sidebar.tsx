@@ -4,7 +4,13 @@
  *
  * This code is for demonstration purposes and should not be considered production ready.
  *--------------------------------------------------------------------------------------------*/
-import { Svg3D, SvgFlag, SvgSync, SvgUsers } from "@itwin/itwinui-icons-react";
+import {
+  Svg3D,
+  SvgCloudUpload,
+  SvgFlag,
+  SvgSync,
+  SvgUsers,
+} from "@itwin/itwinui-icons-react";
 import { SidenavButton, SideNavigation } from "@itwin/itwinui-react";
 import { RouteComponentProps, Router } from "@reach/router";
 import React from "react";
@@ -37,6 +43,14 @@ export const RoutedSidebar = ({ navigate }: RouteComponentProps) => {
           isActive={section === "view"}
         >
           View iModel
+        </SidenavButton>,
+        <SidenavButton
+          key="esg-insights"
+          startIcon={<SvgCloudUpload />}
+          onClick={() => navigate?.(`/esg${selectionPath}`)}
+          isActive={section === "esg"}
+        >
+          ESG Insights
         </SidenavButton>,
         <SidenavButton
           key="synchronize"

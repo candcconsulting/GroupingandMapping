@@ -35,6 +35,7 @@ type IModelRouteProps = RouteComponentProps<
       | "edit"
       | "delete"
       | "manage-versions"
+      | "esg"
     )[];
   }
 >;
