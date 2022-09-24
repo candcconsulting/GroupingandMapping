@@ -13,6 +13,7 @@ import {
 import { CheckpointConnection, IModelApp } from "@itwin/core-frontend";
 import { FrontendIModelsAccess } from "@itwin/imodels-access-frontend";
 import {
+  DefaultCell,
   Table,
   tableFilters,
   TablePaginator,
@@ -27,7 +28,10 @@ import { sqlAPI } from "../../../api/queryAPI";
 import { useApiData } from "../../../api/useApiData";
 import { useApiPrefix } from "../../../api/useApiPrefix";
 import { epd, materialMapping } from "../../../data/epddata";
-import { SkeletonCell } from "../../../routers/SynchronizationRouter/components/SkeletonCell";
+import {
+  ColouredCell,
+  SkeletonCell,
+} from "../../../routers/SynchronizationRouter/components/SkeletonCell";
 import AuthClient from "../../../services/auth/AuthClient";
 
 interface ElementCountProps extends RouteComponentProps {
@@ -87,6 +91,7 @@ export const CarbonByCategory = ({
   const [mapping, setMapping] = React.useState<IMapping>();
   const [groups, setGroups] = React.useState<any[]>([]);
   const [mappingLoaded, setMappingLoaded] = React.useState(false);
+  const [groupsLoaded, setGroupsLoaded] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState("");
   const urlPrefix = useApiPrefix();
@@ -117,32 +122,41 @@ export const CarbonByCategory = ({
     url: `https://api.bentley.com/insights/reporting/datasources/imodels/${iModelId}/mappings`,
   });
 
-  if (!mappingLoaded && mappings) {
-    mappings.forEach((mapping: IMapping) => {
-      if (mapping.mappingName === mMapping.mappingName) {
-        setMapping(mapping);
-        console.log("Found " + mapping.mappingName + mapping.id);
-        setMappingLoaded(true);
-        if (AuthClient.client) {
-          void iTwinAPI
-            .getGroups(AuthClient.client, iModelId, mapping.id)
-            .then((allGroups) => {
-              const ourGroups: IGroup[] = [];
-              console.log(allGroups);
-              allGroups.forEach((group: IGroup) => {
-                const groupStrings = makeGroupStrings();
-                if (groupStrings.indexOf(group.groupName) >= 0) {
-                  console.log(group);
-                  const material = findMapping(group.groupName);
-                  group.material = material;
-                  ourGroups.push(group);
-                }
+  useEffect(() => {
+    if (!mappingLoaded && mappings) {
+      mappings.forEach((mapping: IMapping) => {
+        if (mapping.mappingName === mMapping.mappingName) {
+          setMapping(mapping);
+          console.log("Found " + mapping.mappingName + mapping.id);
+          setMappingLoaded(true);
+          if (AuthClient.client) {
+            void iTwinAPI
+              .getGroups(AuthClient.client, iModelId, mapping.id)
+              .then((allGroups) => {
+                const ourGroups: IGroup[] = [];
+                console.log(allGroups);
+                allGroups.forEach((group: IGroup) => {
+                  const groupStrings = makeGroupStrings();
+                  if (groupStrings.indexOf(group.groupName) >= 0) {
+                    console.log(group);
+                    const material = findMapping(group.groupName);
+                    group.material = material;
+                    ourGroups.push(group);
+                  }
+                });
+                setGroups(ourGroups);
               });
-              setGroups(ourGroups);
-            });
+          }
         }
-      }
-    });
+      });
+    }
+    setGroupsLoaded(true);
+  }, [iModelId, mappings, mappingLoaded]);
+
+  function checkGroups() {
+    if (!groupsLoaded) {
+      window.setTimeout(checkGroups, 100);
+    }
   }
 
   const fetchElements = React.useCallback(async () => {
@@ -153,19 +167,21 @@ export const CarbonByCategory = ({
       setElements([])
       return
       } */
-    setElements([]);
+    // setElements([]);
+    console.log(`Waiting for groups Length = ${groups.length}`);
+    checkGroups();
+    console.log(`Groups Loaded Length = ${groups.length}`);
     setIsLoading(true);
-
+    let max = 0;
+    let min = 0;
     const iModelConnection = await CheckpointConnection.openRemote(
       projectId,
       iModelId
     );
+
     const client = new ProjectsClient(urlPrefix, accessToken);
     try {
-      if (!groups) {
-        return;
-      }
-      let allInstances: any[] = [];
+      let allInstances: any[] = elements;
       allInstances = [];
       groups.forEach(async (aGroup: any) => {
         console.log(aGroup);
@@ -178,8 +194,12 @@ export const CarbonByCategory = ({
           aGroup.material,
           aMaterial?.carbonFactor || 0
         );
+        console.log(`Instances length = ${allInstances.length}`);
         allInstances.push(...tempInstances);
+        console.log(`Instances length = ${allInstances.length}`);
         setElements(allInstances);
+        max = Math.max(...elements.map((o) => o.gwp));
+        min = Math.min(...elements.map((o) => o.gwp));
       });
     } catch (error) {
       const errorResponse = error as Response;
@@ -187,6 +207,7 @@ export const CarbonByCategory = ({
     }
     setIsLoading(false);
   }, [accessToken, urlPrefix, iModelId, projectId, sql, groups]);
+
   React.useEffect(() => void fetchElements(), [fetchElements]);
 
   const pageSizeList = useMemo(() => [10, 25, 50], []);
@@ -240,7 +261,7 @@ export const CarbonByCategory = ({
                   },
                   {
                     accessor: "gwp",
-                    Cell: SkeletonCell,
+                    Cell: ColouredCell,
                     Header: "GWP",
                     disableResizing: false,
                     Filter: tableFilters.NumberRangeFilter(),
