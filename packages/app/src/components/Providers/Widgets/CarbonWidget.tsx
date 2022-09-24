@@ -8,10 +8,13 @@ import { BrowserAuthorizationClient } from "@itwin/browser-authorization";
 import {
   BentleyCloudRpcManager,
   BentleyCloudRpcParams,
+  ColorDef,
+  FeatureOverrideType,
   IModelReadRpcInterface,
 } from "@itwin/core-common";
 import {
   CheckpointConnection,
+  EmphasizeElements,
   IModelApp,
   IModelConnection,
 } from "@itwin/core-frontend";
@@ -170,7 +173,7 @@ export const CarbonWidget = () => {
       if (!groups) {
         return;
       }
-      let allInstances: any[] = [];
+      let allInstances: any[] = elements;
       allInstances = [];
       groups.forEach(async (aGroup: any) => {
         console.log(aGroup);
@@ -206,9 +209,27 @@ export const CarbonWidget = () => {
   const onRowClicked = async (_rows: any, state: any) => {
     const vp = IModelApp.viewManager.selectedView;
     const selectedElements = state.values.id;
-    if (vp && elements) {
-      vp.iModel.selectionSet.replace(selectedElements);
-      void vp.zoomToElements(selectedElements, { animateFrustumChange: true });
+    if (vp && selectedElements) {
+      const emph = EmphasizeElements.getOrCreate(vp);
+      emph.clearEmphasizedElements(vp);
+      emph.clearOverriddenElements(vp);
+
+      //const allElements = ecResult;
+      const allElements = selectedElements;
+      emph.overrideElements(
+        allElements,
+        vp,
+        ColorDef.red,
+        FeatureOverrideType.ColorOnly,
+        true
+      );
+      emph.emphasizeElements(allElements, vp, undefined, true);
+      vp.iModel.selectionSet.emptyAll();
+      /*      for (const es of allElements.values()) {
+        vp.iModel.selectionSet.add(es);
+      } */
+      vp.iModel.selectionSet.add(allElements);
+      void vp.zoomToElements(allElements);
     }
   };
 
@@ -270,7 +291,7 @@ export const CarbonWidget = () => {
           paginatorRenderer={paginator}
           isResizable={true}
           isLoading={isLoading}
-          style={{ height: "50%", width: 750 }}
+          style={{ height: "50%", width: 1500 }}
           emptyTableContent={
             error ||
             "No instances found in iModel.  Enter a valid search criteria"
