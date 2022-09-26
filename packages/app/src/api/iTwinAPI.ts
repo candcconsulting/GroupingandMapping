@@ -159,12 +159,18 @@ export class iTwinAPI {
     );
     const data = await response;
     const json = await data.json();
-    const info: { id: string; groupName: string; groupSQL: string }[] = [];
+    const info: {
+      id: string;
+      groupName: string;
+      groupSQL: string;
+      material: string;
+    }[] = [];
     for (let i = 0; i < json.groups.length; i++) {
       info.push({
         id: json.groups[i].id,
         groupName: json.groups[i].groupName,
         groupSQL: json.groups[i].query,
+        material: "",
       });
     }
 

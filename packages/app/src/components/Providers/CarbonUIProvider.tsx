@@ -10,7 +10,6 @@ import {
   StagePanelSection,
   UiItemsProvider,
 } from "@itwin/appui-abstract";
-import { IModelApp } from "@itwin/core-frontend";
 import React from "react";
 
 import CarbonWidget from "./Widgets/CarbonWidget";
@@ -22,8 +21,8 @@ export class CarbonUIProvider implements UiItemsProvider {
   public provideWidgets(
     stageId: string,
     _stageUsage: string,
-    location: StagePanelLocation,
-    _section?: StagePanelSection | undefined
+    location: StagePanelLocation
+    // _section?: StagePanelSection | undefined
   ): readonly AbstractWidgetProps[] {
     const widgets: AbstractWidgetProps[] = [];
 
