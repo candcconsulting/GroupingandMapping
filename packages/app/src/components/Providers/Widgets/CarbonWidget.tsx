@@ -98,7 +98,10 @@ export const CarbonWidget = () => {
   const [mapping, setMapping] = React.useState<IMapping>();
   const [groups, setGroups] = React.useState<any[]>([]);
   const [mappingLoaded, setMappingLoaded] = React.useState(false);
+  const [groupsLoaded, setGroupsLoaded] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [elementsLoaded, setElementsLoaded] = React.useState(false);
+
   const [error, setError] = React.useState("");
   const urlPrefix = useApiPrefix();
   const rpcInterfaces = [IModelReadRpcInterface];
@@ -124,44 +127,64 @@ export const CarbonWidget = () => {
     url: `https://api.bentley.com/insights/reporting/datasources/imodels/${iModelId}/mappings`,
   });
 
-  if (!mappingLoaded && mappings && iModelId) {
-    mappings.forEach((mapping: IMapping) => {
-      if (mapping.mappingName === mMapping.mappingName) {
-        setMapping(mapping);
-        console.log("Found " + mapping.mappingName + mapping.id);
-        setMappingLoaded(true);
-        if (AuthClient.client) {
-          void iTwinAPI
-            .getGroups(AuthClient.client, iModelId, mapping.id)
-            .then((allGroups) => {
-              const ourGroups: IGroup[] = [];
-              console.log(allGroups);
-              allGroups.forEach((group: IGroup) => {
-                const groupStrings = makeGroupStrings();
-                if (groupStrings.indexOf(group.groupName) >= 0) {
-                  console.log(group);
-                  const material = findMapping(group.groupName);
-                  group.material = material;
-                  ourGroups.push(group);
-                }
+  const checkMappings = async () => {
+    if (!mappings) {
+      window.setTimeout(checkMappings, 100);
+    } else {
+      setMappingLoaded(true);
+    }
+  };
+  const getMappings = async () => {
+    await checkMappings();
+    if (!mappingLoaded && mappings && iModelId) {
+      // mappings.forEach((mapping: IMapping) => {
+      for (const aMapping of mappings) {
+        if (aMapping.mappingName === mMapping.mappingName) {
+          setMapping(mapping);
+          console.log("Found " + aMapping.mappingName + aMapping.id);
+          setMappingLoaded(true);
+          if (AuthClient.client) {
+            void iTwinAPI
+              .getGroups(AuthClient.client, iModelId, aMapping.id)
+              .then((allGroups) => {
+                const ourGroups: IGroup[] = [];
+                console.log(allGroups);
+                allGroups.forEach((group: IGroup) => {
+                  const groupStrings = makeGroupStrings();
+                  if (groupStrings.indexOf(group.groupName) >= 0) {
+                    console.log(group);
+                    const material = findMapping(group.groupName);
+                    group.material = material;
+                    ourGroups.push(group);
+                  }
+                });
+                setGroups(ourGroups);
               });
-              setGroups(ourGroups);
-            });
+          }
         }
-      }
-    });
-  }
+      } //);
+    }
+  };
 
+  function checkGroups() {
+    if (!groupsLoaded && groups.length <= 0) {
+      window.setTimeout(checkGroups, 100);
+    }
+  }
   const fetchElements = React.useCallback(async () => {
-    console.log(
-      "fetchElements called"
-    ); /*
-    if (sql === "" || !sql) {
-      setElements([])
-      return
-      } */
-    setElements([]);
+    console.log("fetchElements called");
+    console.log("getMappings");
+    await getMappings();
+    console.log("Mappings Loaded");
+    if (elementsLoaded) {
+      return;
+    }
+    console.log(`Waiting for groups Length = ${groups.length}`);
+    checkGroups();
+    console.log(`Groups Loaded Length = ${groups.length}`);
     setIsLoading(true);
+    let max = 0;
+    let min = 0;
 
     //const iModelConnection = await CheckpointConnection.openRemote(projectId, iModelId);
     const vp = IModelApp.viewManager.selectedView;
@@ -170,12 +193,13 @@ export const CarbonWidget = () => {
     }
     const client = new ProjectsClient(urlPrefix, accessToken);
     try {
-      if (!groups) {
+      if (elementsLoaded) {
         return;
       }
       let allInstances: any[] = elements;
       allInstances = [];
-      groups.forEach(async (aGroup: any) => {
+      // groups.forEach(async (aGroup: any) => {
+      for (const aGroup of groups) {
         console.log(aGroup);
         const iModelConnection = vp.iModel;
         const aMaterial = mEPD.epd.find(
@@ -189,13 +213,27 @@ export const CarbonWidget = () => {
         );
         allInstances.push(...tempInstances);
         setElements(allInstances);
-      });
+        max = Math.max(...elements.map((o) => o.gwp));
+        min = Math.min(...elements.map((o) => o.gwp));
+      } //);
+      console.log("Loaded");
+      setElementsLoaded(true);
     } catch (error) {
       const errorResponse = error as Response;
       setError(await client.extractAPIErrorMessage(errorResponse));
     }
     setIsLoading(false);
-  }, [accessToken, urlPrefix, iModelId, projectId, groups]);
+  }, [
+    accessToken,
+    urlPrefix,
+    iModelId,
+    projectId,
+    groups,
+    groupsLoaded,
+    groups,
+    mappingLoaded,
+    mappings,
+  ]);
   React.useEffect(() => void fetchElements(), [fetchElements]);
 
   const pageSizeList = useMemo(() => [10, 25, 50], []);

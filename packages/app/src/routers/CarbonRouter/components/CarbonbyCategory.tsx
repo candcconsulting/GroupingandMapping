@@ -92,6 +92,8 @@ export const CarbonByCategory = ({
   const [groups, setGroups] = React.useState<any[]>([]);
   const [mappingLoaded, setMappingLoaded] = React.useState(false);
   const [groupsLoaded, setGroupsLoaded] = React.useState(false);
+  const [elementsLoaded, setElementsLoaded] = React.useState(false);
+
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState("");
   const urlPrefix = useApiPrefix();
@@ -115,6 +117,7 @@ export const CarbonByCategory = ({
   BentleyCloudRpcManager.initializeClient(cloudRpcParams, rpcInterfaces);
 
   console.log("CarbonByCategory");
+
   const {
     results: { mappings },
   } = useApiData<{ mappings: IMapping[] }>({
@@ -122,16 +125,25 @@ export const CarbonByCategory = ({
     url: `https://api.bentley.com/insights/reporting/datasources/imodels/${iModelId}/mappings`,
   });
 
-  useEffect(() => {
+  function checkMappings() {
+    if (!mappings) {
+      window.setTimeout(checkMappings, 100);
+    } else {
+      setMappingLoaded(true);
+    }
+  }
+  const getMappings = async () => {
+    checkMappings();
     if (!mappingLoaded && mappings) {
-      mappings.forEach((mapping: IMapping) => {
-        if (mapping.mappingName === mMapping.mappingName) {
+      for (const aMapping of mappings) {
+        //      mappings.forEach(async (mapping: IMapping) => {
+        if (aMapping.mappingName === mMapping.mappingName) {
           setMapping(mapping);
-          console.log("Found " + mapping.mappingName + mapping.id);
+          console.log("Found " + aMapping.mappingName + aMapping.id);
           setMappingLoaded(true);
           if (AuthClient.client) {
-            void iTwinAPI
-              .getGroups(AuthClient.client, iModelId, mapping.id)
+            const groupsFlag = await iTwinAPI
+              .getGroups(AuthClient.client, iModelId, aMapping.id)
               .then((allGroups) => {
                 const ourGroups: IGroup[] = [];
                 console.log(allGroups);
@@ -145,70 +157,129 @@ export const CarbonByCategory = ({
                   }
                 });
                 setGroups(ourGroups);
+                setGroupsLoaded(true);
+                setElementsLoaded(false);
               });
           }
         }
-      });
+      } //);
     }
+  };
+
+  useEffect(() => {
+    const loadMappings = async () => {
+      if (!mappingLoaded && mappings) {
+        // mappings.forEach(async (mapping: IMapping) => {
+        for (const aMapping of mappings) {
+          if (aMapping.mappingName === mMapping.mappingName) {
+            setMapping(mapping);
+            console.log("Found " + aMapping.mappingName + aMapping.id);
+            setMappingLoaded(true);
+            if (AuthClient.client) {
+              void iTwinAPI
+                .getGroups(AuthClient.client, iModelId, aMapping.id)
+                .then((allGroups) => {
+                  const ourGroups: IGroup[] = [];
+                  console.log(allGroups);
+                  allGroups.forEach((group: IGroup) => {
+                    const groupStrings = makeGroupStrings();
+                    if (groupStrings.indexOf(group.groupName) >= 0) {
+                      console.log(group);
+                      const material = findMapping(group.groupName);
+                      group.material = material;
+                      ourGroups.push(group);
+                    }
+                  });
+                  setGroups(ourGroups);
+                });
+            }
+          }
+        } //);
+      }
+    };
+    /*    void loadMappings();
     setGroupsLoaded(true);
+    setElementsLoaded(false); */
   }, [iModelId, mappings, mappingLoaded]);
 
   function checkGroups() {
-    if (!groupsLoaded) {
+    if (!groupsLoaded && groups.length <= 0) {
       window.setTimeout(checkGroups, 100);
     }
   }
-
-  const fetchElements = React.useCallback(async () => {
-    console.log(
-      "fetchElements called"
-    ); /*
+  useEffect(() => {
+    const fetchElements = async () => {
+      console.log(
+        "fetchElements called"
+      ); /*
     if (sql === "" || !sql) {
       setElements([])
       return
       } */
-    // setElements([]);
-    console.log(`Waiting for groups Length = ${groups.length}`);
-    checkGroups();
-    console.log(`Groups Loaded Length = ${groups.length}`);
-    setIsLoading(true);
-    let max = 0;
-    let min = 0;
-    const iModelConnection = await CheckpointConnection.openRemote(
-      projectId,
-      iModelId
-    );
+      // setElements([]);
+      console.log("getMappings");
+      await getMappings();
+      console.log("Mappings Loaded");
+      if (elementsLoaded) {
+        return;
+      }
+      console.log(`Waiting for groups Length = ${groups.length}`);
+      checkGroups();
+      console.log(`Groups Loaded Length = ${groups.length}`);
+      setIsLoading(true);
+      let max = 0;
+      let min = 0;
+      const iModelConnection = await CheckpointConnection.openRemote(
+        projectId,
+        iModelId
+      );
 
-    const client = new ProjectsClient(urlPrefix, accessToken);
-    try {
-      let allInstances: any[] = elements;
-      allInstances = [];
-      groups.forEach(async (aGroup: any) => {
-        console.log(aGroup);
-        const aMaterial = mEPD.epd.find(
-          (aMaterial) => aMaterial.material === aGroup.material
-        );
-        const tempInstances = await sqlAPI.getVolumeforGroup(
-          iModelConnection,
-          aGroup.groupSQL,
-          aGroup.material,
-          aMaterial?.carbonFactor || 0
-        );
-        console.log(`Instances length = ${allInstances.length}`);
-        allInstances.push(...tempInstances);
-        console.log(`Instances length = ${allInstances.length}`);
-        setElements(allInstances);
-        max = Math.max(...elements.map((o) => o.gwp));
-        min = Math.min(...elements.map((o) => o.gwp));
-      });
-    } catch (error) {
-      const errorResponse = error as Response;
-      setError(await client.extractAPIErrorMessage(errorResponse));
-    }
-    setIsLoading(false);
-  }, [accessToken, urlPrefix, iModelId, projectId, sql, groups]);
-
-  React.useEffect(() => void fetchElements(), [fetchElements]);
+      const client = new ProjectsClient(urlPrefix, accessToken);
+      try {
+        if (elementsLoaded) {
+          return;
+        }
+        let allInstances: any[] = elements;
+        allInstances = [];
+        // groups.forEach(async (aGroup: any) => {
+        for (const aGroup of groups) {
+          console.log(aGroup);
+          const aMaterial = mEPD.epd.find(
+            (aMaterial) => aMaterial.material === aGroup.material
+          );
+          const tempInstances = await sqlAPI.getVolumeforGroup(
+            iModelConnection,
+            aGroup.groupSQL,
+            aGroup.material,
+            aMaterial?.carbonFactor || 0
+          );
+          console.log(`Instances length = ${allInstances.length}`);
+          allInstances.push(...tempInstances);
+          console.log(`Instances length = ${allInstances.length}`);
+          setElements(allInstances);
+          max = Math.max(...elements.map((o) => o.gwp));
+          min = Math.min(...elements.map((o) => o.gwp));
+          setIsLoading(false);
+        } //);
+        console.log("Loaded");
+        setElementsLoaded(true);
+      } catch (error) {
+        const errorResponse = error as Response;
+        setError(await client.extractAPIErrorMessage(errorResponse));
+      }
+    };
+    void fetchElements();
+  }, [
+    accessToken,
+    urlPrefix,
+    iModelId,
+    projectId,
+    sql,
+    groupsLoaded,
+    groups,
+    mappingLoaded,
+    mappings,
+  ]);
 
   const pageSizeList = useMemo(() => [10, 25, 50], []);
   const paginator = useCallback(
@@ -274,7 +345,7 @@ export const CarbonByCategory = ({
           pageSize={25}
           paginatorRenderer={paginator}
           isResizable={true}
-          isLoading={isLoading}
+          isLoading={!elementsLoaded}
           style={{ height: "50%", width: 750 }}
           emptyTableContent={
             error ||
