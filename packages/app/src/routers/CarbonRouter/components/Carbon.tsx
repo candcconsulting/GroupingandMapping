@@ -6,13 +6,11 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { useActiveIModelConnection } from "@itwin/appui-react";
-import { SvgSearch } from "@itwin/itwinui-icons-react";
-import { HorizontalTabs, LabeledInput, Tab } from "@itwin/itwinui-react";
+import { HorizontalTabs, Tab } from "@itwin/itwinui-react";
 import { RouteComponentProps, useLocation, useNavigate } from "@reach/router";
 import React, { BaseSyntheticEvent } from "react";
 
 import { useApiPrefix } from "../../../api/useApiPrefix";
-import { AuthProvider } from "../../../components/Auth/AuthProvider";
 import "../../../data/epddata.ts";
 import "./Carbon.scss";
 import { CarbonByCategory } from "./CarbonbyCategory";

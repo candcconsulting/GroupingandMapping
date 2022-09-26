@@ -4,7 +4,6 @@
  *
  * This code is for demonstration purposes and should not be considered production ready.
  *--------------------------------------------------------------------------------------------*/
-import { BrowserAuthorizationClient } from "@itwin/browser-authorization";
 import {
   BentleyCloudRpcManager,
   BentleyCloudRpcParams,
@@ -12,13 +11,7 @@ import {
   FeatureOverrideType,
   IModelReadRpcInterface,
 } from "@itwin/core-common";
-import {
-  CheckpointConnection,
-  EmphasizeElements,
-  IModelApp,
-  IModelConnection,
-} from "@itwin/core-frontend";
-import { FrontendIModelsAccess } from "@itwin/imodels-access-frontend";
+import { EmphasizeElements, IModelApp } from "@itwin/core-frontend";
 import {
   Table,
   tableFilters,
@@ -68,20 +61,20 @@ const mEPD = epd;
 
 const makeGroupStrings = (): string => {
   let groupString = ",";
-  mMapping.groups.forEach((aGroup: any) => {
+  for (const aGroup of mMapping.groups) {
     groupString = groupString + aGroup.group.toString() + ",";
-  });
+  }
   return groupString;
 };
 
 const findMapping = (searchString: string): string => {
   let returnString = "";
-  mMapping.groups.forEach((aGroup: any) => {
+  for (const aGroup of mMapping.groups) {
     const groupString = aGroup.group.toString();
     if (groupString.toLowerCase().includes(searchString.toLowerCase())) {
       returnString = aGroup.material;
     }
-  });
+  }
   return returnString;
 };
 
@@ -149,16 +142,19 @@ export const CarbonWidget = () => {
               .then((allGroups) => {
                 const ourGroups: IGroup[] = [];
                 console.log(allGroups);
-                allGroups.forEach((group: IGroup) => {
+                for (const aGroup of allGroups) {
+                  //                allGroups.forEach((group: IGroup) => {
                   const groupStrings = makeGroupStrings();
-                  if (groupStrings.indexOf(group.groupName) >= 0) {
-                    console.log(group);
-                    const material = findMapping(group.groupName);
-                    group.material = material;
-                    ourGroups.push(group);
+                  if (groupStrings.indexOf(aGroup.groupName) >= 0) {
+                    console.log(aGroup);
+                    const material = findMapping(aGroup.groupName);
+                    aGroup.material = material;
+                    ourGroups.push(aGroup);
                   }
-                });
+                } // );
                 setGroups(ourGroups);
+                setGroupsLoaded(true);
+                setElementsLoaded(false);
               });
           }
         }
@@ -166,63 +162,70 @@ export const CarbonWidget = () => {
     }
   };
 
+  useEffect(() => {
+    void getMappings();
+  }, [mappings, mappingLoaded]);
+
   function checkGroups() {
     if (!groupsLoaded && groups.length <= 0) {
       window.setTimeout(checkGroups, 100);
     }
   }
-  const fetchElements = React.useCallback(async () => {
-    console.log("fetchElements called");
-    console.log("getMappings");
-    await getMappings();
-    console.log("Mappings Loaded");
-    if (elementsLoaded) {
-      return;
-    }
-    console.log(`Waiting for groups Length = ${groups.length}`);
-    checkGroups();
-    console.log(`Groups Loaded Length = ${groups.length}`);
-    setIsLoading(true);
-    let max = 0;
-    let min = 0;
-
-    //const iModelConnection = await CheckpointConnection.openRemote(projectId, iModelId);
-    const vp = IModelApp.viewManager.selectedView;
-    if (!vp) {
-      return;
-    }
-    const client = new ProjectsClient(urlPrefix, accessToken);
-    try {
+  useEffect(() => {
+    const fetchElements = async () => {
+      console.log("fetchElements called");
+      console.log("getMappings");
+      await getMappings();
+      console.log("Mappings Loaded");
       if (elementsLoaded) {
         return;
       }
-      let allInstances: any[] = elements;
-      allInstances = [];
-      // groups.forEach(async (aGroup: any) => {
-      for (const aGroup of groups) {
-        console.log(aGroup);
-        const iModelConnection = vp.iModel;
-        const aMaterial = mEPD.epd.find(
-          (aMaterial) => aMaterial.material === aGroup.material
-        );
-        const tempInstances = await sqlAPI.getVolumeforGroupWidget(
-          iModelConnection,
-          aGroup.groupSQL,
-          aGroup.material,
-          aMaterial?.carbonFactor || 0
-        );
-        allInstances.push(...tempInstances);
-        setElements(allInstances);
-        max = Math.max(...elements.map((o) => o.gwp));
-        min = Math.min(...elements.map((o) => o.gwp));
-      } //);
-      console.log("Loaded");
-      setElementsLoaded(true);
-    } catch (error) {
-      const errorResponse = error as Response;
-      setError(await client.extractAPIErrorMessage(errorResponse));
-    }
-    setIsLoading(false);
+      console.log(`Waiting for groups Length = ${groups.length}`);
+      checkGroups();
+      console.log(`Groups Loaded Length = ${groups.length}`);
+      setIsLoading(true);
+      let max = 0;
+      let min = 0;
+
+      //const iModelConnection = await CheckpointConnection.openRemote(projectId, iModelId);
+      const vp = IModelApp.viewManager.selectedView;
+      if (!vp) {
+        return;
+      }
+      const client = new ProjectsClient(urlPrefix, accessToken);
+      try {
+        if (elementsLoaded) {
+          return;
+        }
+        let allInstances: any[] = elements;
+        allInstances = [];
+        // groups.forEach(async (aGroup: any) => {
+        for (const aGroup of groups) {
+          console.log(aGroup);
+          const iModelConnection = vp.iModel;
+          const aMaterial = mEPD.epd.find(
+            (aMaterial) => aMaterial.material === aGroup.material
+          );
+          const tempInstances = await sqlAPI.getVolumeforGroupWidget(
+            iModelConnection,
+            aGroup.groupSQL,
+            aGroup.material,
+            aMaterial?.carbonFactor || 0
+          );
+          allInstances.push(...tempInstances);
+          setElements(allInstances);
+          max = Math.max(...elements.map((o) => o.gwp));
+          min = Math.min(...elements.map((o) => o.gwp));
+        } //);
+        console.log("Loaded");
+        setElementsLoaded(true);
+      } catch (error) {
+        const errorResponse = error as Response;
+        setError(await client.extractAPIErrorMessage(errorResponse));
+      }
+      setIsLoading(false);
+    };
+    void fetchElements();
   }, [
     accessToken,
     urlPrefix,
@@ -234,7 +237,7 @@ export const CarbonWidget = () => {
     mappingLoaded,
     mappings,
   ]);
-  React.useEffect(() => void fetchElements(), [fetchElements]);
+  //   React.useEffect(() => void fetchElements(), [fetchElements]);
 
   const pageSizeList = useMemo(() => [10, 25, 50], []);
   const paginator = useCallback(
@@ -332,7 +335,7 @@ export const CarbonWidget = () => {
           style={{ height: "50%", width: 1500 }}
           emptyTableContent={
             error ||
-            "No instances found in iModel.  Enter a valid search criteria"
+            "Please wait for mappings to be loaded.  If this table does not update, please visit the ESG panel and then return here"
           }
         />
       </div>

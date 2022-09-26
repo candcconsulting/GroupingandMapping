@@ -133,13 +133,16 @@ export const CarbonByCategory = ({
     }
   }
   const getMappings = async () => {
+    console.log("getMappings");
     checkMappings();
     if (!mappingLoaded && mappings) {
       for (const aMapping of mappings) {
         //      mappings.forEach(async (mapping: IMapping) => {
         if (aMapping.mappingName === mMapping.mappingName) {
           setMapping(mapping);
-          console.log("Found " + aMapping.mappingName + aMapping.id);
+          console.log(
+            "Found in getMappins" + aMapping.mappingName + aMapping.id
+          );
           setMappingLoaded(true);
           if (AuthClient.client) {
             const groupsFlag = await iTwinAPI
@@ -168,12 +171,15 @@ export const CarbonByCategory = ({
 
   useEffect(() => {
     const loadMappings = async () => {
+      console.log("loadMappings");
       if (!mappingLoaded && mappings) {
         // mappings.forEach(async (mapping: IMapping) => {
         for (const aMapping of mappings) {
           if (aMapping.mappingName === mMapping.mappingName) {
             setMapping(mapping);
-            console.log("Found " + aMapping.mappingName + aMapping.id);
+            console.log(
+              "Found in loadMappings " + aMapping.mappingName + aMapping.id
+            );
             setMappingLoaded(true);
             if (AuthClient.client) {
               void iTwinAPI
@@ -181,15 +187,15 @@ export const CarbonByCategory = ({
                 .then((allGroups) => {
                   const ourGroups: IGroup[] = [];
                   console.log(allGroups);
-                  allGroups.forEach((group: IGroup) => {
+                  for (const aGroup of allGroups) {
                     const groupStrings = makeGroupStrings();
-                    if (groupStrings.indexOf(group.groupName) >= 0) {
-                      console.log(group);
-                      const material = findMapping(group.groupName);
-                      group.material = material;
-                      ourGroups.push(group);
+                    if (groupStrings.indexOf(aGroup.groupName) >= 0) {
+                      console.log(aGroup);
+                      const material = findMapping(aGroup.groupName);
+                      aGroup.material = material;
+                      ourGroups.push(aGroup);
                     }
-                  });
+                  }
                   setGroups(ourGroups);
                 });
             }
@@ -347,10 +353,7 @@ export const CarbonByCategory = ({
           isResizable={true}
           isLoading={!elementsLoaded}
           style={{ height: "50%", width: 750 }}
-          emptyTableContent={
-            error ||
-            "No instances found in iModel.  Enter a valid search criteria"
-          }
+          emptyTableContent={error || "Please wait for mappings to be loaded"}
         />
       </div>
     </div>
