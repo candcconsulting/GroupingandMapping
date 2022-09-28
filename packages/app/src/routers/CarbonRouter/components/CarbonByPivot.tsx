@@ -4,6 +4,7 @@
  *
  * This code is for demonstration purposes and should not be considered production ready.
  *--------------------------------------------------------------------------------------------*/
+import { BrowserAuthorizationClient } from "@itwin/browser-authorization";
 import {
   BentleyCloudRpcManager,
   BentleyCloudRpcParams,
@@ -12,14 +13,20 @@ import {
 import { CheckpointConnection, IModelApp } from "@itwin/core-frontend";
 import { FrontendIModelsAccess } from "@itwin/imodels-access-frontend";
 import {
+  DefaultCell,
   Table,
   tableFilters,
   TablePaginator,
   TablePaginatorRendererProps,
 } from "@itwin/itwinui-react";
 import { RouteComponentProps } from "@reach/router";
-import React, { useCallback, useEffect, useMemo } from "react";
-import { Cell, Pie, PieChart, Tooltip } from "recharts";
+import React, {
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+  useMemo,
+} from "react";
+import { Cell, Legend, Pie, PieChart, Tooltip } from "recharts";
 
 import { iTwinAPI } from "../../../api/iTwinAPI";
 import { ProjectsClient } from "../../../api/projects/projectsClient";
@@ -80,12 +87,11 @@ const findMapping = (searchString: string): string => {
   return returnString;
 };
 
-export const CarbonByCategory = ({
+export const CarbonPivot = ({
   accessToken,
   projectId,
   iModelId,
-  sql,
-}: ElementCountProps) => {
+}: PropsWithChildren<ElementCountProps>) => {
   const [elements, setElements] = React.useState<any[]>([]);
   const [mapping, setMapping] = React.useState<IMapping>();
   const [groups, setGroups] = React.useState<any[]>([]);
@@ -94,7 +100,8 @@ export const CarbonByCategory = ({
   const [elementsLoaded, setElementsLoaded] = React.useState(false);
   const [colors, setColors] = React.useState<any[]>([]);
   const [pieData, setPieData] = React.useState<any[]>([]);
-  const isLoading = React.useRef(false);
+
+  const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState("");
   const urlPrefix = useApiPrefix();
   const rpcInterfaces = [IModelReadRpcInterface];
@@ -116,7 +123,7 @@ export const CarbonByCategory = ({
   };
   BentleyCloudRpcManager.initializeClient(cloudRpcParams, rpcInterfaces);
 
-  console.log("CarbonByCategory");
+  console.log("CarbonPivot");
 
   const {
     results: { mappings },
@@ -125,22 +132,24 @@ export const CarbonByCategory = ({
     url: `https://api.bentley.com/insights/reporting/datasources/imodels/${iModelId}/mappings`,
   });
 
-  useEffect(() => {
-    console.log("setMappingLoaded");
-    if (mappings) {
-      setMappingLoaded(mappings.length > 0);
+  function checkMappings() {
+    if (!mappings) {
+      window.setTimeout(checkMappings, 100);
+    } else {
+      setMappingLoaded(true);
     }
-  }, [mappings]);
-
-  const loadGroups = async () => {
+  }
+  const getMappings = async () => {
     console.log("inside getMappings");
-    if (mappings) {
+    checkMappings();
+    console.log("mappings supposed to be loaded");
+    if (!mappingLoaded && mappings) {
       for (const aMapping of mappings) {
         //      mappings.forEach(async (mapping: IMapping) => {
         if (aMapping.mappingName === mMapping.mappingName) {
           setMapping(mapping);
           console.log(
-            "Found in getMappings" + aMapping.mappingName + aMapping.id
+            "Found in getMappins" + aMapping.mappingName + aMapping.id
           );
           setMappingLoaded(true);
           if (AuthClient.client) {
@@ -159,11 +168,9 @@ export const CarbonByCategory = ({
                   }
                 });
                 setGroups(ourGroups);
+                setGroupsLoaded(true);
+                setElementsLoaded(false);
               });
-            if (groups.length > 0) {
-              setGroupsLoaded(true);
-              setElementsLoaded(false);
-            }
           }
         }
       } //);
@@ -171,27 +178,69 @@ export const CarbonByCategory = ({
       console.log("mappings not loaded so skipping : " + mappingLoaded);
     }
   };
+
   useEffect(() => {
-    if (mappingLoaded && !groupsLoaded) {
-      void loadGroups();
+    const loadMappings = async () => {
+      console.log("loadMappings");
+      if (!mappingLoaded && mappings) {
+        // mappings.forEach(async (mapping: IMapping) => {
+        for (const aMapping of mappings) {
+          if (aMapping.mappingName === mMapping.mappingName) {
+            setMapping(mapping);
+            console.log(
+              "Found in loadMappings " + aMapping.mappingName + aMapping.id
+            );
+            setMappingLoaded(true);
+            if (AuthClient.client) {
+              void iTwinAPI
+                .getGroups(AuthClient.client, iModelId, aMapping.id)
+                .then((allGroups) => {
+                  const ourGroups: IGroup[] = [];
+                  console.log(allGroups);
+                  for (const aGroup of allGroups) {
+                    const groupStrings = makeGroupStrings();
+                    if (groupStrings.indexOf(aGroup.groupName) >= 0) {
+                      console.log(aGroup);
+                      const material = findMapping(aGroup.groupName);
+                      aGroup.material = material;
+                      ourGroups.push(aGroup);
+                    }
+                  }
+                  setGroups(ourGroups);
+                });
+            }
+          }
+        } //);
+      }
+    };
+    /*    void loadMappings();
+    setGroupsLoaded(true);
+    setElementsLoaded(false); */
+  }, [iModelId, mappings, mappingLoaded]);
+
+  function checkGroups() {
+    if (!groupsLoaded && groups.length <= 0) {
+      window.setTimeout(checkGroups, 100);
     }
-  });
-
-  useEffect(() => {
-    setGroupsLoaded(groups.length > 0);
-  }, [groups]);
-
+    setGroupsLoaded(true);
+  }
   useEffect(() => {
     const fetchElements = async () => {
       console.log(
         "fetchElements called"
       ); /*
-  if (sql === "" || !sql) {
-    setElements([])
-    return
-    } */
+    if (sql === "" || !sql) {
+      setElements([])
+      return
+      } */
       // setElements([]);
+      console.log("getMappings");
+      await getMappings();
+      console.log("Mappings Loaded");
+      console.log(`Waiting for groups Length = ${groups.length}`);
+      checkGroups();
       console.log(`Groups Loaded Length = ${groups.length}`);
+      setIsLoading(true);
       let max = 0;
       let min = 0;
       const iModelConnection = await CheckpointConnection.openRemote(
@@ -207,8 +256,8 @@ export const CarbonByCategory = ({
         if (elementsLoaded) {
           return;
         }
-        const allInstances: any[] = elements;
-        // allInstances = [];
+        let allInstances: any[] = elements;
+        allInstances = [];
         // groups.forEach(async (aGroup: any) => {
         for (const aGroup of groups) {
           console.log(aGroup);
@@ -227,121 +276,28 @@ export const CarbonByCategory = ({
           setElements(allInstances);
           max = Math.max(...elements.map((o) => o.gwp));
           min = Math.min(...elements.map((o) => o.gwp));
+          setIsLoading(false);
         } //);
         console.log("Loaded");
-        isLoading.current = false;
         setElementsLoaded(true);
       } catch (error) {
         const errorResponse = error as Response;
         setError(await client.extractAPIErrorMessage(errorResponse));
       }
     };
-
-    if (!elementsLoaded && !isLoading.current && groupsLoaded) {
-      isLoading.current = true;
-      if (isLoading.current) {
-        console.log(
-          "elementsLoaded : ",
-          elementsLoaded,
-          " isLoading:",
-          isLoading.current
-        );
-        void fetchElements().then(() => {
-          setElementsLoaded(true);
-          console.log(elements.length);
-          setElements(elements);
-          console.log(elements.length);
-          console.log("next step");
-        });
-      }
-      console.log(elements.length);
-    }
-  }, [iModelId, elementsLoaded, isLoading, groupsLoaded]);
+    void fetchElements();
+  }, [
+    accessToken,
+    urlPrefix,
+    iModelId,
+    projectId,
+    groupsLoaded,
+    groups,
+    mappingLoaded,
+    mappings,
+  ]);
 
   // random number generator
-  function rand(frm: number, to: number) {
-    return ~~(Math.random() * (to - frm)) + frm;
-  }
-
-  useEffect(() => {
-    const fetchPieData = async () => {
-      if (!elementsLoaded) {
-        const COLORS: any[] = [];
-        COLORS.push("#8884d8");
-        setColors(COLORS);
-        setPieData([
-          {
-            name: "Loading",
-            value: 100,
-          },
-        ]);
-      } else {
-        if (elementsLoaded) {
-          const COLORS: any[] = [];
-          const client = new ProjectsClient(urlPrefix, accessToken);
-          try {
-            const result: any[] = [];
-            let pieEntry = {};
-            for await (const entry of elements) {
-              pieEntry = {
-                name: entry.material,
-                value: entry.gwp,
-              };
-              result.push(pieEntry);
-              // now we need to reduce the categories as there will be duplicates
-            }
-            const tempPieData = await result.reduce((acc: any, curr) => {
-              const objInAcc: any = acc.find((o: any) => o.name === curr.name);
-              if (objInAcc) {
-                objInAcc.value += curr.value;
-              } else {
-                acc.push(curr);
-              }
-              return acc;
-            }, []);
-            setPieData(tempPieData);
-            while (COLORS.length < pieData.length) {
-              COLORS.push(
-                `rgb(${rand(0, 255)}, ${rand(0, 255)}, ${rand(0, 255)})`
-              );
-            }
-            setColors(COLORS);
-          } catch (error) {
-            const errorResponse = error as Response;
-            setError(await client.extractAPIErrorMessage(errorResponse));
-          }
-        }
-      }
-    };
-    console.log("Elements :", elements);
-    if (elementsLoaded) {
-      void fetchPieData();
-    }
-  }, [accessToken, urlPrefix, elements, elementsLoaded]);
-
-  const CustomTooltip = ({
-    active,
-    payload,
-    label,
-  }: {
-    active: boolean;
-    payload: {
-      name: string;
-      value: number;
-    }[];
-    label: string;
-  }) => {
-    if (active) {
-      return (
-        <div className="custom-tooltip">
-          <p className="label">{`${payload[0].name} : ${payload[0].value}`}</p>
-          <p className="desc">use filter to reduce segments</p>
-        </div>
-      );
-    }
-
-    return null;
-  };
 
   const pageSizeList = useMemo(() => [10, 25, 50], []);
   const paginator = useCallback(
@@ -351,91 +307,56 @@ export const CarbonByCategory = ({
     [pageSizeList]
   );
 
+  const columnDefs = React.useMemo(
+    () => [
+      {
+        children: [
+          {
+            field: "id",
+            headerName: "Id",
+            filter: true,
+            sortable: true,
+          },
+          {
+            field: "userlabel",
+            headerName: "Userlabel",
+            filter: true,
+            sortable: true,
+          },
+          {
+            field: "material",
+            headerName: "Material",
+            filter: true,
+            sortable: true,
+          },
+          {
+            field: "netVolume",
+            headerName: "Volume",
+            filter: true,
+            sortable: true,
+          },
+          {
+            field: "gwp",
+            headerName: "GWP",
+            filter: true,
+            sortable: true,
+          },
+        ],
+      },
+    ],
+    []
+  );
+  const gridData = elements;
+
   return (
     <div>
       <div className="row">
         <div className="column">
           <div className="panel-header">Carbon by Category</div>
-          <Table
-            isSortable={true}
-            expanderCell={() => null}
-            data={elements}
-            columns={React.useMemo(
-              () => [
-                {
-                  Header: "Table",
-                  columns: [
-                    {
-                      accessor: "id",
-                      Cell: SkeletonCell,
-                      Header: "Id",
-                      disableResizing: false,
-                      Filter: tableFilters.TextFilter(),
-                    },
-                    {
-                      accessor: "userlabel",
-                      Cell: SkeletonCell,
-                      Header: "Userlabel",
-                      disableResizing: false,
-                      Filter: tableFilters.TextFilter(),
-                    },
-                    {
-                      accessor: "material",
-                      Cell: SkeletonCell,
-                      Header: "Material",
-                      disableResizing: false,
-                      Filter: tableFilters.TextFilter(),
-                    },
-                    {
-                      accessor: "netVolume",
-                      Cell: SkeletonCell,
-                      Header: "Volume",
-                      disableResizing: false,
-                      Filter: tableFilters.NumberRangeFilter(),
-                    },
-                    {
-                      accessor: "gwp",
-                      Cell: ColouredCell,
-                      Header: "GWP",
-                      disableResizing: false,
-                      Filter: tableFilters.NumberRangeFilter(),
-                    },
-                  ],
-                },
-              ],
-              []
-            )}
-            pageSize={25}
-            paginatorRenderer={paginator}
-            isResizable={true}
-            isLoading={!elementsLoaded}
-            style={{ height: "50%", width: 750 }}
-            emptyTableContent={error || "Please wait for mappings to be loaded"}
-          />
-        </div>
-        <div className="column">
-          <PieChart width={730} height={700}>
-            <Pie
-              data={pieData}
-              color="#000000"
-              dataKey="value"
-              nameKey="name"
-              cx="50%"
-              cy="50%"
-              outerRadius={120}
-              fill="#8884d8"
-            >
-              {pieData.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={colors[index % colors.length]}
-                />
-              ))}
-            </Pie>
-            <Tooltip
-              content={<CustomTooltip active={false} payload={[]} label={""} />}
-            />
-          </PieChart>
+          <div
+            className="ag-theme-alpine"
+            style={{ height: 400, width: 1200 }}
+          ></div>
         </div>
       </div>
     </div>
