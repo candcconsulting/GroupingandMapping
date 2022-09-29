@@ -19,7 +19,8 @@ import {
   TablePaginatorRendererProps,
 } from "@itwin/itwinui-react";
 import { RouteComponentProps } from "@reach/router";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { CellRendererProps } from "react-table";
 import { Cell, Pie, PieChart, Tooltip } from "recharts";
 
 import { iTwinAPI } from "../../../api/iTwinAPI";
@@ -33,9 +34,7 @@ import {
   SkeletonCell,
 } from "../../../routers/SynchronizationRouter/components/SkeletonCell";
 import AuthClient from "../../../services/auth/AuthClient";
-import type {
-  CellRendererProps,
-  } from 'react-table';
+import { coloredCellRenderer } from "./ColoredCell";
 
 interface ElementCountProps extends RouteComponentProps {
   accessToken: string;
@@ -111,6 +110,8 @@ export const CarbonByCategory = ({
   const [error, setError] = React.useState("");
   const urlPrefix = useApiPrefix();
   const rpcInterfaces = [IModelReadRpcInterface];
+  const [min, setMin] = useState(0);
+  const [max, setMax] = useState(1);
 
   useEffect(() => {
     async function startIModelApp() {
@@ -288,8 +289,8 @@ export const CarbonByCategory = ({
         // console.log(summarizeElements);
         setElements(summarizeElements);
         // setElements(allInstances)
-        const max = Math.max(...allInstances.map(o => o.y))
-        const min = Math.min(...allInstances.map(o => o.y))
+        setMax(Math.max(...allInstances.map((o) => o.y)));
+        setMin(Math.min(...allInstances.map((o) => o.y)));
         setElementsLoaded(true);
       } catch (error) {
         const errorResponse = error as Response;
@@ -409,19 +410,19 @@ export const CarbonByCategory = ({
   );
 
   return (
-      <div className="row">
-        <div>
-          <div className="panel-header">Carbon by Category</div>
-          <Table
-            isSortable={true}
-            expanderCell={() => null}
-            data={elements}
-            columns={React.useMemo(
-              () => [
-                {
-                  Header: "Table",
-                  columns: [
-                    /*                    {
+    <div className="row">
+      <div>
+        <div className="panel-header">Carbon by Category</div>
+        <Table
+          isSortable={true}
+          expanderCell={() => null}
+          data={elements}
+          columns={React.useMemo(
+            () => [
+              {
+                Header: "Table",
+                columns: [
+                  /*                    {
                       accessor: "id",
                       Cell: SkeletonCell,
                       Header: "Id",
@@ -435,84 +436,83 @@ export const CarbonByCategory = ({
                       disableResizing: false,
                       Filter: tableFilters.TextFilter(),
                     }, */
-                    {
-                      accessor: "material",
-                      Cell: SkeletonCell,
-                      Header: "Material",
-                      disableResizing: false,
-                      Filter: tableFilters.TextFilter(),
-                    },
-                    {
-                      accessor: "netVolume",
-                      Cell: SkeletonCell,
-                      Header: "Volume",
-                      disableResizing: false,
-                      Filter: tableFilters.NumberRangeFilter(),
-                    },
-                    {
-                      accessor: "gwp",
-                      cellRenderer: (props : CellRendererProps<any>) => <DefaultCell {...props} style={{backgroundColor: "red"}}/>,
-                      Header: "GWP",
-                      disableResizing: false,
-                      Filter: tableFilters.NumberRangeFilter(),
-                    },
-                    {
-                      accessor: "max",
-                      Cell: ColouredCell,
-                      Header: "Max",
-                      disableResizing: false,
-                      Filter: tableFilters.NumberRangeFilter(),
-                    },
-                    {
-                      accessor: "min",
-                      Cell: ColouredCell,
-                      Header: "Min",
-                      disableResizing: false,
-                      Filter: tableFilters.NumberRangeFilter(),
-                    },
-                    {
-                      accessor: "count",
-                      Cell: ColouredCell,
-                      Header: "Count",
-                      disableResizing: false,
-                      Filter: tableFilters.NumberRangeFilter(),
-                    },
-                  ],
-                },
-              ],
-              []
-            )}
-            pageSize={25}
-            paginatorRenderer={paginator}
-            isResizable={true}
-            isLoading={!elementsLoaded}
-            style={{ height: "50%"}}
-            emptyTableContent={error || "Please wait for mappings to be loaded"}
-          />
-        </div>
-          <PieChart width={400} height={400}>
-            <Pie
-              data={pieData}
-              color="#000000"
-              dataKey="value"
-              nameKey="name"
-              cx="50%"
-              cy="50%"
-              outerRadius={120}
-              fill="#8884d8"
-            >
-              {pieData.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={colors[index % colors.length]}
-                />
-              ))}
-            </Pie>
-            <Tooltip
-              content={<CustomTooltip active={false} payload={[]} label={""} />}
-            />
-          </PieChart>
+                  {
+                    accessor: "material",
+                    Cell: SkeletonCell,
+                    Header: "Material",
+                    disableResizing: false,
+                    Filter: tableFilters.TextFilter(),
+                  },
+                  {
+                    accessor: "netVolume",
+                    Cell: SkeletonCell,
+                    Header: "Volume",
+                    disableResizing: false,
+                    Filter: tableFilters.NumberRangeFilter(),
+                  },
+                  {
+                    accessor: "gwp",
+                    Cell: SkeletonCell,
+                    cellRenderer: (props: CellRendererProps<any>) =>
+                      coloredCellRenderer(props, min, max),
+                    Header: "GWP",
+                    disableResizing: false,
+                    Filter: tableFilters.NumberRangeFilter(),
+                  },
+                  {
+                    accessor: "max",
+                    Cell: ColouredCell,
+                    Header: "Max",
+                    disableResizing: false,
+                    Filter: tableFilters.NumberRangeFilter(),
+                  },
+                  {
+                    accessor: "min",
+                    Cell: ColouredCell,
+                    Header: "Min",
+                    disableResizing: false,
+                    Filter: tableFilters.NumberRangeFilter(),
+                  },
+                  {
+                    accessor: "count",
+                    Cell: ColouredCell,
+                    Header: "Count",
+                    disableResizing: false,
+                    Filter: tableFilters.NumberRangeFilter(),
+                  },
+                ],
+              },
+            ],
+            [max, min]
+          )}
+          pageSize={25}
+          paginatorRenderer={paginator}
+          isResizable={true}
+          isLoading={!elementsLoaded}
+          style={{ height: "50%" }}
+          emptyTableContent={error || "Please wait for mappings to be loaded"}
+        />
       </div>
+      <PieChart width={400} height={400}>
+        <Pie
+          data={pieData}
+          color="#000000"
+          dataKey="value"
+          nameKey="name"
+          cx="50%"
+          cy="50%"
+          outerRadius={120}
+          fill="#8884d8"
+        >
+          {pieData.map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+          ))}
+        </Pie>
+        <Tooltip
+          content={<CustomTooltip active={false} payload={[]} label={""} />}
+        />
+      </PieChart>
+    </div>
   );
 };
 
