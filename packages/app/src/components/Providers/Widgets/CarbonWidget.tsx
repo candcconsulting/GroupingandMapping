@@ -19,7 +19,7 @@ import {
   TablePaginatorRendererProps,
 } from "@itwin/itwinui-react";
 import { RouteComponentProps } from "@reach/router";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useLayoutEffect, useMemo } from "react";
 
 import { iTwinAPI } from "../../../api/iTwinAPI";
 import { ProjectsClient } from "../../../api/projects/projectsClient";
@@ -56,6 +56,16 @@ interface IGroup {
   material?: string;
 }
 
+interface ISummary {
+  material: string;
+  netVolume: number;
+  gwp: number;
+  elements: string;
+  count : number,
+  max : number,
+  min : number
+}
+
 const mMapping = materialMapping;
 const mEPD = epd;
 
@@ -78,13 +88,6 @@ const findMapping = (searchString: string): string => {
   return returnString;
 };
 
-const getAccessToken = async (): Promise<string> => {
-  if (!IModelApp.authorizationClient) {
-    throw new Error("Auth client is not defined.");
-  }
-
-  return IModelApp.authorizationClient.getAccessToken();
-};
 
 export const CarbonWidget = () => {
   const [elements, setElements] = React.useState<any[]>([]);
@@ -92,18 +95,23 @@ export const CarbonWidget = () => {
   const [groups, setGroups] = React.useState<any[]>([]);
   const [mappingLoaded, setMappingLoaded] = React.useState(false);
   const [groupsLoaded, setGroupsLoaded] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const isLoading = React.useRef(false);
   const [elementsLoaded, setElementsLoaded] = React.useState(false);
+ 
 
   const [error, setError] = React.useState("");
   const urlPrefix = useApiPrefix();
   const rpcInterfaces = [IModelReadRpcInterface];
-  let accessToken: any;
+  
 
-  void getAccessToken().then((aToken) => {
-    accessToken = aToken;
-  });
-
+  const useAccessToken = () => {  
+    const [accessToken, setAccessToken] = React.useState<string>();
+    useLayoutEffect(() => {
+      IModelApp.authorizationClient?.getAccessToken().then(setAccessToken);
+    }, [])
+    return (accessToken);
+  };
+  
   const { section, projectId, iModelId } = useCommonPathPattern();
 
   const cloudRpcParams: BentleyCloudRpcParams = {
@@ -112,24 +120,24 @@ export const CarbonWidget = () => {
   };
   BentleyCloudRpcManager.initializeClient(cloudRpcParams, rpcInterfaces);
 
-  console.log("CarbonByCategory");
+  const accessToken = useAccessToken();
   const {
     results: { mappings },
   } = useApiData<{ mappings: IMapping[] }>({
-    accessToken,
+    accessToken : accessToken,
     url: `https://api.bentley.com/insights/reporting/datasources/imodels/${iModelId}/mappings`,
   });
 
-  const checkMappings = async () => {
-    if (!mappings) {
-      window.setTimeout(checkMappings, 100);
-    } else {
-      setMappingLoaded(true);
+  useEffect(() => {
+    if (mappings) {
+      console.log("Mappings.Length", mappings.length)
+      setMappingLoaded(mappings.length > 0);
     }
-  };
-  const getMappings = async () => {
-    await checkMappings();
-    if (!mappingLoaded && mappings && iModelId) {
+  }, [mappings]);
+
+  useEffect(() => {
+  const loadGroups = async () => {
+    if (mappings && iModelId) {
       // mappings.forEach((mapping: IMapping) => {
       for (const aMapping of mappings) {
         if (aMapping.mappingName === mMapping.mappingName) {
@@ -154,36 +162,23 @@ export const CarbonWidget = () => {
                 } // );
                 setGroups(ourGroups);
                 setGroupsLoaded(true);
-                setElementsLoaded(false);
               });
           }
         }
       } //);
     }
   };
-
-  useEffect(() => {
-    void getMappings();
-  }, [mappings, mappingLoaded]);
-
-  function checkGroups() {
-    if (!groupsLoaded && groups.length <= 0) {
-      window.setTimeout(checkGroups, 100);
-    }
+  if (mappingLoaded) {
+    console.log("mappingLoaded")
+    void loadGroups();
   }
+},[mappingLoaded])
+
   useEffect(() => {
     const fetchElements = async () => {
       console.log("fetchElements called");
-      console.log("getMappings");
-      await getMappings();
-      console.log("Mappings Loaded");
-      if (elementsLoaded) {
-        return;
-      }
-      console.log(`Waiting for groups Length = ${groups.length}`);
-      checkGroups();
       console.log(`Groups Loaded Length = ${groups.length}`);
-      setIsLoading(true);
+      isLoading.current = true;
       let max = 0;
       let min = 0;
 
@@ -192,7 +187,7 @@ export const CarbonWidget = () => {
       if (!vp) {
         return;
       }
-      const client = new ProjectsClient(urlPrefix, accessToken);
+      const client = new ProjectsClient(urlPrefix, accessToken || "");
       try {
         if (elementsLoaded) {
           return;
@@ -213,19 +208,81 @@ export const CarbonWidget = () => {
             aMaterial?.carbonFactor || 0
           );
           allInstances.push(...tempInstances);
-          setElements(allInstances);
+          // setElements(allInstances);
           max = Math.max(...elements.map((o) => o.gwp));
           min = Math.min(...elements.map((o) => o.gwp));
         } //);
         console.log("Loaded");
+        const summarizeElements : ISummary[] = []
+        const tempElements = allInstances;
+        void tempElements.reduce((summary, value) => {
+          if (summary) {
+            summarizeElements.push ({
+              material : summary.material,
+              netVolume : +summary.netVolume.toFixed(2),
+              gwp : +summary.gwp.toFixed(2) ?? 0,
+              elements : summary.id,
+              max : +summary.gwp.toFixed(2) ?? 0,
+              min : +summary.gwp.toFixed(2) ?? 0,
+              count : 1
+            })
+
+          }
+          const index = summarizeElements.findIndex((aElement) => aElement.material === value.material )
+          if (index >= 0) {
+            summarizeElements[index].netVolume = +(summarizeElements[index].netVolume + value.netVolume).toFixed(2);
+            summarizeElements[index].gwp = +(summarizeElements[index].gwp + value.gwp).toFixed(2);
+            summarizeElements[index].elements = summarizeElements[index].elements + "," + value.id;
+            if ((value.gwp > summarizeElements[index].max) && (value.gwp > 0)) {
+              summarizeElements[index].max = value.gwp
+            }
+            if ((value.gwp < summarizeElements[index].min) && (value.gwp > 0)) {
+              summarizeElements[index].min = value.gwp
+            }
+            summarizeElements[index].count += 1
+          } else
+          {
+            summarizeElements.push ({
+              material : value.material,
+              netVolume : value.netVolume,
+              gwp : value.gwp ?? 0,
+              elements : value.id,
+              max : summary.gwp ?? 0,
+              min : summary.gwp ?? 0,
+              count : 1
+            })
+          }
+          return "";
+        })
+        // setElements(allInstances);
         setElementsLoaded(true);
+        setElements(summarizeElements);
+        isLoading.current = false;
       } catch (error) {
         const errorResponse = error as Response;
         setError(await client.extractAPIErrorMessage(errorResponse));
       }
-      setIsLoading(false);
+      
     };
-    void fetchElements();
+    if (!elementsLoaded && !isLoading.current && groupsLoaded) {
+      isLoading.current = true;
+      if (isLoading.current) {
+        console.log(
+          "elementsLoaded : ",
+          elementsLoaded,
+          " isLoading:",
+          isLoading.current
+        );
+        void fetchElements().then(() => {
+          setElementsLoaded(true);
+          console.log(elements.length);
+          // setElements(elements);
+          console.log(elements.length);
+          console.log("next step");
+        });
+      }
+      console.log(elements.length);
+    }
   }, [
     accessToken,
     urlPrefix,
@@ -249,14 +306,15 @@ export const CarbonWidget = () => {
 
   const onRowClicked = async (_rows: any, state: any) => {
     const vp = IModelApp.viewManager.selectedView;
-    const selectedElements = state.values.id;
+    const index = elements.findIndex((aElement) => aElement.material === state.values.material )
+    const selectedElements = elements[index].elements;
     if (vp && selectedElements) {
       const emph = EmphasizeElements.getOrCreate(vp);
       emph.clearEmphasizedElements(vp);
       emph.clearOverriddenElements(vp);
 
       //const allElements = ecResult;
-      const allElements = selectedElements;
+      const allElements = selectedElements.split(",");
       emph.overrideElements(
         allElements,
         vp,
@@ -287,7 +345,7 @@ export const CarbonWidget = () => {
               {
                 Header: "Table",
                 columns: [
-                  {
+/*                  {
                     accessor: "id",
                     Cell: SkeletonCell,
                     Header: "Id",
@@ -300,7 +358,7 @@ export const CarbonWidget = () => {
                     Header: "Userlabel",
                     disableResizing: false,
                     Filter: tableFilters.TextFilter(),
-                  },
+                  }, */
                   {
                     accessor: "material",
                     Cell: SkeletonCell,
@@ -322,6 +380,27 @@ export const CarbonWidget = () => {
                     disableResizing: false,
                     Filter: tableFilters.NumberRangeFilter(),
                   },
+                  {
+                    accessor: "max",
+                    Cell: SkeletonCell,
+                    Header: "Max",
+                    disableResizing: false,
+                    Filter: tableFilters.NumberRangeFilter(),
+                  },
+                  {
+                    accessor: "min",
+                    Cell: SkeletonCell,
+                    Header: "Min",
+                    disableResizing: false,
+                    Filter: tableFilters.NumberRangeFilter(),
+                  },
+                  {
+                    accessor: "count",
+                    Cell: SkeletonCell,
+                    Header: "Count",
+                    disableResizing: false,
+                    Filter: tableFilters.NumberRangeFilter(),
+                  },                    
                 ],
               },
             ],
@@ -331,7 +410,7 @@ export const CarbonWidget = () => {
           onRowClick={onRowClicked}
           paginatorRenderer={paginator}
           isResizable={true}
-          isLoading={isLoading}
+          isLoading={!elementsLoaded}
           style={{ height: "50%", width: 1500 }}
           emptyTableContent={
             error ||

@@ -19,12 +19,17 @@
 .dashboard-toolbar {
   display: flex;
   margin-bottom: 15;
+  width: 100%;
 
   &-searchbar {
     margin-left: 15;
     margin-right: auto;
     max-width: 1024;
   }
+}
+
+.dashboard-tabs {
+  width:100%
 }
 
 .panel-header {
@@ -34,6 +39,10 @@
 
 .row {
   display: flex;
+  flex-grow: 1;
+  > div:first-child {
+    flex-grow: 1;
+  }
 }
 
 .column {
