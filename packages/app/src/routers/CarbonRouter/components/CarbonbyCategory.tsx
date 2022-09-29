@@ -17,6 +17,7 @@ import {
   TablePaginator,
   TablePaginatorRendererProps,
 } from "@itwin/itwinui-react";
+import { Value } from "@itwin/presentation-common";
 import { RouteComponentProps } from "@reach/router";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { Cell, Pie, PieChart, Tooltip } from "recharts";
@@ -58,6 +59,15 @@ interface IGroup {
   material?: string;
 }
 
+interface ISummary {
+  material: string;
+  netVolume: number;
+  gwp: number;
+  elements: string;
+  count: number;
+  max: number;
+  min: number;
+}
 const mMapping = materialMapping;
 const mEPD = epd;
 
@@ -224,12 +234,62 @@ export const CarbonByCategory = ({
           console.log(`Instances length = ${allInstances.length}`);
           allInstances.push(...tempInstances);
           console.log(`Instances length = ${allInstances.length}`);
-          setElements(allInstances);
+          // setElements(allInstances);
           max = Math.max(...elements.map((o) => o.gwp));
           min = Math.min(...elements.map((o) => o.gwp));
         } //);
         console.log("Loaded");
         isLoading.current = false;
+        const summarizeElements: ISummary[] = [];
+        const tempElements = elements;
+        void tempElements.reduce((summary, value) => {
+          if (summary) {
+            summarizeElements.push({
+              material: summary.material,
+              netVolume: +summary.netVolume.toFixed(2),
+              gwp: +summary.gwp.toFixed(2) ?? 0,
+              elements: summary.id,
+              max: +summary.gwp.toFixed(2) ?? 0,
+              min: +summary.gwp.toFixed(2) ?? 0,
+              count: 1,
+            });
+          }
+          const index = summarizeElements.findIndex(
+            (aElement) => aElement.material === value.material
+          );
+          if (index >= 0) {
+            summarizeElements[index].netVolume = +(
+              summarizeElements[index].netVolume + value.netVolume
+            ).toFixed(2);
+            summarizeElements[index].gwp = +(
+              summarizeElements[index].gwp + value.gwp
+            ).toFixed(2);
+            summarizeElements[index].elements =
+              summarizeElements[index].elements + "," + value.id;
+            if (value.gwp > summarizeElements[index].max && value.gwp > 0) {
+              summarizeElements[index].max = value.gwp;
+            }
+            if (value.gwp < summarizeElements[index].min && value.gwp > 0) {
+              summarizeElements[index].min = value.gwp;
+            }
+            summarizeElements[index].count += 1;
+          } else {
+            summarizeElements.push({
+              material: value.material,
+              netVolume: value.netVolume,
+              gwp: value.gwp ?? 0,
+              elements: value.id,
+              max: summary.gwp ?? 0,
+              min: summary.gwp ?? 0,
+              count: 1,
+            });
+          }
+          return "";
+        });
+        // console.log(summarizeElements);
+        setElements(summarizeElements);
+        console.log();
+        // setElements(allInstances)
         setElementsLoaded(true);
       } catch (error) {
         const errorResponse = error as Response;
@@ -249,7 +309,7 @@ export const CarbonByCategory = ({
         void fetchElements().then(() => {
           setElementsLoaded(true);
           console.log(elements.length);
-          setElements(elements);
+          // setElements(elements);
           console.log(elements.length);
           console.log("next step");
         });
@@ -365,7 +425,7 @@ export const CarbonByCategory = ({
                 {
                   Header: "Table",
                   columns: [
-                    {
+                    /*                    {
                       accessor: "id",
                       Cell: SkeletonCell,
                       Header: "Id",
@@ -378,7 +438,7 @@ export const CarbonByCategory = ({
                       Header: "Userlabel",
                       disableResizing: false,
                       Filter: tableFilters.TextFilter(),
-                    },
+                    }, */
                     {
                       accessor: "material",
                       Cell: SkeletonCell,
@@ -397,6 +457,27 @@ export const CarbonByCategory = ({
                       accessor: "gwp",
                       Cell: ColouredCell,
                       Header: "GWP",
+                      disableResizing: false,
+                      Filter: tableFilters.NumberRangeFilter(),
+                    },
+                    {
+                      accessor: "max",
+                      Cell: ColouredCell,
+                      Header: "Max",
+                      disableResizing: false,
+                      Filter: tableFilters.NumberRangeFilter(),
+                    },
+                    {
+                      accessor: "min",
+                      Cell: ColouredCell,
+                      Header: "Min",
+                      disableResizing: false,
+                      Filter: tableFilters.NumberRangeFilter(),
+                    },
+                    {
+                      accessor: "count",
+                      Cell: ColouredCell,
+                      Header: "Count",
                       disableResizing: false,
                       Filter: tableFilters.NumberRangeFilter(),
                     },
