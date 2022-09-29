@@ -286,8 +286,8 @@ export const CarbonByCategory = ({
           return "";
         });
         // console.log(summarizeElements);
-        // setElements(summarizeElements);
-        setElements(allInstances)
+        setElements(summarizeElements);
+        // setElements(allInstances)
         const max = Math.max(...allInstances.map(o => o.y))
         const min = Math.min(...allInstances.map(o => o.y))
         setElementsLoaded(true);
