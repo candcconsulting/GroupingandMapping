@@ -291,7 +291,7 @@ export const CarbonByCategory = ({
         // setElements(allInstances)
         setMaxGWP(Math.max(...summarizeElements.map((o) => o.gwp)));
         setMinGWP(Math.min(...summarizeElements.map((o) => o.gwp)));
-        setElementsLoaded(true);        
+        setElementsLoaded(true);
       } catch (error) {
         const errorResponse = error as Response;
         setError(await client.extractAPIErrorMessage(errorResponse));
@@ -314,7 +314,16 @@ export const CarbonByCategory = ({
         });
       }
     }
-  }, [iModelId, elementsLoaded, isLoading, groupsLoaded, groups, projectId, accessToken, urlPrefix]);
+  }, [
+    iModelId,
+    elementsLoaded,
+    isLoading,
+    groupsLoaded,
+    groups,
+    projectId,
+    accessToken,
+    urlPrefix,
+  ]);
 
   // random number generator
   function rand(frm: number, to: number) {
