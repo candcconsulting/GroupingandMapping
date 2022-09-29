@@ -18,7 +18,6 @@ import {
   TablePaginator,
   TablePaginatorRendererProps,
 } from "@itwin/itwinui-react";
-import { RouteComponentProps } from "@reach/router";
 import React, { useCallback, useEffect, useLayoutEffect, useMemo } from "react";
 
 import { iTwinAPI } from "../../../api/iTwinAPI";
@@ -31,12 +30,6 @@ import { SkeletonCell } from "../../../routers/SynchronizationRouter/components/
 import AuthClient from "../../../services/auth/AuthClient";
 import { useCommonPathPattern } from "../../MainLayout/useCommonPathPattern";
 
-interface ElementCountProps extends RouteComponentProps {
-  accessToken: string;
-  projectId: string;
-  iModelId: string;
-  sql?: string;
-}
 
 interface IMapping {
   id: string;
@@ -112,6 +105,7 @@ export const CarbonWidget = () => {
     return (accessToken);
   };
   
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { section, projectId, iModelId } = useCommonPathPattern();
 
   const cloudRpcParams: BentleyCloudRpcParams = {
@@ -172,7 +166,7 @@ export const CarbonWidget = () => {
     console.log("mappingLoaded")
     void loadGroups();
   }
-},[mappingLoaded])
+},[mappingLoaded, mapping, iModelId, mappings])
 
   useEffect(() => {
     const fetchElements = async () => {
@@ -187,12 +181,12 @@ export const CarbonWidget = () => {
       if (!vp) {
         return;
       }
-      const client = new ProjectsClient(urlPrefix, accessToken || "");
+      const client = new ProjectsClient(urlPrefix, accessToken ?? "");
       try {
         if (elementsLoaded) {
           return;
         }
-        let allInstances: any[] = elements;
+        let allInstances: any[] = [];
         allInstances = [];
         // groups.forEach(async (aGroup: any) => {
         for (const aGroup of groups) {
@@ -205,12 +199,12 @@ export const CarbonWidget = () => {
             iModelConnection,
             aGroup.groupSQL,
             aGroup.material,
-            aMaterial?.carbonFactor || 0
+            aMaterial?.carbonFactor ?? 0
           );
           allInstances.push(...tempInstances);
           // setElements(allInstances);
-          max = Math.max(...elements.map((o) => o.gwp));
-          min = Math.min(...elements.map((o) => o.gwp));
+          max = Math.max(...allInstances.map((o) => o.gwp));
+          min = Math.min(...allInstances.map((o) => o.gwp));
         } //);
         console.log("Loaded");
         const summarizeElements : ISummary[] = []
@@ -267,21 +261,10 @@ export const CarbonWidget = () => {
     if (!elementsLoaded && !isLoading.current && groupsLoaded) {
       isLoading.current = true;
       if (isLoading.current) {
-        console.log(
-          "elementsLoaded : ",
-          elementsLoaded,
-          " isLoading:",
-          isLoading.current
-        );
         void fetchElements().then(() => {
           setElementsLoaded(true);
-          console.log(elements.length);
-          // setElements(elements);
-          console.log(elements.length);
-          console.log("next step");
         });
       }
-      console.log(elements.length);
     }
   }, [
     accessToken,
@@ -290,9 +273,9 @@ export const CarbonWidget = () => {
     projectId,
     groups,
     groupsLoaded,
-    groups,
     mappingLoaded,
     mappings,
+    elementsLoaded
   ]);
   //   React.useEffect(() => void fetchElements(), [fetchElements]);
 
