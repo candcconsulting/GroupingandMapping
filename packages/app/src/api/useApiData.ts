@@ -63,6 +63,7 @@ export const useApiData: <T>(
   refreshData(): (() => void) | undefined;
   state: undefined | Error | "done";
 } = ({ noAutoFetch, accessToken, url, headers }) => {
+
   const [results, setResults] = React.useState<any>({});
   const [state, setState] = React.useState<undefined | Error | "done">();
   const prefixedUrl = usePrefixedUrl(url);

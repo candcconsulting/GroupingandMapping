@@ -35,7 +35,7 @@ export const SkeletonCell = (props: SkeletonCellProps) => {
 export const ColouredCell = (props: ColouredCellProps) => {
   if (Object.keys(props.row.original).length !== 0) {
     return (props.children ?? (
-      <span title={props.value}>{props.value}</span>
+      <span title={props.value} style={{backgroundColor:"red"}}>{props.value}</span>
     )) as React.ReactElement;
   }
   return <Body isSkeleton={true}>Fetching</Body>;

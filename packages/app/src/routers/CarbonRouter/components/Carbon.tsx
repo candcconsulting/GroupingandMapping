@@ -97,7 +97,7 @@ export const Carbon = ({
 
   return (
     <div className="dashboard-toolbar">
-      <HorizontalTabs
+      <HorizontalTabs wrapperClassName="dashboard-tabs"
         labels={[
           <Tab key={1} label="Carbon" sublabel="Carbon Review" />,
           <Tab

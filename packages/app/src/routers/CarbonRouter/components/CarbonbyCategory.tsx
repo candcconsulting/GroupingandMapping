@@ -12,12 +12,12 @@ import {
 import { CheckpointConnection, IModelApp } from "@itwin/core-frontend";
 import { FrontendIModelsAccess } from "@itwin/imodels-access-frontend";
 import {
+  DefaultCell,
   Table,
   tableFilters,
   TablePaginator,
   TablePaginatorRendererProps,
 } from "@itwin/itwinui-react";
-import { Value } from "@itwin/presentation-common";
 import { RouteComponentProps } from "@reach/router";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { Cell, Pie, PieChart, Tooltip } from "recharts";
@@ -33,6 +33,9 @@ import {
   SkeletonCell,
 } from "../../../routers/SynchronizationRouter/components/SkeletonCell";
 import AuthClient from "../../../services/auth/AuthClient";
+import type {
+  CellRendererProps,
+  } from 'react-table';
 
 interface ElementCountProps extends RouteComponentProps {
   accessToken: string;
@@ -202,8 +205,6 @@ export const CarbonByCategory = ({
     } */
       // setElements([]);
       console.log(`Groups Loaded Length = ${groups.length}`);
-      let max = 0;
-      let min = 0;
       const iModelConnection = await CheckpointConnection.openRemote(
         projectId,
         iModelId
@@ -217,7 +218,7 @@ export const CarbonByCategory = ({
         if (elementsLoaded) {
           return;
         }
-        const allInstances: any[] = elements;
+        const allInstances: any[] = [];
         // allInstances = [];
         // groups.forEach(async (aGroup: any) => {
         for (const aGroup of groups) {
@@ -235,13 +236,11 @@ export const CarbonByCategory = ({
           allInstances.push(...tempInstances);
           console.log(`Instances length = ${allInstances.length}`);
           // setElements(allInstances);
-          max = Math.max(...elements.map((o) => o.gwp));
-          min = Math.min(...elements.map((o) => o.gwp));
         } //);
         console.log("Loaded");
         isLoading.current = false;
         const summarizeElements: ISummary[] = [];
-        const tempElements = elements;
+        const tempElements = allInstances;
         void tempElements.reduce((summary, value) => {
           if (summary) {
             summarizeElements.push({
@@ -287,9 +286,10 @@ export const CarbonByCategory = ({
           return "";
         });
         // console.log(summarizeElements);
-        setElements(summarizeElements);
-        console.log();
-        // setElements(allInstances)
+        // setElements(summarizeElements);
+        setElements(allInstances)
+        const max = Math.max(...allInstances.map(o => o.y))
+        const min = Math.min(...allInstances.map(o => o.y))
         setElementsLoaded(true);
       } catch (error) {
         const errorResponse = error as Response;
@@ -308,13 +308,10 @@ export const CarbonByCategory = ({
         );
         void fetchElements().then(() => {
           setElementsLoaded(true);
-          console.log(elements.length);
           // setElements(elements);
-          console.log(elements.length);
           console.log("next step");
         });
       }
-      console.log(elements.length);
     }
   }, [iModelId, elementsLoaded, isLoading, groupsLoaded]);
 
@@ -412,9 +409,8 @@ export const CarbonByCategory = ({
   );
 
   return (
-    <div>
       <div className="row">
-        <div className="column">
+        <div>
           <div className="panel-header">Carbon by Category</div>
           <Table
             isSortable={true}
@@ -455,7 +451,7 @@ export const CarbonByCategory = ({
                     },
                     {
                       accessor: "gwp",
-                      Cell: ColouredCell,
+                      cellRenderer: (props : CellRendererProps<any>) => <DefaultCell {...props} style={{backgroundColor: "red"}}/>,
                       Header: "GWP",
                       disableResizing: false,
                       Filter: tableFilters.NumberRangeFilter(),
@@ -490,12 +486,11 @@ export const CarbonByCategory = ({
             paginatorRenderer={paginator}
             isResizable={true}
             isLoading={!elementsLoaded}
-            style={{ height: "50%", width: 750 }}
+            style={{ height: "50%"}}
             emptyTableContent={error || "Please wait for mappings to be loaded"}
           />
         </div>
-        <div className="column">
-          <PieChart width={730} height={700}>
+          <PieChart width={400} height={400}>
             <Pie
               data={pieData}
               color="#000000"
@@ -517,9 +512,7 @@ export const CarbonByCategory = ({
               content={<CustomTooltip active={false} payload={[]} label={""} />}
             />
           </PieChart>
-        </div>
       </div>
-    </div>
   );
 };
 
