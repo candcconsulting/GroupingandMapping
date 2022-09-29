@@ -110,8 +110,8 @@ export const CarbonByCategory = ({
   const [error, setError] = React.useState("");
   const urlPrefix = useApiPrefix();
   const rpcInterfaces = [IModelReadRpcInterface];
-  const [min, setMin] = useState(0);
-  const [max, setMax] = useState(1);
+  const [minGWP, setMinGWP] = useState(0);
+  const [maxGWP, setMaxGWP] = useState(1);
 
   useEffect(() => {
     async function startIModelApp() {
@@ -289,9 +289,9 @@ export const CarbonByCategory = ({
         // console.log(summarizeElements);
         setElements(summarizeElements);
         // setElements(allInstances)
-        setMax(Math.max(...allInstances.map((o) => o.y)));
-        setMin(Math.min(...allInstances.map((o) => o.y)));
-        setElementsLoaded(true);
+        setMaxGWP(Math.max(...summarizeElements.map((o) => o.gwp)));
+        setMinGWP(Math.min(...summarizeElements.map((o) => o.gwp)));
+        setElementsLoaded(true);        
       } catch (error) {
         const errorResponse = error as Response;
         setError(await client.extractAPIErrorMessage(errorResponse));
@@ -314,7 +314,7 @@ export const CarbonByCategory = ({
         });
       }
     }
-  }, [iModelId, elementsLoaded, isLoading, groupsLoaded]);
+  }, [iModelId, elementsLoaded, isLoading, groupsLoaded, groups, projectId, accessToken, urlPrefix]);
 
   // random number generator
   function rand(frm: number, to: number) {
@@ -454,7 +454,7 @@ export const CarbonByCategory = ({
                     accessor: "gwp",
                     Cell: SkeletonCell,
                     cellRenderer: (props: CellRendererProps<any>) =>
-                      coloredCellRenderer(props, min, max),
+                      coloredCellRenderer(props, minGWP, maxGWP),
                     Header: "GWP",
                     disableResizing: false,
                     Filter: tableFilters.NumberRangeFilter(),
@@ -483,7 +483,7 @@ export const CarbonByCategory = ({
                 ],
               },
             ],
-            [max, min]
+            [maxGWP, minGWP]
           )}
           pageSize={25}
           paginatorRenderer={paginator}
