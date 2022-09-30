@@ -27,6 +27,6 @@ const getColor = (value: number, min: number, max: number) => {
   const percentage = normalizedValue / normalizedMax;
   // const hue = ((1 - percentage) * 120).toString(10);
   const hue = Math.floor((1 - percentage) * 120); // go from green to red
-  const saturation = Math.abs(percentage - 0.5) * 100;
+  // const saturation = Math.abs(percentage - 0.5) * 100;
   return `hsl(${hue},50%,60%)`;
 };

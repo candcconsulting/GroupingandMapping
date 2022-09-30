@@ -7,6 +7,17 @@
 import { QueryRowFormat } from "@itwin/core-common";
 import { CheckpointConnection, IModelConnection } from "@itwin/core-frontend";
 
+const singleReturnSQL = (sql: string) => {
+  const fromLoc = sql.toLowerCase().indexOf("from");
+  const commaLoc = sql.toLowerCase().indexOf(",");
+  let returnSQL = sql;
+  if (commaLoc < fromLoc && commaLoc >= 0) {
+    returnSQL = sql.substring(0, commaLoc) + " " + sql.substring(fromLoc);
+  }
+
+  return returnSQL;
+};
+
 const _executeQuery = async (imodel: IModelConnection, query: string) => {
   const rows = [];
   try {
@@ -69,6 +80,8 @@ export interface IVolume {
   material: string;
   userlabel: string;
   gwp: number;
+  max?: number;
+  min?: number;
 }
 
 export class sqlAPI {
@@ -168,9 +181,16 @@ export class sqlAPI {
     iModel: IModelConnection,
     groupSQL: string,
     material: string,
-    carbonFactor: number
+    carbonFactor: number,
+    checkErrors = false
   ) => {
-    const sql = `select element.Id as id,  netVolume, ge.userlabel as userlabel from qto.VolumeAspect as va join bis.geometricelement3d ge  on ge.ecinstanceid = va.element.id where element.id in (${groupSQL}) `;
+    let sqlCheck = "";
+    if (checkErrors) {
+      sqlCheck =
+        " AND (0.5 * ((ifnull(grossvolume,0)+ifnull(netvolume,0)) + abs(ifnull(grossvolume,0)-ifnull(netvolume,0)))) <= 0 ";
+    }
+    const newSQL = singleReturnSQL(groupSQL);
+    const sql = `select ge.ecInstanceId as id,   0.5 * ((ifnull(grossvolume,0)+ifnull(netvolume,0)) + abs(ifnull(grossvolume,0)-ifnull(netvolume,0))) as netVolume, ge.userlabel as userlabel from bis.geometricelement3d ge left join qto.VolumeAspect as va on ge.ecinstanceid = va.element.id where ge.ecinstanceid in (${newSQL}) ${sqlCheck} `;
     const rows = await _executeQuery(iModel, sql);
     if (!carbonFactor) {
       carbonFactor = 0;
@@ -193,9 +213,16 @@ export class sqlAPI {
     iModel: CheckpointConnection,
     groupSQL: string,
     material: string,
-    carbonFactor: number
+    carbonFactor: number,
+    checkErrors = false
   ) => {
-    const sql = `select element.Id as id,  netVolume, ge.userlabel as userlabel from qto.VolumeAspect as va join bis.geometricelement3d ge  on ge.ecinstanceid = va.element.id where element.id in (${groupSQL}) `;
+    let sqlCheck = "";
+    if (checkErrors) {
+      sqlCheck =
+        " AND (0.5 * ((ifnull(grossvolume,0)+ifnull(netvolume,0)) + abs(ifnull(grossvolume,0)-ifnull(netvolume,0)))) <= 0 ";
+    }
+    const newSQL = singleReturnSQL(groupSQL);
+    const sql = `select ge.ecInstanceId as id,   0.5 * ((ifnull(grossvolume,0)+ifnull(netvolume,0)) + abs(ifnull(grossvolume,0)-ifnull(netvolume,0))) as netVolume, ge.userlabel as userlabel from bis.geometricelement3d ge left join qto.VolumeAspect as va on ge.ecinstanceid = va.element.id where ge.ecinstanceid in (${newSQL}) ${sqlCheck} `;
     const rows = await _executeQuery(iModel, sql);
     if (!carbonFactor) {
       carbonFactor = 0;

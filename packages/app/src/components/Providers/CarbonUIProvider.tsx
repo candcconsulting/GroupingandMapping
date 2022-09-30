@@ -7,7 +7,6 @@
 import {
   AbstractWidgetProps,
   StagePanelLocation,
-  StagePanelSection,
   UiItemsProvider,
 } from "@itwin/appui-abstract";
 import React from "react";

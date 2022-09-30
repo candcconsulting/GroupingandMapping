@@ -14,7 +14,6 @@ import { useApiPrefix } from "../../../api/useApiPrefix";
 import "../../../data/epddata.ts";
 import "./Carbon.scss";
 import { CarbonByCategory } from "./CarbonbyCategory";
-import { CarbonPivot } from "./CarbonByPivot";
 
 export interface CarbonProps extends RouteComponentProps {
   projectId?: string;
@@ -77,13 +76,7 @@ export const Carbon = ({
           <div
             className="app-dashboard-grid"
             style={{ overflow: "auto", height: "90vh", display: "flex" }}
-          >
-            <CarbonPivot
-              projectId={projectId}
-              accessToken={accessToken}
-              iModelId={iModelId}
-            ></CarbonPivot>
-          </div>
+          ></div>
         );
       case 2:
         return (
@@ -97,7 +90,8 @@ export const Carbon = ({
 
   return (
     <div className="dashboard-toolbar">
-      <HorizontalTabs wrapperClassName="dashboard-tabs"
+      <HorizontalTabs
+        wrapperClassName="dashboard-tabs"
         labels={[
           <Tab key={1} label="Carbon" sublabel="Carbon Review" />,
           <Tab

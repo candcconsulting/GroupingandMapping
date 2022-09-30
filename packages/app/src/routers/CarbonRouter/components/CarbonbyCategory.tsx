@@ -12,7 +12,6 @@ import {
 import { CheckpointConnection, IModelApp } from "@itwin/core-frontend";
 import { FrontendIModelsAccess } from "@itwin/imodels-access-frontend";
 import {
-  DefaultCell,
   Table,
   tableFilters,
   TablePaginator,
@@ -80,6 +79,82 @@ const makeGroupStrings = (): string => {
   });
   return groupString;
 };
+/*
+const getColor = (value: number, min: number, max: number) => {
+  const normalizedValue = value - min;
+  const normalizedMax = max - min;
+  const percentage = normalizedValue / normalizedMax;
+  // const hue = ((1 - percentage) * 120).toString(10);
+  const hue = Math.floor((1 - percentage) * 120); // go from green to red
+  const saturation = Math.abs(percentage - 0.5) * 100;
+  return `hsl(${hue},50%,60%)`
+} */
+
+const getRGBColor = (value: number, min: number, max: number) => {
+  const normalizedValue = value - min;
+  const normalizedMax = max - min;
+  const percentage = normalizedValue / normalizedMax;
+  // const hue = ((1 - percentage) * 120).toString(10);
+  const hue = Math.floor((1 - percentage) * 120); // go from green to red
+  // const saturation = Math.abs(percentage - 0.5) * 100;
+  return getRGB(hue, 50, 60);
+};
+
+const getRGB = (h: number, s: number, l: number) => {
+  s /= 100;
+  l /= 100;
+
+  const c = (1 - Math.abs(2 * l - 1)) * s,
+    x = c * (1 - Math.abs(((h / 60) % 2) - 1)),
+    m = l - c / 2;
+  let r = 0,
+    g = 0,
+    b = 0;
+
+  if (0 <= h && h < 60) {
+    r = c;
+    g = x;
+    b = 0;
+  } else if (60 <= h && h < 120) {
+    r = x;
+    g = c;
+    b = 0;
+  } else if (120 <= h && h < 180) {
+    r = 0;
+    g = c;
+    b = x;
+  } else if (180 <= h && h < 240) {
+    r = 0;
+    g = x;
+    b = c;
+  } else if (240 <= h && h < 300) {
+    r = x;
+    g = 0;
+    b = c;
+  } else if (300 <= h && h < 360) {
+    r = c;
+    g = 0;
+    b = x;
+  }
+  r = Math.round((r + m) * 255);
+  g = Math.round((g + m) * 255);
+  b = Math.round((b + m) * 255);
+  let rh = r.toString(16);
+  let gh = g.toString(16);
+  let bh = b.toString(16);
+
+  if (rh.length === 1) {
+    rh = "0" + r;
+  }
+  if (gh.length === 1) {
+    gh = "0" + g;
+  }
+  if (bh.length === 1) {
+    bh = "0" + b;
+  }
+
+  return "#" + rh + gh + bh;
+};
 
 const findMapping = (searchString: string): string => {
   let returnString = "";
@@ -96,7 +171,6 @@ export const CarbonByCategory = ({
   accessToken,
   projectId,
   iModelId,
-  sql,
 }: ElementCountProps) => {
   const [elements, setElements] = React.useState<any[]>([]);
   const [mapping, setMapping] = React.useState<IMapping>();
@@ -104,12 +178,13 @@ export const CarbonByCategory = ({
   const [mappingLoaded, setMappingLoaded] = React.useState(false);
   const [groupsLoaded, setGroupsLoaded] = React.useState(false);
   const [elementsLoaded, setElementsLoaded] = React.useState(false);
+  const [pieDataLoaded, setPieDataLoaded] = React.useState(false);
   const [colors, setColors] = React.useState<any[]>([]);
   const [pieData, setPieData] = React.useState<any[]>([]);
   const isLoading = React.useRef(false);
   const [error, setError] = React.useState("");
   const urlPrefix = useApiPrefix();
-  const rpcInterfaces = [IModelReadRpcInterface];
+  const rpcInterfaces = React.useMemo(() => [IModelReadRpcInterface], []);
   const [minGWP, setMinGWP] = useState(0);
   const [maxGWP, setMaxGWP] = useState(1);
 
@@ -158,7 +233,7 @@ export const CarbonByCategory = ({
           );
           setMappingLoaded(true);
           if (AuthClient.client) {
-            const groupsFlag = await iTwinAPI
+            void (await iTwinAPI
               .getGroups(AuthClient.client, iModelId, aMapping.id)
               .then((allGroups) => {
                 const ourGroups: IGroup[] = [];
@@ -173,7 +248,7 @@ export const CarbonByCategory = ({
                   }
                 });
                 setGroups(ourGroups);
-              });
+              }));
             if (groups.length > 0) {
               setGroupsLoaded(true);
               setElementsLoaded(false);
@@ -231,11 +306,17 @@ export const CarbonByCategory = ({
             iModelConnection,
             aGroup.groupSQL,
             aGroup.material,
-            aMaterial?.carbonFactor || 0
+            aMaterial?.carbonFactor ?? 0
           );
-          console.log(`Instances length = ${allInstances.length}`);
           allInstances.push(...tempInstances);
-          console.log(`Instances length = ${allInstances.length}`);
+          const errInstances = await sqlAPI.getVolumeforGroup(
+            iModelConnection,
+            aGroup.groupSQL,
+            "Invalid Elements",
+            aMaterial?.carbonFactor ?? 0,
+            true
+          );
+          allInstances.push(...errInstances);
           // setElements(allInstances);
         } //);
         console.log("Loaded");
@@ -325,17 +406,12 @@ export const CarbonByCategory = ({
     urlPrefix,
   ]);
 
-  // random number generator
-  function rand(frm: number, to: number) {
-    return ~~(Math.random() * (to - frm)) + frm;
-  }
-
   useEffect(() => {
+    const tempColors: any[] = [];
     const fetchPieData = async () => {
       if (!elementsLoaded) {
-        const COLORS: any[] = [];
-        COLORS.push("#8884d8");
-        setColors(COLORS);
+        tempColors.push("#8884d8");
+        setColors(tempColors);
         setPieData([
           {
             name: "Loading",
@@ -344,7 +420,6 @@ export const CarbonByCategory = ({
         ]);
       } else {
         if (elementsLoaded) {
-          const COLORS: any[] = [];
           const client = new ProjectsClient(urlPrefix, accessToken);
           try {
             const result: any[] = [];
@@ -366,13 +441,8 @@ export const CarbonByCategory = ({
               }
               return acc;
             }, []);
+            setPieDataLoaded(true);
             setPieData(tempPieData);
-            while (COLORS.length < pieData.length) {
-              COLORS.push(
-                `rgb(${rand(0, 255)}, ${rand(0, 255)}, ${rand(0, 255)})`
-              );
-            }
-            setColors(COLORS);
           } catch (error) {
             const errorResponse = error as Response;
             setError(await client.extractAPIErrorMessage(errorResponse));
@@ -381,14 +451,34 @@ export const CarbonByCategory = ({
       }
     };
     console.log("Elements :", elements);
-    if (elementsLoaded) {
+    if (elementsLoaded && !pieDataLoaded) {
       void fetchPieData();
     }
-  }, [accessToken, urlPrefix, elements, elementsLoaded]);
+  }, [
+    accessToken,
+    urlPrefix,
+    elements,
+    elementsLoaded,
+    pieData,
+    pieDataLoaded,
+  ]);
 
+  useEffect(() => {
+    if (pieDataLoaded && pieData.length > 0) {
+      const tempColors: any[] = [];
+      //const pMax = Math.max(...pieData.map((o) => o.value))
+      //const pMin = (Math.min(...pieData.map((o) => o.value)))
+      for (let i = pieData.length - 1; i >= 0; i--) {
+        // tempColors[i] = getRGBColor(pieData[i].value, pMax, pMin)
+        tempColors[i] = getRGBColor(i, 0, pieData.length);
+      }
+      setColors(tempColors);
+    }
+  }, [pieDataLoaded, pieData]);
   const CustomTooltip = ({
     active,
     payload,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     label,
   }: {
     active: boolean;
@@ -502,7 +592,7 @@ export const CarbonByCategory = ({
           emptyTableContent={error || "Please wait for mappings to be loaded"}
         />
       </div>
-      <PieChart width={400} height={400}>
+      <PieChart width={600} height={600}>
         <Pie
           data={pieData}
           color="#000000"
@@ -514,7 +604,7 @@ export const CarbonByCategory = ({
           fill="#8884d8"
         >
           {pieData.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+            <Cell key={`cell-${index}`} fill={colors[index]} />
           ))}
         </Pie>
         <Tooltip

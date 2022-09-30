@@ -20,6 +20,13 @@ export const epd = {
       ICEcarbonFactor: 1.21,
       carbonFactor: 9438,
     },
+    {
+      material: "glazing",
+      description: "Double glazing with reinforced thermal insulation",
+      density: 7800,
+      ICEcarbonFactor: 0.089,
+      carbonFactor: 91.5,
+    },
   ],
 };
 
@@ -28,9 +35,10 @@ export const materialMapping = {
   groups: [
     {
       material: "steelwork",
-      group: ["Steelwork"],
+      group: ["Steelwork", "Beams", "Columns"],
     },
     { material: "concrete", group: ["Foundations", "Floors"] },
+    { material: "glazing", group: ["Glazing", "Windows"] },
   ],
 };
 

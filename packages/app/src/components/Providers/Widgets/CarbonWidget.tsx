@@ -17,6 +17,7 @@ import {
   tableFilters,
   TablePaginator,
   TablePaginatorRendererProps,
+  ToggleSwitch,
 } from "@itwin/itwinui-react";
 import React, { useCallback, useEffect, useLayoutEffect, useMemo } from "react";
 
@@ -29,7 +30,6 @@ import { epd, materialMapping } from "../../../data/epddata";
 import { SkeletonCell } from "../../../routers/SynchronizationRouter/components/SkeletonCell";
 import AuthClient from "../../../services/auth/AuthClient";
 import { useCommonPathPattern } from "../../MainLayout/useCommonPathPattern";
-
 
 interface IMapping {
   id: string;
@@ -54,9 +54,10 @@ interface ISummary {
   netVolume: number;
   gwp: number;
   elements: string;
-  count : number,
-  max : number,
-  min : number
+  count: number;
+  max: number;
+  min: number;
+  userLabel?: string;
 }
 
 const mMapping = materialMapping;
@@ -81,7 +82,6 @@ const findMapping = (searchString: string): string => {
   return returnString;
 };
 
-
 export const CarbonWidget = () => {
   const [elements, setElements] = React.useState<any[]>([]);
   const [mapping, setMapping] = React.useState<IMapping>();
@@ -90,21 +90,21 @@ export const CarbonWidget = () => {
   const [groupsLoaded, setGroupsLoaded] = React.useState(false);
   const isLoading = React.useRef(false);
   const [elementsLoaded, setElementsLoaded] = React.useState(false);
- 
+  const [showDetails, setShowDetails] = React.useState(false);
+  const [columns, setColumns] = React.useState<any[]>([]);
 
   const [error, setError] = React.useState("");
   const urlPrefix = useApiPrefix();
   const rpcInterfaces = [IModelReadRpcInterface];
-  
 
-  const useAccessToken = () => {  
+  const useAccessToken = () => {
     const [accessToken, setAccessToken] = React.useState<string>();
     useLayoutEffect(() => {
       IModelApp.authorizationClient?.getAccessToken().then(setAccessToken);
-    }, [])
-    return (accessToken);
+    }, []);
+    return accessToken;
   };
-  
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { section, projectId, iModelId } = useCommonPathPattern();
 
@@ -118,70 +118,195 @@ export const CarbonWidget = () => {
   const {
     results: { mappings },
   } = useApiData<{ mappings: IMapping[] }>({
-    accessToken : accessToken,
+    accessToken: accessToken,
     url: `https://api.bentley.com/insights/reporting/datasources/imodels/${iModelId}/mappings`,
   });
 
+  const groupColumns = React.useMemo(
+    () => [
+      {
+        Header: "Table",
+        columns: [
+          /*                  {
+            accessor: "id",
+            Cell: SkeletonCell,
+            Header: "Id",
+            disableResizing: false,
+            Filter: tableFilters.TextFilter(),
+          },
+          {
+            accessor: "userlabel",
+            Cell: SkeletonCell,
+            Header: "Userlabel",
+            disableResizing: false,
+            Filter: tableFilters.TextFilter(),
+          }, */
+          {
+            accessor: "material",
+            Cell: SkeletonCell,
+            Header: "Material",
+            disableResizing: false,
+            Filter: tableFilters.TextFilter(),
+          },
+          {
+            accessor: "netVolume",
+            Cell: SkeletonCell,
+            Header: "Volume",
+            disableResizing: false,
+            Filter: tableFilters.NumberRangeFilter(),
+          },
+          {
+            accessor: "gwp",
+            Cell: SkeletonCell,
+            Header: "GWP",
+            disableResizing: false,
+            Filter: tableFilters.NumberRangeFilter(),
+          },
+          {
+            accessor: "max",
+            Cell: SkeletonCell,
+            Header: "Max",
+            disableResizing: false,
+            Filter: tableFilters.NumberRangeFilter(),
+          },
+          {
+            accessor: "min",
+            Cell: SkeletonCell,
+            Header: "Min",
+            disableResizing: false,
+            Filter: tableFilters.NumberRangeFilter(),
+          },
+          {
+            accessor: "count",
+            Cell: SkeletonCell,
+            Header: "Count",
+            disableResizing: false,
+            Filter: tableFilters.NumberRangeFilter(),
+          },
+        ],
+      },
+    ],
+    []
+  );
+  const allColumns = React.useMemo(
+    () => [
+      {
+        Header: "Table",
+        columns: [
+          {
+            accessor: "id",
+            Cell: SkeletonCell,
+            Header: "Id",
+            disableResizing: false,
+            Filter: tableFilters.TextFilter(),
+          },
+          {
+            accessor: "userlabel",
+            Cell: SkeletonCell,
+            Header: "Userlabel",
+            disableResizing: false,
+            Filter: tableFilters.TextFilter(),
+          },
+          {
+            accessor: "material",
+            Cell: SkeletonCell,
+            Header: "Material",
+            disableResizing: false,
+            Filter: tableFilters.TextFilter(),
+          },
+          {
+            accessor: "netVolume",
+            Cell: SkeletonCell,
+            Header: "Volume",
+            disableResizing: false,
+            Filter: tableFilters.NumberRangeFilter(),
+          },
+          {
+            accessor: "gwp",
+            Cell: SkeletonCell,
+            Header: "GWP",
+            disableResizing: false,
+            Filter: tableFilters.NumberRangeFilter(),
+          },
+          {
+            accessor: "max",
+            Cell: SkeletonCell,
+            Header: "Max",
+            disableResizing: false,
+            Filter: tableFilters.NumberRangeFilter(),
+          },
+          {
+            accessor: "min",
+            Cell: SkeletonCell,
+            Header: "Min",
+            disableResizing: false,
+            Filter: tableFilters.NumberRangeFilter(),
+          },
+        ],
+      },
+    ],
+    []
+  );
   useEffect(() => {
     if (mappings) {
-      console.log("Mappings.Length", mappings.length)
+      console.log("Mappings.Length", mappings.length);
       setMappingLoaded(mappings.length > 0);
     }
   }, [mappings]);
 
   useEffect(() => {
-  const loadGroups = async () => {
-    if (mappings && iModelId) {
-      // mappings.forEach((mapping: IMapping) => {
-      for (const aMapping of mappings) {
-        if (aMapping.mappingName === mMapping.mappingName) {
-          setMapping(mapping);
-          console.log("Found " + aMapping.mappingName + aMapping.id);
-          setMappingLoaded(true);
-          if (AuthClient.client) {
-            void iTwinAPI
-              .getGroups(AuthClient.client, iModelId, aMapping.id)
-              .then((allGroups) => {
-                const ourGroups: IGroup[] = [];
-                console.log(allGroups);
-                for (const aGroup of allGroups) {
-                  //                allGroups.forEach((group: IGroup) => {
-                  const groupStrings = makeGroupStrings();
-                  if (groupStrings.indexOf(aGroup.groupName) >= 0) {
-                    console.log(aGroup);
-                    const material = findMapping(aGroup.groupName);
-                    aGroup.material = material;
-                    ourGroups.push(aGroup);
-                  }
-                } // );
-                setGroups(ourGroups);
-                setGroupsLoaded(true);
-              });
+    const loadGroups = async () => {
+      if (mappings && iModelId) {
+        // mappings.forEach((mapping: IMapping) => {
+        for (const aMapping of mappings) {
+          if (aMapping.mappingName === mMapping.mappingName) {
+            setMapping(mapping);
+            console.log("Found " + aMapping.mappingName + aMapping.id);
+            setMappingLoaded(true);
+            if (AuthClient.client) {
+              void iTwinAPI
+                .getGroups(AuthClient.client, iModelId, aMapping.id)
+                .then((allGroups) => {
+                  const ourGroups: IGroup[] = [];
+                  console.log(allGroups);
+                  for (const aGroup of allGroups) {
+                    //                allGroups.forEach((group: IGroup) => {
+                    const groupStrings = makeGroupStrings();
+                    if (groupStrings.indexOf(aGroup.groupName) >= 0) {
+                      console.log(aGroup);
+                      const material = findMapping(aGroup.groupName);
+                      aGroup.material = material;
+                      ourGroups.push(aGroup);
+                    }
+                  } // );
+                  setGroups(ourGroups);
+                  setGroupsLoaded(true);
+                });
+            }
           }
-        }
-      } //);
+        } //);
+      }
+    };
+    if (mappingLoaded) {
+      console.log("mappingLoaded");
+      void loadGroups();
     }
-  };
-  if (mappingLoaded) {
-    console.log("mappingLoaded")
-    void loadGroups();
-  }
-},[mappingLoaded, mapping, iModelId, mappings])
+  }, [mappingLoaded, mapping, iModelId, mappings]);
 
   useEffect(() => {
+    const client = new ProjectsClient(urlPrefix, accessToken ?? "");
     const fetchElements = async () => {
       console.log("fetchElements called");
       console.log(`Groups Loaded Length = ${groups.length}`);
       isLoading.current = true;
-      let max = 0;
-      let min = 0;
+      //let max = 0;
+      //let min = 0;
 
       //const iModelConnection = await CheckpointConnection.openRemote(projectId, iModelId);
       const vp = IModelApp.viewManager.selectedView;
       if (!vp) {
         return;
       }
-      const client = new ProjectsClient(urlPrefix, accessToken ?? "");
       try {
         if (elementsLoaded) {
           return;
@@ -201,71 +326,110 @@ export const CarbonWidget = () => {
             aGroup.material,
             aMaterial?.carbonFactor ?? 0
           );
+          const max = Math.max(...tempInstances.map((o) => o.gwp));
+          const min = Math.min(...tempInstances.map((o) => o.gwp));
+          tempInstances.map((x) => {
+            x.min = min;
+            return x;
+          });
+          tempInstances.map((x) => {
+            x.max = max;
+            return x;
+          });
+
           allInstances.push(...tempInstances);
+          const errInstances = await sqlAPI.getVolumeforGroupWidget(
+            iModelConnection,
+            aGroup.groupSQL,
+            "Invalid Elements",
+            aMaterial?.carbonFactor ?? 0,
+            true
+          );
+          allInstances.push(...errInstances);
+
           // setElements(allInstances);
-          max = Math.max(...allInstances.map((o) => o.gwp));
-          min = Math.min(...allInstances.map((o) => o.gwp));
+          // max = Math.max(...allInstances.map((o) => o.gwp));
+          // min = Math.min(...allInstances.map((o) => o.gwp));
         } //);
         console.log("Loaded");
-        const summarizeElements : ISummary[] = []
-        const tempElements = allInstances;
-        void tempElements.reduce((summary, value) => {
-          if (summary) {
-            summarizeElements.push ({
-              material : summary.material,
-              netVolume : +summary.netVolume.toFixed(2),
-              gwp : +summary.gwp.toFixed(2) ?? 0,
-              elements : summary.id,
-              max : +summary.gwp.toFixed(2) ?? 0,
-              min : +summary.gwp.toFixed(2) ?? 0,
-              count : 1
-            })
-
+        if (showDetails) {
+          setElements(allInstances);
+          setElementsLoaded(true);
+          isLoading.current = false;
+          setColumns(allColumns);
+        } else {
+          const summarizeElements: ISummary[] = [];
+          const tempElements = allInstances;
+          setColumns(groupColumns);
+          if (allInstances.length > 0) {
+            void tempElements.reduce((summary, value) => {
+              if (summary) {
+                summarizeElements.push({
+                  material: summary.material,
+                  netVolume: +summary.netVolume.toFixed(2),
+                  gwp: +summary.gwp.toFixed(2) ?? 0,
+                  elements: summary.id,
+                  max: +summary.gwp.toFixed(2) ?? 0,
+                  min: +summary.gwp.toFixed(2) ?? 0,
+                  count: 1,
+                });
+              }
+              const index = summarizeElements.findIndex(
+                (aElement) => aElement.material === value.material
+              );
+              if (index >= 0) {
+                summarizeElements[index].netVolume = +(
+                  summarizeElements[index].netVolume + value.netVolume
+                ).toFixed(2);
+                summarizeElements[index].gwp = +(
+                  summarizeElements[index].gwp + value.gwp
+                ).toFixed(2);
+                summarizeElements[index].elements =
+                  summarizeElements[index].elements + "," + value.id;
+                if (value.gwp > summarizeElements[index].max && value.gwp > 0) {
+                  summarizeElements[index].max = value.gwp;
+                }
+                if (value.gwp < summarizeElements[index].min && value.gwp > 0) {
+                  summarizeElements[index].min = value.gwp;
+                }
+                summarizeElements[index].count += 1;
+              } else {
+                summarizeElements.push({
+                  material: value.material,
+                  netVolume: value.netVolume,
+                  gwp: value.gwp ?? 0,
+                  elements: value.id,
+                  max: summary.gwp ?? 0,
+                  min: summary.gwp ?? 0,
+                  count: 1,
+                });
+              }
+              return "";
+            });
+            // setElements(allInstances);
+            setElementsLoaded(true);
+            setElements(summarizeElements);
+            isLoading.current = false;
+          } else {
+            setElements([]);
+            isLoading.current = false;
           }
-          const index = summarizeElements.findIndex((aElement) => aElement.material === value.material )
-          if (index >= 0) {
-            summarizeElements[index].netVolume = +(summarizeElements[index].netVolume + value.netVolume).toFixed(2);
-            summarizeElements[index].gwp = +(summarizeElements[index].gwp + value.gwp).toFixed(2);
-            summarizeElements[index].elements = summarizeElements[index].elements + "," + value.id;
-            if ((value.gwp > summarizeElements[index].max) && (value.gwp > 0)) {
-              summarizeElements[index].max = value.gwp
-            }
-            if ((value.gwp < summarizeElements[index].min) && (value.gwp > 0)) {
-              summarizeElements[index].min = value.gwp
-            }
-            summarizeElements[index].count += 1
-          } else
-          {
-            summarizeElements.push ({
-              material : value.material,
-              netVolume : value.netVolume,
-              gwp : value.gwp ?? 0,
-              elements : value.id,
-              max : summary.gwp ?? 0,
-              min : summary.gwp ?? 0,
-              count : 1
-            })
-          }
-          return "";
-        })
-        // setElements(allInstances);
-        setElementsLoaded(true);
-        setElements(summarizeElements);
-        isLoading.current = false;
+        }
       } catch (error) {
         const errorResponse = error as Response;
         setError(await client.extractAPIErrorMessage(errorResponse));
       }
-      
     };
-    if (!elementsLoaded && !isLoading.current && groupsLoaded) {
-      isLoading.current = true;
-      if (isLoading.current) {
-        void fetchElements().then(() => {
-          setElementsLoaded(true);
-        });
+    try {
+      if (!elementsLoaded && !isLoading.current && groupsLoaded) {
+        isLoading.current = true;
+        if (isLoading.current) {
+          void fetchElements().then(() => {
+            setElementsLoaded(true);
+          });
+        }
       }
-    }
+    } catch (error) {}
   }, [
     accessToken,
     urlPrefix,
@@ -275,7 +439,10 @@ export const CarbonWidget = () => {
     groupsLoaded,
     mappingLoaded,
     mappings,
-    elementsLoaded
+    elementsLoaded,
+    allColumns,
+    groupColumns,
+    showDetails,
   ]);
   //   React.useEffect(() => void fetchElements(), [fetchElements]);
 
@@ -287,9 +454,21 @@ export const CarbonWidget = () => {
     [pageSizeList]
   );
 
+  useEffect(() => {
+    const vp = IModelApp.viewManager.selectedView;
+    if (vp) {
+      const emph = EmphasizeElements.getOrCreate(vp);
+      emph.clearEmphasizedElements(vp);
+      emph.clearOverriddenElements(vp);
+      vp.iModel.selectionSet.emptyAll();
+    }
+  }, [showDetails]);
+
   const onRowClicked = async (_rows: any, state: any) => {
     const vp = IModelApp.viewManager.selectedView;
-    const index = elements.findIndex((aElement) => aElement.material === state.values.material )
+    const index = elements.findIndex(
+      (aElement) => aElement.material === state.values.material
+    );
     const selectedElements = elements[index].elements;
     if (vp && selectedElements) {
       const emph = EmphasizeElements.getOrCreate(vp);
@@ -318,77 +497,24 @@ export const CarbonWidget = () => {
   return (
     <div>
       <div className="idp-content-margins idp-scrolling-content">
-        <div className="panel-header">Carbon by Category</div>
+        <div className="panel-header-row">
+          <div className="column">Carbon by Category</div>
+          <div className="column-right">
+            <ToggleSwitch
+              label="Show Details"
+              checked={showDetails}
+              onChange={() => {
+                setShowDetails(!showDetails);
+                setElementsLoaded(false);
+              }}
+            ></ToggleSwitch>
+          </div>
+        </div>
         <Table
           isSortable={true}
           expanderCell={() => null}
           data={elements}
-          columns={React.useMemo(
-            () => [
-              {
-                Header: "Table",
-                columns: [
-/*                  {
-                    accessor: "id",
-                    Cell: SkeletonCell,
-                    Header: "Id",
-                    disableResizing: false,
-                    Filter: tableFilters.TextFilter(),
-                  },
-                  {
-                    accessor: "userlabel",
-                    Cell: SkeletonCell,
-                    Header: "Userlabel",
-                    disableResizing: false,
-                    Filter: tableFilters.TextFilter(),
-                  }, */
-                  {
-                    accessor: "material",
-                    Cell: SkeletonCell,
-                    Header: "Material",
-                    disableResizing: false,
-                    Filter: tableFilters.TextFilter(),
-                  },
-                  {
-                    accessor: "netVolume",
-                    Cell: SkeletonCell,
-                    Header: "Volume",
-                    disableResizing: false,
-                    Filter: tableFilters.NumberRangeFilter(),
-                  },
-                  {
-                    accessor: "gwp",
-                    Cell: SkeletonCell,
-                    Header: "GWP",
-                    disableResizing: false,
-                    Filter: tableFilters.NumberRangeFilter(),
-                  },
-                  {
-                    accessor: "max",
-                    Cell: SkeletonCell,
-                    Header: "Max",
-                    disableResizing: false,
-                    Filter: tableFilters.NumberRangeFilter(),
-                  },
-                  {
-                    accessor: "min",
-                    Cell: SkeletonCell,
-                    Header: "Min",
-                    disableResizing: false,
-                    Filter: tableFilters.NumberRangeFilter(),
-                  },
-                  {
-                    accessor: "count",
-                    Cell: SkeletonCell,
-                    Header: "Count",
-                    disableResizing: false,
-                    Filter: tableFilters.NumberRangeFilter(),
-                  },                    
-                ],
-              },
-            ],
-            []
-          )}
+          columns={columns}
           pageSize={25}
           onRowClick={onRowClicked}
           paginatorRenderer={paginator}
