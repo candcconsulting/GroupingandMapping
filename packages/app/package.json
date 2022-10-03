@@ -22,7 +22,7 @@
     "@itwin/core-react": "^3.2.0",
     "@itwin/create-imodel-react": "^0.4.1",
     "@itwin/delete-imodel-react": "^0.2.0",
-    "@itwin/grouping-mapping-widget": "^0.5.8",
+    "@itwin/grouping-mapping-widget": "^0.8.1",
     "@itwin/imodel-browser-react": "^0.11.0",
     "@itwin/imodel-components-react": "^3.2.0",
     "@itwin/imodels-access-frontend": "^1.0.1",

@@ -466,10 +466,15 @@ export const CarbonWidget = () => {
 
   const onRowClicked = async (_rows: any, state: any) => {
     const vp = IModelApp.viewManager.selectedView;
-    const index = elements.findIndex(
-      (aElement) => aElement.material === state.values.material
-    );
-    const selectedElements = elements[index].elements;
+    let selectedElements = "";
+    if (!showDetails) {
+      const index = elements.findIndex(
+        (aElement) => aElement.material === state.values.material
+      );
+      selectedElements = elements[index].elements;
+    } else {
+      selectedElements = state.values.id;
+    }
     if (vp && selectedElements) {
       const emph = EmphasizeElements.getOrCreate(vp);
       emph.clearEmphasizedElements(vp);
