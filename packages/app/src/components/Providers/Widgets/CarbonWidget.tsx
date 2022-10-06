@@ -12,13 +12,18 @@ import {
   IModelReadRpcInterface,
 } from "@itwin/core-common";
 import { EmphasizeElements, IModelApp } from "@itwin/core-frontend";
+import { SvgGroupUngroup } from "@itwin/itwinui-icons-react";
 import {
+  IconButton,
   Table,
   tableFilters,
   TablePaginator,
   TablePaginatorRendererProps,
+  toaster,
   ToggleSwitch,
 } from "@itwin/itwinui-react";
+import { getColorValue } from "@itwin/itwinui-react/cjs/core/ColorPicker/ColorPicker";
+import { SelectionHelper } from "@itwin/presentation-frontend";
 import React, { useCallback, useEffect, useLayoutEffect, useMemo } from "react";
 
 import { iTwinAPI } from "../../../api/iTwinAPI";
@@ -27,6 +32,7 @@ import { sqlAPI } from "../../../api/queryAPI";
 import { useApiData } from "../../../api/useApiData";
 import { useApiPrefix } from "../../../api/useApiPrefix";
 import { epd, materialMapping } from "../../../data/epddata";
+import { getRGBColor } from "../../../routers/CarbonRouter/components/CarbonbyCategory";
 import { SkeletonCell } from "../../../routers/SynchronizationRouter/components/SkeletonCell";
 import AuthClient from "../../../services/auth/AuthClient";
 import { useCommonPathPattern } from "../../MainLayout/useCommonPathPattern";
@@ -82,6 +88,40 @@ const findMapping = (searchString: string): string => {
   return returnString;
 };
 
+const getColourByCounter = (count: number): ColorDef => {
+  let returnValue = ColorDef.red;
+  switch (count) {
+    case 1:
+      returnValue = ColorDef.fromString("yellow");
+      break;
+    case 2:
+      returnValue = ColorDef.fromString("green");
+      break;
+    case 3:
+      returnValue = ColorDef.fromString("blue");
+      break;
+    case 4:
+      returnValue = ColorDef.fromString("pink");
+      break;
+  }
+  /*  const red = 255 - (count * 10);
+  const green = (count % 2) * 10
+  const blue = 255 - ((count % 3 ) * 10)
+  return ColorDef.from(red, green, blue); */
+  return returnValue;
+};
+
+const displayNegativeToast = (content: string) => {
+  toaster.setSettings({
+    placement: "top",
+    order: "descending",
+  });
+  toaster.negative(content, {
+    duration: 7000,
+    hasCloseButton: false,
+    type: "temporary",
+  });
+};
 export const CarbonWidget = () => {
   const [elements, setElements] = React.useState<any[]>([]);
   const [mapping, setMapping] = React.useState<IMapping>();
@@ -454,6 +494,32 @@ export const CarbonWidget = () => {
     [pageSizeList]
   );
 
+  const colourElements = (
+    vp: any,
+    elementSet: any,
+    clear?: boolean,
+    colour?: any
+  ) => {
+    const emph = EmphasizeElements.getOrCreate(vp);
+    if (clear) {
+      emph.clearEmphasizedElements(vp);
+      emph.clearOverriddenElements(vp);
+    }
+    if (!colour) {
+      colour = ColorDef.fromString("yellow");
+    }
+    //const allElements = ecResult;
+    const allElements = elementSet.split(",");
+    emph.overrideElements(
+      allElements,
+      vp,
+      colour,
+      FeatureOverrideType.ColorOnly,
+      true
+    );
+    emph.emphasizeElements(allElements, vp, undefined, true);
+  };
+
   useEffect(() => {
     const vp = IModelApp.viewManager.selectedView;
     if (vp) {
@@ -463,6 +529,31 @@ export const CarbonWidget = () => {
       vp.iModel.selectionSet.emptyAll();
     }
   }, [showDetails]);
+
+  const showCarbonElements = async () => {
+    if (!elementsLoaded) {
+      displayNegativeToast("Please wait for elements table to complete");
+      return;
+    }
+    const vp = IModelApp.viewManager.selectedView;
+    let invalidElements = [];
+    let counter = 1;
+    const maxGWP = Math.max(...elements.map((o) => o.gwp));
+    const minGWP = Math.min(...elements.map((o) => o.gwp));
+    for (const elementGroup of elements) {
+      const colour = ColorDef.fromString(
+        getRGBColor(elementGroup.gwp, minGWP, maxGWP)
+      );
+      const selectedElements = elementGroup.elements;
+      if (elementGroup.material === "Invalid Elements") {
+        invalidElements = elementGroup.elements;
+      } else {
+        colourElements(vp, selectedElements, false, colour);
+      }
+      counter = counter + 1;
+    }
+    // colourElements(vp, invalidElements, ColorDef.red);
+  };
 
   const onRowClicked = async (_rows: any, state: any) => {
     const vp = IModelApp.viewManager.selectedView;
@@ -476,20 +567,9 @@ export const CarbonWidget = () => {
       selectedElements = state.values.id;
     }
     if (vp && selectedElements) {
-      const emph = EmphasizeElements.getOrCreate(vp);
-      emph.clearEmphasizedElements(vp);
-      emph.clearOverriddenElements(vp);
-
+      colourElements(vp, selectedElements, true);
       //const allElements = ecResult;
       const allElements = selectedElements.split(",");
-      emph.overrideElements(
-        allElements,
-        vp,
-        ColorDef.red,
-        FeatureOverrideType.ColorOnly,
-        true
-      );
-      emph.emphasizeElements(allElements, vp, undefined, true);
       vp.iModel.selectionSet.emptyAll();
       /*      for (const es of allElements.values()) {
         vp.iModel.selectionSet.add(es);
@@ -504,7 +584,7 @@ export const CarbonWidget = () => {
       <div className="idp-content-margins idp-scrolling-content">
         <div className="panel-header-row">
           <div className="column">Carbon by Category</div>
-          <div className="column-right">
+          <div className="column-right-row">
             <ToggleSwitch
               label="Show Details"
               checked={showDetails}
@@ -513,6 +593,12 @@ export const CarbonWidget = () => {
                 setElementsLoaded(false);
               }}
             ></ToggleSwitch>
+            <IconButton
+              onClick={() => showCarbonElements()}
+              styleType={"borderless"}
+            >
+              <SvgGroupUngroup />
+            </IconButton>
           </div>
         </div>
         <Table

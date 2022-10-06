@@ -64,3 +64,18 @@
 .column-right {
   text-align: right;
 }
+
+.column-right-row {
+  display: flex;
+  flex-direction: row;
+  margin: 5px;
+  justify-content: space-between;
+}
+
+.icon {
+  width: 36px;
+  display: flex;
+  flex-direction: row;
+  flex-grow: 2;
+  justify-content: space-between;
+}

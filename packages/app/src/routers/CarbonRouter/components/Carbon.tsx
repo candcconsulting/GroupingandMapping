@@ -11,7 +11,6 @@ import { RouteComponentProps, useLocation, useNavigate } from "@reach/router";
 import React, { BaseSyntheticEvent } from "react";
 
 import { useApiPrefix } from "../../../api/useApiPrefix";
-import "../../../data/epddata.ts";
 import "./Carbon.scss";
 import { CarbonByCategory } from "./CarbonbyCategory";
 
@@ -97,7 +96,7 @@ export const Carbon = ({
           <Tab
             key={2}
             label="Properties"
-            sublabel="User defined slection of properties and instances"
+            sublabel="User defined selection of properties and instances"
           />,
           <Tab
             key={3}

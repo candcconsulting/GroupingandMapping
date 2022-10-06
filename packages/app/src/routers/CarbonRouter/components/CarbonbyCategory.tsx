@@ -28,6 +28,7 @@ import { sqlAPI } from "../../../api/queryAPI";
 import { useApiData } from "../../../api/useApiData";
 import { useApiPrefix } from "../../../api/useApiPrefix";
 import { epd, materialMapping } from "../../../data/epddata";
+// import {mongoDBapi} from "../../../api/mongoDBapi";
 import {
   ColouredCell,
   SkeletonCell,
@@ -71,6 +72,7 @@ interface ISummary {
 }
 const mMapping = materialMapping;
 const mEPD = epd;
+// const mongoEPD = mongoDBapi.getAllEPD();
 
 const makeGroupStrings = (): string => {
   let groupString = ",";
@@ -90,7 +92,7 @@ const getColor = (value: number, min: number, max: number) => {
   return `hsl(${hue},50%,60%)`
 } */
 
-const getRGBColor = (value: number, min: number, max: number) => {
+export const getRGBColor = (value: number, min: number, max: number) => {
   const normalizedValue = value - min;
   const normalizedMax = max - min;
   const percentage = normalizedValue / normalizedMax;
