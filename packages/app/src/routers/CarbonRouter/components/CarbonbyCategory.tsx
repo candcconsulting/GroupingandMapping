@@ -11,7 +11,9 @@ import {
 } from "@itwin/core-common";
 import { CheckpointConnection, IModelApp } from "@itwin/core-frontend";
 import { FrontendIModelsAccess } from "@itwin/imodels-access-frontend";
+import { SvgRecords } from "@itwin/itwinui-icons-react";
 import {
+  IconButton,
   Table,
   tableFilters,
   TablePaginator,
@@ -22,7 +24,10 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { CellRendererProps } from "react-table";
 import { Cell, Pie, PieChart, Tooltip } from "recharts";
 
+import { displayNegativeToast } from "../../../api/helperfunctions/messages";
 import { iTwinAPI } from "../../../api/iTwinAPI";
+// import mongoDBapi, { IGWP } from "../../../api/mongoDBapi";
+import mongoAppApi, { IGWP } from "../../../api/mongoAppApi";
 import { ProjectsClient } from "../../../api/projects/projectsClient";
 import { sqlAPI } from "../../../api/queryAPI";
 import { useApiData } from "../../../api/useApiData";
@@ -34,6 +39,7 @@ import {
   SkeletonCell,
 } from "../../../routers/SynchronizationRouter/components/SkeletonCell";
 import AuthClient from "../../../services/auth/AuthClient";
+import { getClaimsFromToken } from "../../../services/auth/authUtil";
 import { coloredCellRenderer } from "./ColoredCell";
 
 interface ElementCountProps extends RouteComponentProps {
@@ -189,6 +195,11 @@ export const CarbonByCategory = ({
   const rpcInterfaces = React.useMemo(() => [IModelReadRpcInterface], []);
   const [minGWP, setMinGWP] = useState(0);
   const [maxGWP, setMaxGWP] = useState(1);
+  const [claims, setClaims] = React.useState<Record<string, string>>({});
+
+  React.useEffect(() => {
+    setClaims(getClaimsFromToken(accessToken ?? "") ?? {});
+  }, [accessToken]);
 
   useEffect(() => {
     async function startIModelApp() {
@@ -283,6 +294,7 @@ export const CarbonByCategory = ({
     } */
       // setElements([]);
       console.log(`Groups Loaded Length = ${groups.length}`);
+
       const iModelConnection = await CheckpointConnection.openRemote(
         projectId,
         iModelId
@@ -502,6 +514,25 @@ export const CarbonByCategory = ({
     return null;
   };
 
+  const storeGWP = async () => {
+    if (!elementsLoaded) {
+      displayNegativeToast("Please wait for Index to load fully");
+      return;
+    }
+    const aDate = new Date();
+    for (const element of elements) {
+      const gwpStore: IGWP = {
+        iModelId: iModelId,
+        storeDate: aDate,
+        volume: element.volume,
+        gwp: element.gwp,
+        material: element.material,
+        count: element.count,
+      };
+      void mongoAppApi.putGWP(claims.email, iModelId, accessToken, gwpStore);
+    }
+  };
+
   const pageSizeList = useMemo(() => [10, 25, 50], []);
   const paginator = useCallback(
     (props: TablePaginatorRendererProps) => (
@@ -513,7 +544,23 @@ export const CarbonByCategory = ({
   return (
     <div className="row">
       <div>
-        <div className="panel-header">Carbon by Category</div>
+        <div className="panel-header">
+          <div className="row">
+            <div className="column">Carbon by Category</div>
+            <div className="column-right">
+              <IconButton
+                className="icon"
+                styleType="borderless"
+                onClick={async () => {
+                  await storeGWP();
+                }}
+              >
+                <SvgRecords />
+              </IconButton>
+            </div>
+          </div>
+        </div>
+
         <Table
           isSortable={true}
           expanderCell={() => null}

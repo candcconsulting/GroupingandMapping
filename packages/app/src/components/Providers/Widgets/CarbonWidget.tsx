@@ -23,7 +23,6 @@ import {
   ToggleSwitch,
 } from "@itwin/itwinui-react";
 import { getColorValue } from "@itwin/itwinui-react/cjs/core/ColorPicker/ColorPicker";
-import { SelectionHelper } from "@itwin/presentation-frontend";
 import React, { useCallback, useEffect, useLayoutEffect, useMemo } from "react";
 
 import { iTwinAPI } from "../../../api/iTwinAPI";

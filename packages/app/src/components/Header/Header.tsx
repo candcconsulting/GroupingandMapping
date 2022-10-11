@@ -62,7 +62,8 @@ const RoutedHeader = ({
 
   const showProjectButton = isAuthenticated && projectId;
   const showIModelButton = isAuthenticated && iModelId && section !== "members";
-  const showVersionButton = isAuthenticated && iModelId && section === "view";
+  const showVersionButton =
+    isAuthenticated && iModelId && (section === "view" || section === "esg");
 
   return (
     <IuiHeader

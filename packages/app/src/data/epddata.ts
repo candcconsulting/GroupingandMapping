@@ -27,6 +27,13 @@ export const epd = {
       ICEcarbonFactor: 0.089,
       carbonFactor: 91.5,
     },
+    {
+      material: "plasterboard",
+      description: "Gyproc® Normal Standard Plasterboard",
+      density: 720,
+      ICEcarbonFactor: 0.03,
+      carbonFactor: 20.7,
+    },
   ],
 };
 
@@ -35,10 +42,14 @@ export const materialMapping = {
   groups: [
     {
       material: "steelwork",
-      group: ["Steelwork", "Beams", "Columns"],
+      group: ["Steelwork", "Beams", "Columns", "SteelFraming"],
     },
-    { material: "concrete", group: ["Foundations", "Floors"] },
+    {
+      material: "concrete",
+      group: ["Foundations", "Floors", "ConcreteStructures", "WallsConcrete"],
+    },
     { material: "glazing", group: ["Glazing", "Windows"] },
+    { material: "plasterboard", group: ["WallsPlaster"] },
   ],
 };
 

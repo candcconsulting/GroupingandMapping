@@ -54,7 +54,8 @@
     "react-dom": "^17.0.2",
     "react-intersection-observer": "^8.32.0",
     "recharts": "^2.1.13",
-    "bootstrap-table": "^1.21.1"
+    "bootstrap-table": "^1.21.1",
+    "realm-web": "^1.7.1"
   },
   "devDependencies": {
     "@bentley/react-scripts": "^4.0.7",

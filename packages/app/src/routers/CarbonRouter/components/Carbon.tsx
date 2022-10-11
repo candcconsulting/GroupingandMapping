@@ -13,6 +13,7 @@ import React, { BaseSyntheticEvent } from "react";
 import { useApiPrefix } from "../../../api/useApiPrefix";
 import "./Carbon.scss";
 import { CarbonByCategory } from "./CarbonbyCategory";
+import { CarbonTrend } from "./CarbonTrend";
 
 export interface CarbonProps extends RouteComponentProps {
   projectId?: string;
@@ -61,13 +62,27 @@ export const Carbon = ({
         return (
           <div
             className="app-dashboard-grid"
-            style={{ overflow: "auto", height: "90vh", display: "flex" }}
+            style={{
+              overflow: "auto",
+              height: "90vh",
+              display: "flex",
+              flexDirection: "column",
+            }}
           >
-            <CarbonByCategory
-              projectId={projectId}
-              accessToken={accessToken}
-              iModelId={iModelId}
-            ></CarbonByCategory>
+            <div style={{ flex: "2" }}>
+              <CarbonByCategory
+                projectId={projectId}
+                accessToken={accessToken}
+                iModelId={iModelId}
+              ></CarbonByCategory>
+            </div>
+            <div style={{ flex: "1" }}>
+              <CarbonTrend
+                projectId={projectId}
+                accessToken={accessToken}
+                iModelId={iModelId}
+              ></CarbonTrend>
+            </div>
           </div>
         );
       case 1:
