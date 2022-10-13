@@ -10,7 +10,7 @@ Select All : Select All elements that are emphasized to be selected for useful c
 Hide All : will cycle through all groups and Hide All elements which are part of a grouping thus allowing users to view what part of the model is not reported on.
 Show All : Emphasize all elements that are part of a group, thus allowing a user to review what is already selected across all groups
 
-##MongoDB
+## MongoDB
 The MongoDB Tag indicates that the epd and epdMapping have moved to MongoDB
 Instructions on how to configure this and a MongoDB template will be forthcoming and listed in the mongoDB readme
 
