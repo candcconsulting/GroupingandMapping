@@ -14,8 +14,8 @@ import { FrontendIModelsAccess } from "@itwin/imodels-access-frontend";
 import { RouteComponentProps } from "@reach/router";
 import React, { useEffect } from "react";
 import {
-  Area,
-  Bar,
+  //  Area,
+  // Bar,
   CartesianGrid,
   ComposedChart,
   Legend,
@@ -26,8 +26,7 @@ import {
   YAxis,
 } from "recharts";
 
-import mongoAppApi, { IGWP } from "../../../api/mongoAppApi";
-import { sqlAPI } from "../../../api/queryAPI";
+import mongoAppApi from "../../../api/mongoAppApi";
 import AuthClient from "../../../services/auth/AuthClient";
 import { getClaimsFromToken } from "../../../services/auth/authUtil";
 
@@ -46,18 +45,8 @@ const colours = [
   "#D0ECE7",
   "#FCF3CF",
   "#EBDEF0",
-
 ];
-const dashes = [
-  "3 3",
-  "5 5",
-  "7 7",
-  "9 9",
-  "3 1 3",
-  "5 1 5",
-  "7 1 7",
-  "9 1 9"
-]
+const dashes = ["3 3", "5 5", "7 7", "9 9", "3 1 3", "5 1 5", "7 1 7", "9 1 9"];
 
 export const CarbonTrend = ({
   accessToken,
@@ -96,7 +85,7 @@ export const CarbonTrend = ({
     if (claims.email) {
       void getGWPData();
     }
-  }, [iModelId, claims.email]);
+  }, [iModelId, claims.email, accessToken]);
 
   const gwpFormatter = (aGWP: number) => {
     if (aGWP > 1000000000) {

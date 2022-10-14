@@ -4,7 +4,6 @@
  *
  * This code is for demonstration purposes and should not be considered production ready.
  *--------------------------------------------------------------------------------------------*/
-import { access } from "fs";
 import * as Realm from "realm-web";
 
 export interface IGWP {
@@ -17,10 +16,8 @@ export interface IGWP {
   id?: string;
 }
 
-const REALM_APP_ID = "itwin-osdfm";
-
 export class mongoAppApi {
-  static app = new Realm.App(REALM_APP_ID);
+  static app = new Realm.App(process.env.REALM_APP_ID ?? "");
 
   public static async getGWP(
     userName: string,
@@ -80,12 +77,13 @@ export class mongoAppApi {
       const user = await mongoAppApi.app.logIn(credentials);
       console.log("getEPD Mapping User Logged in ", user.id);
       let epdMapping = await user.functions.getEPDMapping(iModel);
-      if (epdMapping === null)
+      if (epdMapping === null) {
         epdMapping = await user.functions.getEPDMapping("default");
-      return epdMapping  
+      }
+      return epdMapping;
     } catch (error) {
       console.log(error);
-      return undefined
+      return undefined;
     }
   }
 
@@ -100,9 +98,6 @@ export class mongoAppApi {
       console.log(error);
     }
   }
-
-
 }
-
 
 export default mongoAppApi;

@@ -11,7 +11,7 @@ import {
 } from "@itwin/core-common";
 import { CheckpointConnection, IModelApp } from "@itwin/core-frontend";
 import { FrontendIModelsAccess } from "@itwin/imodels-access-frontend";
-import { SvgRecords, SvgSave } from "@itwin/itwinui-icons-react";
+import { SvgSave } from "@itwin/itwinui-icons-react";
 import {
   IconButton,
   Table,
@@ -20,7 +20,6 @@ import {
   TablePaginatorRendererProps,
 } from "@itwin/itwinui-react";
 import { RouteComponentProps } from "@reach/router";
-import { access } from "fs";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { CellRendererProps } from "react-table";
 import { Cell, Pie, PieChart, Tooltip } from "recharts";
@@ -81,7 +80,6 @@ interface ISummary {
 // const mEPD = epd;
 // const mongoEPD = mongoDBapi.getAllEPD();
 
-
 /*
 const getColor = (value: number, min: number, max: number) => {
   const normalizedValue = value - min;
@@ -92,6 +90,25 @@ const getColor = (value: number, min: number, max: number) => {
   const saturation = Math.abs(percentage - 0.5) * 100;
   return `hsl(${hue},50%,60%)`
 } */
+
+const findMapping = (epdMapping: any, searchString: string): string => {
+  let returnString = "";
+  epdMapping.groups.forEach((aGroup: any) => {
+    const groupString = aGroup.group.toString();
+    if (groupString.toLowerCase().includes(searchString.toLowerCase())) {
+      returnString = aGroup.material;
+    }
+  });
+  return returnString;
+};
+
+const makeGroupStrings = (epdMapping: any): string => {
+  let groupString = ",";
+  epdMapping.groups.forEach((aGroup: any) => {
+    groupString = groupString + aGroup.group.toString() + ",";
+  });
+  return groupString;
+};
 
 export const getRGBColor = (value: number, min: number, max: number) => {
   const normalizedValue = value - min;
@@ -159,8 +176,6 @@ const getRGB = (h: number, s: number, l: number) => {
   return "#" + rh + gh + bh;
 };
 
-
-
 export const CarbonByCategory = ({
   accessToken,
   projectId,
@@ -168,7 +183,9 @@ export const CarbonByCategory = ({
 }: ElementCountProps) => {
   const [elements, setElements] = React.useState<any[]>([]);
   const [epdMapping, setEPDMapping] = React.useState<any>(undefined);
-  const [EPDMappingLoaded, setEPDMappingLoaded] = React.useState(epdMapping !== undefined);
+  const [EPDMappingLoaded, setEPDMappingLoaded] = React.useState(
+    epdMapping !== undefined
+  );
   const [epd, setEPD] = React.useState<any[]>([]);
   const [mapping, setMapping] = React.useState<IMapping>();
   const [groups, setGroups] = React.useState<any[]>([]);
@@ -185,25 +202,6 @@ export const CarbonByCategory = ({
   const [minGWP, setMinGWP] = useState(0);
   const [maxGWP, setMaxGWP] = useState(1);
   const [claims, setClaims] = React.useState<Record<string, string>>({});
-
-  const findMapping = (searchString: string): string => {
-    let returnString = "";
-    epdMapping.groups.forEach((aGroup: any) => {
-      const groupString = aGroup.group.toString();
-      if (groupString.toLowerCase().includes(searchString.toLowerCase())) {
-        returnString = aGroup.material;
-      }
-    });
-    return returnString;
-  };
-  
-  const makeGroupStrings = (): string => {
-    let groupString = ",";
-    epdMapping.groups.forEach((aGroup: any) => {
-      groupString = groupString + aGroup.group.toString() + ",";
-    });
-    return groupString;
-  };
 
   React.useEffect(() => {
     setClaims(getClaimsFromToken(accessToken ?? "") ?? {});
@@ -235,30 +233,29 @@ export const CarbonByCategory = ({
     url: `https://api.bentley.com/insights/reporting/datasources/imodels/${iModelId}/mappings`,
   });
 
-  useEffect ( () => {
+  useEffect(() => {
     if (iModelId && claims.email && accessToken) {
-      void mongoAppApi.getEPDMapping(claims.email, iModelId, accessToken)
-      .then((theMapping) => {
-        if (theMapping?.iModelId !== iModelId) {
-          console.log(`EPD Mapping for ${iModelId} not found using default`)
-        }
-        setEPDMapping(theMapping);
-        if (theMapping)
-          setEPDMappingLoaded(true);
-      });
+      void mongoAppApi
+        .getEPDMapping(claims.email, iModelId, accessToken)
+        .then((theMapping) => {
+          if (theMapping?.iModelId !== iModelId) {
+            console.log(`EPD Mapping for ${iModelId} not found using default`);
+          }
+          setEPDMapping(theMapping);
+          if (theMapping) {
+            setEPDMappingLoaded(true);
+          }
+        });
     }
   }, [iModelId, accessToken, claims]);
 
-  useEffect (() => {
+  useEffect(() => {
     if (iModelId) {
-      void mongoAppApi.getAllEPD()
-      .then((allEPD) => {
-        setEPD(allEPD)
-      })
+      void mongoAppApi.getAllEPD().then((allEPD) => {
+        setEPD(allEPD);
+      });
     }
-
-  }, [iModelId])
-
+  }, [iModelId]);
 
   useEffect(() => {
     // console.log("setMappingLoaded");
@@ -267,47 +264,55 @@ export const CarbonByCategory = ({
     }
   }, [mappings]);
 
-useEffect(() => {
-  const loadGroups = async () => {    
-    if (mappings && EPDMappingLoaded) {
-      for (const aMapping of mappings) {
-        //      mappings.forEach(async (mapping: IMapping) => {
-        if (aMapping.mappingName === epdMapping.mappingName) {
-          setMapping(mapping);
-          console.log(
-            "Found in getMappings" + aMapping.mappingName + aMapping.id
-          );
-          setMappingLoaded(true);
-          if (AuthClient.client) {
-            void (await iTwinAPI
-              .getGroups(AuthClient.client, iModelId, aMapping.id)
-              .then((allGroups) => {
-                const ourGroups: IGroup[] = [];
-                // console.log(allGroups);
-                allGroups.forEach((group: IGroup) => {
-                  const groupStrings = makeGroupStrings();
-                  if (groupStrings.indexOf(group.groupName) >= 0) {
-                    // console.log(group);
-                    const material = findMapping(group.groupName);
-                    group.material = material;
-                    ourGroups.push(group);
-                  }
-                });
-                setGroups(ourGroups);
-              }));
+  useEffect(() => {
+    const loadGroups = async () => {
+      if (mappings && EPDMappingLoaded) {
+        for (const aMapping of mappings) {
+          //      mappings.forEach(async (mapping: IMapping) => {
+          if (aMapping.mappingName === epdMapping.mappingName) {
+            setMapping(mapping);
+            console.log(
+              "Found in getMappings" + aMapping.mappingName + aMapping.id
+            );
+            setMappingLoaded(true);
+            if (AuthClient.client) {
+              void (await iTwinAPI
+                .getGroups(AuthClient.client, iModelId, aMapping.id)
+                .then((allGroups) => {
+                  const ourGroups: IGroup[] = [];
+                  // console.log(allGroups);
+                  allGroups.forEach((group: IGroup) => {
+                    const groupStrings = makeGroupStrings(epdMapping);
+                    if (groupStrings.indexOf(group.groupName) >= 0) {
+                      // console.log(group);
+                      const material = findMapping(epdMapping, group.groupName);
+                      group.material = material;
+                      ourGroups.push(group);
+                    }
+                  });
+                  setGroups(ourGroups);
+                }));
+            }
           }
-        }
-      } //);
-    } else {
-      // console.log("mappings not loaded so skipping : " + mappingLoaded);
-    }
-  };
-  // console.log("checking :", mappingLoaded, groupsLoaded, EPDMappingLoaded)
+        } //);
+      } else {
+        // console.log("mappings not loaded so skipping : " + mappingLoaded);
+      }
+    };
+    // console.log("checking :", mappingLoaded, groupsLoaded, EPDMappingLoaded)
     if (mappingLoaded && !groupsLoaded && EPDMappingLoaded && epdMapping) {
-      console.log("Loading Groups")
+      console.log("Loading Groups");
       void loadGroups();
     }
-  },[mappingLoaded, groupsLoaded, epdMapping, EPDMappingLoaded, mappings, mapping, iModelId]);
+  }, [
+    mappingLoaded,
+    groupsLoaded,
+    epdMapping,
+    EPDMappingLoaded,
+    mappings,
+    mapping,
+    iModelId,
+  ]);
 
   useEffect(() => {
     setGroupsLoaded(groups.length > 0);
@@ -427,7 +432,7 @@ useEffect(() => {
     if (!elementsLoaded && !isLoading.current && groupsLoaded) {
       isLoading.current = true;
       if (isLoading.current) {
-/*        console.log(
+        /*        console.log(
           "elementsLoaded : ",
           elementsLoaded,
           " isLoading:",
@@ -449,6 +454,7 @@ useEffect(() => {
     projectId,
     accessToken,
     urlPrefix,
+    epd,
   ]);
 
   useEffect(() => {

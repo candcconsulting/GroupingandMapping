@@ -6,7 +6,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { useActiveIModelConnection } from "@itwin/appui-react";
-import Grid from "@itwin/itwinui-icons-react/cjs/icons/Grid";
 import { HorizontalTabs, Tab } from "@itwin/itwinui-react";
 import { RouteComponentProps, useLocation, useNavigate } from "@reach/router";
 import React, { BaseSyntheticEvent } from "react";
@@ -63,14 +62,14 @@ export const Carbon = ({
         return (
           <div
             className="app-dashboard-grid"
-            style={{              
+            style={{
               height: "90vh",
               display: "flex",
               flexDirection: "column",
             }}
           >
-            <div style={{ flex: "1", minWidth:"50%"}}>
-              <CarbonByCategory 
+            <div style={{ flex: "1", minWidth: "50%" }}>
+              <CarbonByCategory
                 projectId={projectId}
                 accessToken={accessToken}
                 iModelId={iModelId}
