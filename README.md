@@ -10,9 +10,10 @@ Select All : Select All elements that are emphasized to be selected for useful c
 Hide All : will cycle through all groups and Hide All elements which are part of a grouping thus allowing users to view what part of the model is not reported on.
 Show All : Emphasize all elements that are part of a group, thus allowing a user to review what is already selected across all groups
 
-From 0.2.0 this application utilises MongoDB and Atlas App Services to calculate GWP factors. Grouping and Mapping will still work but GWP / Carbon will only work with a MongoDB endpoint configured.
-You can use this repository as a starting point
-https://github.com/candcconsulting/AtlasCarbon
+## MongoDB
+
+The MongoDB Tag indicates that the epd and epdMapping have moved to MongoDB
+Instructions on how to configure this and a MongoDB template will be forthcoming and listed in the mongoDB readme
 
 ## Environment Variables
 
