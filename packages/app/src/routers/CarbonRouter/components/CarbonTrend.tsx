@@ -42,11 +42,22 @@ const colours = [
   "#F08080",
   "#1E8449",
   "#3498DB",
+  "#85929E",
   "#D0ECE7",
   "#FCF3CF",
   "#EBDEF0",
-  "#85929E",
+
 ];
+const dashes = [
+  "3 3",
+  "5 5",
+  "7 7",
+  "9 9",
+  "3 1 3",
+  "5 1 5",
+  "7 1 7",
+  "9 1 9"
+]
 
 export const CarbonTrend = ({
   accessToken,
@@ -146,6 +157,7 @@ export const CarbonTrend = ({
         tempObjects.push(
           <Line
             name={materials[aMaterial]}
+            strokeDasharray={dashes[aMaterial]}
             yAxisId={0}
             type="monotone"
             dot={true}
@@ -160,6 +172,7 @@ export const CarbonTrend = ({
         tempObjects.push(
           <Line
             name={materials[aMaterial]}
+            strokeDasharray={dashes[aMaterial]}
             yAxisId={1}
             type="linear"
             dot={true}
@@ -185,7 +198,7 @@ export const CarbonTrend = ({
 
   console.log("CarbonHistory");
   return (
-    <ResponsiveContainer width={"100%"} aspect={3}>
+    <ResponsiveContainer width={"80%"} aspect={3}>
       <ComposedChart>
         <XAxis
           allowDuplicatedCategory={false}

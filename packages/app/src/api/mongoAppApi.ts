@@ -38,7 +38,7 @@ export class mongoAppApi {
     );
     try {
       const user = await mongoAppApi.app.logIn(credentials);
-      console.log("User Logged in ", user.id);
+      console.log("getGWP User Logged in ", user.id);
       const gwp = await user.functions.getGWP(iModel);
       return gwp;
     } catch (error) {
@@ -60,13 +60,49 @@ export class mongoAppApi {
     );
     try {
       const user = await mongoAppApi.app.logIn(credentials);
-      console.log("User Logged in ", user.id);
       const gwp = await user.functions.putGWP(gwpStore);
-      console.log("success ", gwp);
+      console.log("User Logged in ", user.id);
     } catch (error) {
       console.log(error);
     }
   }
+
+  public static async getEPDMapping(
+    userName: string,
+    iModel: string,
+    accessToken: string
+  ) {
+    const credentials = Realm.Credentials.emailPassword(
+      userName.toLowerCase(),
+      userName.toLowerCase()
+    );
+    try {
+      const user = await mongoAppApi.app.logIn(credentials);
+      console.log("getEPD Mapping User Logged in ", user.id);
+      let epdMapping = await user.functions.getEPDMapping(iModel);
+      if (epdMapping === null)
+        epdMapping = await user.functions.getEPDMapping("default");
+      return epdMapping  
+    } catch (error) {
+      console.log(error);
+      return undefined
+    }
+  }
+
+  public static async getAllEPD() {
+    const credentials = Realm.Credentials.anonymous();
+    try {
+      const user = await mongoAppApi.app.logIn(credentials);
+      console.log("getAllEPD User Logged in ", user.id);
+      const epd = await user.functions.getAllEPD();
+      return epd;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+
 }
+
 
 export default mongoAppApi;

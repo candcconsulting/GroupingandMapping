@@ -26,6 +26,7 @@ import { getColorValue } from "@itwin/itwinui-react/cjs/core/ColorPicker/ColorPi
 import React, { useCallback, useEffect, useLayoutEffect, useMemo } from "react";
 
 import { iTwinAPI } from "../../../api/iTwinAPI";
+import mongoAppApi from "../../../api/mongoAppApi";
 import { ProjectsClient } from "../../../api/projects/projectsClient";
 import { sqlAPI } from "../../../api/queryAPI";
 import { useApiData } from "../../../api/useApiData";
@@ -34,6 +35,7 @@ import { epd, materialMapping } from "../../../data/epddata";
 import { getRGBColor } from "../../../routers/CarbonRouter/components/CarbonbyCategory";
 import { SkeletonCell } from "../../../routers/SynchronizationRouter/components/SkeletonCell";
 import AuthClient from "../../../services/auth/AuthClient";
+import { getClaimsFromToken } from "../../../services/auth/authUtil";
 import { useCommonPathPattern } from "../../MainLayout/useCommonPathPattern";
 
 interface IMapping {
@@ -64,28 +66,6 @@ interface ISummary {
   min: number;
   userLabel?: string;
 }
-
-const mMapping = materialMapping;
-const mEPD = epd;
-
-const makeGroupStrings = (): string => {
-  let groupString = ",";
-  for (const aGroup of mMapping.groups) {
-    groupString = groupString + aGroup.group.toString() + ",";
-  }
-  return groupString;
-};
-
-const findMapping = (searchString: string): string => {
-  let returnString = "";
-  for (const aGroup of mMapping.groups) {
-    const groupString = aGroup.group.toString();
-    if (groupString.toLowerCase().includes(searchString.toLowerCase())) {
-      returnString = aGroup.material;
-    }
-  }
-  return returnString;
-};
 
 const getColourByCounter = (count: number): ColorDef => {
   let returnValue = ColorDef.red;
@@ -125,12 +105,16 @@ export const CarbonWidget = () => {
   const [elements, setElements] = React.useState<any[]>([]);
   const [mapping, setMapping] = React.useState<IMapping>();
   const [groups, setGroups] = React.useState<any[]>([]);
+  const [epdMapping, setEPDMapping] = React.useState<any>(undefined);
+  const [EPDMappingLoaded, setEPDMappingLoaded] = React.useState(epdMapping !== undefined);
+  const [epd, setEPD] = React.useState<any[]>([]);
   const [mappingLoaded, setMappingLoaded] = React.useState(false);
   const [groupsLoaded, setGroupsLoaded] = React.useState(false);
   const isLoading = React.useRef(false);
   const [elementsLoaded, setElementsLoaded] = React.useState(false);
   const [showDetails, setShowDetails] = React.useState(false);
   const [columns, setColumns] = React.useState<any[]>([]);
+  const [claims, setClaims] = React.useState<Record<string, string>>({});
 
   const [error, setError] = React.useState("");
   const urlPrefix = useApiPrefix();
@@ -160,6 +144,26 @@ export const CarbonWidget = () => {
     accessToken: accessToken,
     url: `https://api.bentley.com/insights/reporting/datasources/imodels/${iModelId}/mappings`,
   });
+
+  const findMapping = (searchString: string): string => {
+    let returnString = "";
+    epdMapping.groups.forEach((aGroup: any) => {
+      const groupString = aGroup.group.toString();
+      if (groupString.toLowerCase().includes(searchString.toLowerCase())) {
+        returnString = aGroup.material;
+      }
+    });
+    return returnString;
+  };
+  
+  const makeGroupStrings = (): string => {
+    let groupString = ",";
+    epdMapping.groups.forEach((aGroup: any) => {
+      groupString = groupString + aGroup.group.toString() + ",";
+    });
+    return groupString;
+  };
+
 
   const groupColumns = React.useMemo(
     () => [
@@ -286,19 +290,48 @@ export const CarbonWidget = () => {
     ],
     []
   );
+
+  React.useEffect(() => {
+    setClaims(getClaimsFromToken(accessToken ?? "") ?? {});
+  }, [accessToken]);
+  
+  useEffect ( () => {
+    if (iModelId && claims.email && accessToken) {
+      void mongoAppApi.getEPDMapping(claims.email, iModelId, accessToken)
+      .then((theMapping) => {
+        if (theMapping?.iModelId !== iModelId) {
+          console.log(`EPD Mapping for ${iModelId} not found using default`)
+        }
+        setEPDMapping(theMapping);
+        if (theMapping)
+          setEPDMappingLoaded(true);
+      });
+    }
+  }, [iModelId, accessToken, claims]);
+
+  useEffect (() => {
+    if (iModelId) {
+      void mongoAppApi.getAllEPD()
+      .then((allEPD) => {
+        setEPD(allEPD)
+      })
+    }
+
+  }, [iModelId])
+
   useEffect(() => {
     if (mappings) {
-      console.log("Mappings.Length", mappings.length);
+      // console.log("Mappings.Length", mappings.length);
       setMappingLoaded(mappings.length > 0);
     }
   }, [mappings]);
 
   useEffect(() => {
     const loadGroups = async () => {
-      if (mappings && iModelId) {
+      if (mappings && EPDMappingLoaded && iModelId) {
         // mappings.forEach((mapping: IMapping) => {
         for (const aMapping of mappings) {
-          if (aMapping.mappingName === mMapping.mappingName) {
+          if (aMapping.mappingName === epdMapping.mappingName) {
             setMapping(mapping);
             console.log("Found " + aMapping.mappingName + aMapping.id);
             setMappingLoaded(true);
@@ -307,7 +340,7 @@ export const CarbonWidget = () => {
                 .getGroups(AuthClient.client, iModelId, aMapping.id)
                 .then((allGroups) => {
                   const ourGroups: IGroup[] = [];
-                  console.log(allGroups);
+                  // console.log(allGroups);
                   for (const aGroup of allGroups) {
                     //                allGroups.forEach((group: IGroup) => {
                     const groupStrings = makeGroupStrings();
@@ -318,24 +351,28 @@ export const CarbonWidget = () => {
                       ourGroups.push(aGroup);
                     }
                   } // );
-                  setGroups(ourGroups);
-                  setGroupsLoaded(true);
+                  setGroups(ourGroups);                  
                 });
             }
           }
         } //);
       }
     };
-    if (mappingLoaded) {
+    if (mappingLoaded && !groupsLoaded && EPDMappingLoaded && epdMapping) {
       console.log("mappingLoaded");
       void loadGroups();
     }
-  }, [mappingLoaded, mapping, iModelId, mappings]);
+  }, [mappingLoaded, mapping, iModelId, mappings, EPDMappingLoaded, epdMapping]);
+
+  useEffect(() => {
+    setGroupsLoaded(groups.length > 0);
+    setElementsLoaded(false);
+  }, [groups]);
 
   useEffect(() => {
     const client = new ProjectsClient(urlPrefix, accessToken ?? "");
     const fetchElements = async () => {
-      console.log("fetchElements called");
+      // console.log("fetchElements called");
       console.log(`Groups Loaded Length = ${groups.length}`);
       isLoading.current = true;
       //let max = 0;
@@ -354,9 +391,9 @@ export const CarbonWidget = () => {
         allInstances = [];
         // groups.forEach(async (aGroup: any) => {
         for (const aGroup of groups) {
-          console.log(aGroup);
+          // console.log(aGroup);
           const iModelConnection = vp.iModel;
-          const aMaterial = mEPD.epd.find(
+          const aMaterial = epd.find(
             (aMaterial) => aMaterial.material === aGroup.material
           );
           const tempInstances = await sqlAPI.getVolumeforGroupWidget(
