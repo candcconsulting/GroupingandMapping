@@ -14,6 +14,8 @@ Show All : Emphasize all elements that are part of a group, thus allowing a user
 
 The MongoDB Tag indicates that the epd and epdMapping have moved to MongoDB
 Instructions on how to configure this and a MongoDB template will be forthcoming and listed in the mongoDB readme
+Sample MongoDB Atlas template is here
+https://github.com/candcconsulting/AtlasCarbon
 
 ## Environment Variables
 
