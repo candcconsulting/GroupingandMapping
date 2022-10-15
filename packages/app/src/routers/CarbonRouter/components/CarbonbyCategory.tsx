@@ -358,7 +358,7 @@ export const CarbonByCategory = ({
             aGroup.groupSQL,
             aGroup.material,
             aMaterial?.carbonFactor ?? 0,
-            aMaterial.unit
+            aMaterial.unitType
           );
           allInstances.push(...tempInstances);
           const errInstances = await sqlAPI.getVolumeforGroup(
@@ -366,7 +366,7 @@ export const CarbonByCategory = ({
             aGroup.groupSQL,
             "Invalid Elements",
             aMaterial?.carbonFactor ?? 0,
-            aMaterial.unit,
+            aMaterial.unitType,
             true
           );
           allInstances.push(...errInstances);

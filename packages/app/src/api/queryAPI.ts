@@ -195,10 +195,25 @@ export class sqlAPI {
       carbonFactor = 0;
     }
     const returnList: IVolume[] = [];
+    let operation = 2;
+    switch (unitType) {
+      case "length": {
+        operation = 0;
+        break;
+      }
+      case "area": {
+        operation = 1;
+        break;
+      }
+      case "volume": {
+        operation = 2;
+        break;
+      }
+    }
     const ids = rows.map((aRow) => aRow.id);
     const massProperties = await iModel.getMassPropertiesPerCandidate({
       candidates: CompressedId64Set.compressIds(ids),
-      operations: [2],
+      operations: [operation],
     });
     let counter = 0;
     for await (const row of rows) {
@@ -269,10 +284,25 @@ export class sqlAPI {
     if (!carbonFactor) {
       carbonFactor = 0;
     }
+    let operation = 2;
+    switch (unitType) {
+      case "length": {
+        operation = 0;
+        break;
+      }
+      case "area": {
+        operation = 1;
+        break;
+      }
+      case "volume": {
+        operation = 2;
+        break;
+      }
+    }
     const ids = rows.map((aRow) => aRow.id);
     const massProperties = await iModel.getMassPropertiesPerCandidate({
       candidates: CompressedId64Set.compressIds(ids),
-      operations: [2],
+      operations: [operation],
     });
     // now we have
     // array of mass Properties massProperties[1].area / .length / .volume / .status
