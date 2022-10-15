@@ -4,8 +4,10 @@
  *
  * This code is for demonstration purposes and should not be considered production ready.
  *--------------------------------------------------------------------------------------------*/
+import { CompressedId64Set } from "@bentley/bentleyjs-core";
 import { QueryRowFormat } from "@itwin/core-common";
 import { CheckpointConnection, IModelConnection } from "@itwin/core-frontend";
+import { ArrowTool } from "@itwin/core-markup";
 
 const singleReturnSQL = (sql: string) => {
   const fromLoc = sql.toLowerCase().indexOf("from");
@@ -76,10 +78,11 @@ export interface IInstanceCount {
 
 export interface IVolume {
   id: string;
-  netVolume: number;
+  quantity: number;
   material: string;
   userlabel: string;
   gwp: number;
+  unit: string;
   max?: number;
   min?: number;
 }
@@ -182,29 +185,70 @@ export class sqlAPI {
     groupSQL: string,
     material: string,
     carbonFactor: number,
+    unitType: string,
     checkErrors = false
   ) => {
-    let sqlCheck = "";
-    if (checkErrors) {
-      sqlCheck =
-        " AND (0.5 * ((ifnull(grossvolume,0)+ifnull(netvolume,0)) + abs(ifnull(grossvolume,0)-ifnull(netvolume,0)))) <= 0 ";
-    }
     const newSQL = singleReturnSQL(groupSQL);
-    const sql = `select ge.ecInstanceId as id,   0.5 * ((ifnull(grossvolume,0)+ifnull(netvolume,0)) + abs(ifnull(grossvolume,0)-ifnull(netvolume,0))) as netVolume, ge.userlabel as userlabel from bis.geometricelement3d ge left join qto.VolumeAspect as va on ge.ecinstanceid = va.element.id where ge.ecinstanceid in (${newSQL}) ${sqlCheck} `;
+    const sql = `select ge.ecInstanceId as id, ge.userlabel as userlabel from bis.geometricelement3d ge where ge.ecinstanceid in (${newSQL})`;
     const rows = await _executeQuery(iModel, sql);
     if (!carbonFactor) {
       carbonFactor = 0;
     }
     const returnList: IVolume[] = [];
+    const ids = rows.map((aRow) => aRow.id);
+    const massProperties = await iModel.getMassPropertiesPerCandidate({
+      candidates: CompressedId64Set.compressIds(ids),
+      operations: [2],
+    });
+    let counter = 0;
     for await (const row of rows) {
-      const aVolume: IVolume = {
-        id: row.id,
-        netVolume: Math.round(row.netVolume * 100) / 100,
-        material: material,
-        userlabel: row.userlabel,
-        gwp: Math.round(row.netVolume * carbonFactor * 100) / 100,
-      };
-      returnList.push(aVolume);
+      let unit = "";
+      let quantity = 0;
+      if (massProperties[counter].status === 0 && !checkErrors) {
+        switch (unitType) {
+          case "volume": {
+            unit = "m3";
+            quantity = massProperties[counter].volume ?? 0;
+            break;
+          }
+          case "area": {
+            unit = "m2";
+            quantity = massProperties[counter].area ?? 0;
+            break;
+          }
+          case "length": {
+            unit = "m";
+            quantity = massProperties[counter].length ?? 0;
+            break;
+          }
+          default: {
+            unit = "m3";
+            quantity = massProperties[counter].volume ?? 0;
+            console.log(`Unrecognised unitType ${unitType} using volume`);
+            break;
+          }
+        }
+        const aVolume: IVolume = {
+          id: row.id,
+          quantity: Math.round(quantity * 100) / 100,
+          material: material,
+          userlabel: row.userlabel,
+          unit: unit,
+          gwp: Math.round(quantity * carbonFactor * 100) / 100,
+        };
+        returnList.push(aVolume);
+      } else if (massProperties[counter].status !== 0 && !checkErrors) {
+        const aVolume: IVolume = {
+          id: row.id,
+          quantity: 0,
+          material: material,
+          userlabel: row.userlabel,
+          unit: "",
+          gwp: 0,
+        };
+        returnList.push(aVolume);
+      }
+      counter = counter + 1;
     }
     return returnList;
   };
@@ -214,29 +258,75 @@ export class sqlAPI {
     groupSQL: string,
     material: string,
     carbonFactor: number,
+    unitType: string,
     checkErrors = false
   ) => {
-    let sqlCheck = "";
-    if (checkErrors) {
-      sqlCheck =
-        " AND (0.5 * ((ifnull(grossvolume,0)+ifnull(netvolume,0)) + abs(ifnull(grossvolume,0)-ifnull(netvolume,0)))) <= 0 ";
-    }
+    /* Update to enable unitType.  qto is not sufficiently populated so use calculateMassProperties which will return area / length / volume and Invalid Elements */
+
     const newSQL = singleReturnSQL(groupSQL);
-    const sql = `select ge.ecInstanceId as id,   0.5 * ((ifnull(grossvolume,0)+ifnull(netvolume,0)) + abs(ifnull(grossvolume,0)-ifnull(netvolume,0))) as netVolume, ge.userlabel as userlabel from bis.geometricelement3d ge left join qto.VolumeAspect as va on ge.ecinstanceid = va.element.id where ge.ecinstanceid in (${newSQL}) ${sqlCheck} `;
+    const sql = `select ge.ecInstanceId as id, ge.userlabel as userlabel from bis.geometricelement3d ge where ge.ecinstanceid in (${newSQL})`;
     const rows = await _executeQuery(iModel, sql);
     if (!carbonFactor) {
       carbonFactor = 0;
     }
+    const ids = rows.map((aRow) => aRow.id);
+    const massProperties = await iModel.getMassPropertiesPerCandidate({
+      candidates: CompressedId64Set.compressIds(ids),
+      operations: [2],
+    });
+    // now we have
+    // array of mass Properties massProperties[1].area / .length / .volume / .status
     const returnList: IVolume[] = [];
+    let counter = 0;
+
     for await (const row of rows) {
-      const aVolume: IVolume = {
-        id: row.id,
-        netVolume: Math.round(row.netVolume * 100) / 100,
-        material: material,
-        userlabel: row.userlabel,
-        gwp: Math.round(row.netVolume * carbonFactor * 100) / 100,
-      };
-      returnList.push(aVolume);
+      let unit = "";
+      let quantity = 0;
+      if (massProperties[counter].status === 0 && !checkErrors) {
+        switch (unitType) {
+          case "volume": {
+            unit = "m3";
+            quantity = massProperties[counter].volume ?? 0;
+            break;
+          }
+          case "area": {
+            unit = "m2";
+            quantity = massProperties[counter].area ?? 0;
+            break;
+          }
+          case "length": {
+            unit = "m";
+            quantity = massProperties[counter].length ?? 0;
+            break;
+          }
+          default: {
+            unit = "m3";
+            quantity = massProperties[counter].volume ?? 0;
+            console.log(`Unrecognised unitType ${unitType} using volume`);
+            break;
+          }
+        }
+        const aVolume: IVolume = {
+          id: row.id,
+          quantity: Math.round(quantity * 100) / 100,
+          material: material,
+          userlabel: row.userlabel,
+          unit: unit,
+          gwp: Math.round(quantity * carbonFactor * 100) / 100,
+        };
+        returnList.push(aVolume);
+      } else if (massProperties[counter].status !== 0 && !checkErrors) {
+        const aVolume: IVolume = {
+          id: row.id,
+          quantity: 0,
+          material: material,
+          userlabel: row.userlabel,
+          unit: "",
+          gwp: 0,
+        };
+        returnList.push(aVolume);
+      }
+      counter = counter + 1;
     }
     return returnList;
   };

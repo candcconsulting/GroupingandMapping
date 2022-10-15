@@ -4,6 +4,7 @@
  *
  * This code is for demonstration purposes and should not be considered production ready.
  *--------------------------------------------------------------------------------------------*/
+import dotenv from "dotenv";
 import * as Realm from "realm-web";
 
 export interface IGWP {
@@ -15,9 +16,10 @@ export interface IGWP {
   count: number;
   id?: string;
 }
+dotenv.config();
 
 export class mongoAppApi {
-  static app = new Realm.App(process.env.REALM_APP_ID ?? "");
+  static app = new Realm.App(process.env.REALM_APP_ID ?? "itwin-osdfm");
 
   public static async getGWP(
     userName: string,

@@ -56,12 +56,13 @@ interface IGroup {
 
 interface ISummary {
   material: string;
-  netVolume: number;
+  quantity: number;
   gwp: number;
   elements: string;
   count: number;
   max: number;
   min: number;
+  unit: string;
   userLabel?: string;
 }
 
@@ -168,9 +169,9 @@ export const CarbonWidget = () => {
             Filter: tableFilters.TextFilter(),
           },
           {
-            accessor: "netVolume",
+            accessor: "quantity",
             Cell: SkeletonCell,
-            Header: "Volume",
+            Header: "Quantity",
             disableResizing: false,
             Filter: tableFilters.NumberRangeFilter(),
           },
@@ -201,6 +202,13 @@ export const CarbonWidget = () => {
             Header: "Count",
             disableResizing: false,
             Filter: tableFilters.NumberRangeFilter(),
+          },
+          {
+            accessor: "unit",
+            Cell: SkeletonCell,
+            Header: "Unit",
+            disableResizing: false,
+            Filter: tableFilters.TextFilter(),
           },
         ],
       },
@@ -234,9 +242,9 @@ export const CarbonWidget = () => {
             Filter: tableFilters.TextFilter(),
           },
           {
-            accessor: "netVolume",
+            accessor: "quantity",
             Cell: SkeletonCell,
-            Header: "Volume",
+            Header: "Quantity",
             disableResizing: false,
             Filter: tableFilters.NumberRangeFilter(),
           },
@@ -260,6 +268,13 @@ export const CarbonWidget = () => {
             Header: "Min",
             disableResizing: false,
             Filter: tableFilters.NumberRangeFilter(),
+          },
+          {
+            accessor: "unit",
+            Cell: SkeletonCell,
+            Header: "Unit",
+            disableResizing: false,
+            Filter: tableFilters.TextFilter(),
           },
         ],
       },
@@ -387,7 +402,8 @@ export const CarbonWidget = () => {
             iModelConnection,
             aGroup.groupSQL,
             aGroup.material,
-            aMaterial?.carbonFactor ?? 0
+            aMaterial?.carbonFactor ?? 0,
+            aMaterial.unitType
           );
           const max = Math.max(...tempInstances.map((o) => o.gwp));
           const min = Math.min(...tempInstances.map((o) => o.gwp));
@@ -406,6 +422,7 @@ export const CarbonWidget = () => {
             aGroup.groupSQL,
             "Invalid Elements",
             aMaterial?.carbonFactor ?? 0,
+            aMaterial.unitType,
             true
           );
           allInstances.push(...errInstances);
@@ -429,20 +446,21 @@ export const CarbonWidget = () => {
               if (summary) {
                 summarizeElements.push({
                   material: summary.material,
-                  netVolume: +summary.netVolume.toFixed(2),
+                  quantity: +summary.quantity.toFixed(2),
                   gwp: +summary.gwp.toFixed(2) ?? 0,
                   elements: summary.id,
                   max: +summary.gwp.toFixed(2) ?? 0,
                   min: +summary.gwp.toFixed(2) ?? 0,
                   count: 1,
+                  unit: summary.unit,
                 });
               }
               const index = summarizeElements.findIndex(
                 (aElement) => aElement.material === value.material
               );
               if (index >= 0) {
-                summarizeElements[index].netVolume = +(
-                  summarizeElements[index].netVolume + value.netVolume
+                summarizeElements[index].quantity = +(
+                  summarizeElements[index].quantity + value.quantity
                 ).toFixed(2);
                 summarizeElements[index].gwp = +(
                   summarizeElements[index].gwp + value.gwp
@@ -459,12 +477,13 @@ export const CarbonWidget = () => {
               } else {
                 summarizeElements.push({
                   material: value.material,
-                  netVolume: value.netVolume,
+                  quantity: value.quantity,
                   gwp: value.gwp ?? 0,
                   elements: value.id,
                   max: summary.gwp ?? 0,
                   min: summary.gwp ?? 0,
                   count: 1,
+                  unit: value.unit,
                 });
               }
               return "";
