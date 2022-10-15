@@ -405,27 +405,19 @@ export const CarbonWidget = () => {
             aMaterial?.carbonFactor ?? 0,
             aMaterial.unitType
           );
-          const max = Math.max(...tempInstances.map((o) => o.gwp));
-          const min = Math.min(...tempInstances.map((o) => o.gwp));
-          tempInstances.map((x) => {
+          const max = Math.max(...tempInstances.gwpList.map((o) => o.gwp));
+          const min = Math.min(...tempInstances.gwpList.map((o) => o.gwp));
+          tempInstances.gwpList.map((x) => {
             x.min = min;
             return x;
           });
-          tempInstances.map((x) => {
+          tempInstances.gwpList.map((x) => {
             x.max = max;
             return x;
           });
 
-          allInstances.push(...tempInstances);
-          const errInstances = await sqlAPI.getVolumeforGroupWidget(
-            iModelConnection,
-            aGroup.groupSQL,
-            "Invalid Elements",
-            aMaterial?.carbonFactor ?? 0,
-            aMaterial.unitType,
-            true
-          );
-          allInstances.push(...errInstances);
+          allInstances.push(...tempInstances.gwpList);
+          allInstances.push(...tempInstances.errorList);
 
           // setElements(allInstances);
           // max = Math.max(...allInstances.map((o) => o.gwp));

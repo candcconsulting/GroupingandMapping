@@ -195,6 +195,7 @@ export class sqlAPI {
       carbonFactor = 0;
     }
     const returnList: IVolume[] = [];
+    const errorList: IVolume[] = [];
     let operation = 2;
     switch (unitType) {
       case "length": {
@@ -219,7 +220,7 @@ export class sqlAPI {
     for await (const row of rows) {
       let unit = "";
       let quantity = 0;
-      if (massProperties[counter].status === 0 && !checkErrors) {
+      if (massProperties[counter].status === 0) {
         switch (unitType) {
           case "volume": {
             unit = "m3";
@@ -252,7 +253,7 @@ export class sqlAPI {
           gwp: Math.round(quantity * carbonFactor * 100) / 100,
         };
         returnList.push(aVolume);
-      } else if (massProperties[counter].status !== 0 && !checkErrors) {
+      } else {
         const aVolume: IVolume = {
           id: row.id,
           quantity: 0,
@@ -261,11 +262,11 @@ export class sqlAPI {
           unit: "",
           gwp: 0,
         };
-        returnList.push(aVolume);
+        errorList.push(aVolume);
       }
       counter = counter + 1;
     }
-    return returnList;
+    return { gwpList: returnList, errorList: errorList };
   };
 
   public static getVolumeforGroup = async (
@@ -307,12 +308,13 @@ export class sqlAPI {
     // now we have
     // array of mass Properties massProperties[1].area / .length / .volume / .status
     const returnList: IVolume[] = [];
+    const errorList: IVolume[] = [];
     let counter = 0;
 
     for await (const row of rows) {
       let unit = "";
       let quantity = 0;
-      if (massProperties[counter].status === 0 && !checkErrors) {
+      if (massProperties[counter].status === 0) {
         switch (unitType) {
           case "volume": {
             unit = "m3";
@@ -345,7 +347,7 @@ export class sqlAPI {
           gwp: Math.round(quantity * carbonFactor * 100) / 100,
         };
         returnList.push(aVolume);
-      } else if (massProperties[counter].status !== 0 && !checkErrors) {
+      } else {
         const aVolume: IVolume = {
           id: row.id,
           quantity: 0,
@@ -354,11 +356,11 @@ export class sqlAPI {
           unit: "",
           gwp: 0,
         };
-        returnList.push(aVolume);
+        errorList.push(aVolume);
       }
       counter = counter + 1;
     }
-    return returnList;
+    return { gwpList: returnList, errorList: errorList };
   };
 
   public static getPropertyInstances = async (

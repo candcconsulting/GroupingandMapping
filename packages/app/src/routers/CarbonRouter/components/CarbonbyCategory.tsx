@@ -360,16 +360,8 @@ export const CarbonByCategory = ({
             aMaterial?.carbonFactor ?? 0,
             aMaterial.unitType
           );
-          allInstances.push(...tempInstances);
-          const errInstances = await sqlAPI.getVolumeforGroup(
-            iModelConnection,
-            aGroup.groupSQL,
-            "Invalid Elements",
-            aMaterial?.carbonFactor ?? 0,
-            aMaterial.unitType,
-            true
-          );
-          allInstances.push(...errInstances);
+          allInstances.push(...tempInstances.gwpList);
+          allInstances.push(...tempInstances.errorList);
           // setElements(allInstances);
         } //);
         console.log("Loaded");
