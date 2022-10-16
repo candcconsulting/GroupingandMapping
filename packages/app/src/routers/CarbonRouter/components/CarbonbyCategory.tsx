@@ -22,7 +22,7 @@ import {
 import { RouteComponentProps } from "@reach/router";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { CellRendererProps } from "react-table";
-import { Cell, Pie, PieChart, Tooltip } from "recharts";
+import { Cell, Legend, Pie, PieChart, Tooltip } from "recharts";
 
 import { displayNegativeToast } from "../../../api/helperfunctions/messages";
 import { iTwinAPI } from "../../../api/iTwinAPI";
@@ -40,7 +40,7 @@ import {
 } from "../../../routers/SynchronizationRouter/components/SkeletonCell";
 import AuthClient from "../../../services/auth/AuthClient";
 import { getClaimsFromToken } from "../../../services/auth/authUtil";
-import { coloredCellRenderer } from "./ColoredCell";
+import { coloredCellRenderer, getColor } from "./ColoredCell";
 
 interface ElementCountProps extends RouteComponentProps {
   accessToken: string;
@@ -543,7 +543,6 @@ export const CarbonByCategory = ({
       return (
         <div className="custom-tooltip">
           <p className="label">{`${payload[0].name} : ${payload[0].value}`}</p>
-          <p className="desc">use filter to reduce segments</p>
         </div>
       );
     }
@@ -697,12 +696,16 @@ export const CarbonByCategory = ({
           fill="#8884d8"
         >
           {pieData.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={colors[index]} />
+            <Cell
+              key={`cell-${index}`}
+              fill={getColor(entry.value, minGWP, maxGWP)}
+            />
           ))}
         </Pie>
         <Tooltip
           content={<CustomTooltip active={false} payload={[]} label={""} />}
         />
+        <Legend layout="vertical" verticalAlign="top" align="right" />
       </PieChart>
     </div>
   );

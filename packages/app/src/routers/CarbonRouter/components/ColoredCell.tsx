@@ -21,7 +21,7 @@ export const coloredCellRenderer = (
   );
 };
 
-const getColor = (value: number, min: number, max: number) => {
+export const getColor = (value: number, min: number, max: number) => {
   const normalizedValue = value - min;
   const normalizedMax = max - min;
   const percentage = normalizedValue / normalizedMax;
