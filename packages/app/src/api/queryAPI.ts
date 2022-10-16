@@ -252,12 +252,17 @@ export class sqlAPI {
           unit: unit,
           gwp: Math.round(quantity * carbonFactor * 100) / 100,
         };
-        returnList.push(aVolume);
+        if (aVolume.quantity <= 0) {
+          aVolume.material = "Invalid " + material;
+          aVolume.gwp = 0;
+        } else {
+          returnList.push(aVolume);
+        }
       } else {
         const aVolume: IVolume = {
           id: row.id,
           quantity: 0,
-          material: material,
+          material: "Invalid " + material,
           userlabel: row.userlabel,
           unit: "",
           gwp: 0,

@@ -580,7 +580,7 @@ export const CarbonWidget = () => {
         getRGBColor(elementGroup.gwp, minGWP, maxGWP)
       );
       const selectedElements = elementGroup.elements;
-      if (elementGroup.material === "Invalid Elements") {
+      if (elementGroup.material.substring(0, 7).toLowerCase() === "invalid") {
         invalidElements = elementGroup.elements;
       } else {
         colourElements(vp, selectedElements, false, colour);

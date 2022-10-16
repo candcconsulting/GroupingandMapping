@@ -31,10 +31,9 @@ export class mongoAppApi {
     }
     // const credentials = Realm.Credentials.jwt(accessToken);
     // const credentials = Realm.Credentials.anonymous();
-    const credentials = Realm.Credentials.emailPassword(
-      userName.toLowerCase(),
-      userName.toLowerCase()
-    );
+    const credentials = Realm.Credentials.function({
+      accessToken: accessToken,
+    });
     try {
       const user = await mongoAppApi.app.logIn(credentials);
       console.log("getGWP User Logged in ", user.id);
@@ -53,10 +52,9 @@ export class mongoAppApi {
   ) {
     // const credentials = Realm.Credentials.jwt(accessToken);
     // const credentials = Realm.Credentials.anonymous();
-    const credentials = Realm.Credentials.emailPassword(
-      userName.toLowerCase(),
-      userName.toLowerCase()
-    );
+    const credentials = Realm.Credentials.function({
+      accessToken: accessToken,
+    });
     try {
       const user = await mongoAppApi.app.logIn(credentials);
       const gwp = await user.functions.putGWP(gwpStore);
@@ -71,10 +69,9 @@ export class mongoAppApi {
     iModel: string,
     accessToken: string
   ) {
-    const credentials = Realm.Credentials.emailPassword(
-      userName.toLowerCase(),
-      userName.toLowerCase()
-    );
+    const credentials = Realm.Credentials.function({
+      accessToken: accessToken,
+    });
     try {
       const user = await mongoAppApi.app.logIn(credentials);
       console.log("getEPD Mapping User Logged in ", user.id);

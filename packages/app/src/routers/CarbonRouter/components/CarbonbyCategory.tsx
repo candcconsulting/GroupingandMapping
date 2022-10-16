@@ -375,7 +375,7 @@ export const CarbonByCategory = ({
               quantity: +summary.quantity.toFixed(2),
               gwp: +summary.gwp.toFixed(2) ?? 0,
               elements: summary.id,
-              unit: summary.unity,
+              unit: summary.unit,
               max: +summary.gwp.toFixed(2) ?? 0,
               min: +summary.gwp.toFixed(2) ?? 0,
               count: 1,
@@ -396,7 +396,10 @@ export const CarbonByCategory = ({
             if (value.gwp > summarizeElements[index].max && value.gwp > 0) {
               summarizeElements[index].max = value.gwp;
             }
-            if (value.gwp < summarizeElements[index].min && value.gwp > 0) {
+            if (
+              (value.gwp < summarizeElements[index].min && value.gwp > 0) ||
+              (summarizeElements[index].min === 0 && value.gwp > 0)
+            ) {
               summarizeElements[index].min = value.gwp;
             }
             summarizeElements[index].count += 1;

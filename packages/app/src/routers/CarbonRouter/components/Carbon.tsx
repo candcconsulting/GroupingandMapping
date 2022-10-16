@@ -63,12 +63,12 @@ export const Carbon = ({
           <div
             className="app-dashboard-grid"
             style={{
-              height: "90vh",
+              // height: "90vh",
               display: "flex",
               flexDirection: "column",
             }}
           >
-            <div style={{ flex: "1", minWidth: "50%" }}>
+            <div style={{ flex: "1", minWidth: "50%", marginBottom: "40px" }}>
               <CarbonByCategory
                 projectId={projectId}
                 accessToken={accessToken}
