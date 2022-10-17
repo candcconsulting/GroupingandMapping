@@ -356,7 +356,7 @@ export class sqlAPI {
         const aVolume: IVolume = {
           id: row.id,
           quantity: 0,
-          material: material,
+          material: "Invalid " + material,
           userlabel: row.userlabel,
           unit: "",
           gwp: 0,
