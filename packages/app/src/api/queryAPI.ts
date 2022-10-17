@@ -367,7 +367,6 @@ export class sqlAPI {
     }
     return { gwpList: returnList, errorList: errorList };
   };
-
   public static getPropertyInstances = async (
     iModel: CheckpointConnection,
     searchProperty: string,
