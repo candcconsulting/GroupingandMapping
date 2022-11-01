@@ -1,0 +1,14 @@
+// hack to fix lost dialog in oneclick LCA awaiting fix from itwin ui team
+#iui-react-portal-container {
+  .iui-dialog-default {
+    max-width:100%;
+  }
+  .iui-dialog-visible {
+    .iui-dialog {
+      visibility : visible;
+      opacity: 1;
+    }
+  }
+ }
+
+

@@ -1966,25 +1966,10 @@
     cross-fetch "^3.1.4"
     fast-xml-parser "^4.0.9"
 
-"@itwin/itwinui-css@0.x", "@itwin/itwinui-css@^0.58.0":
-  version "0.58.0"
-  resolved "https://registry.yarnpkg.com/@itwin/itwinui-css/-/itwinui-css-0.58.0.tgz#e385efc7ce903fc56e955976271e366fa3c0265c"
-  integrity sha512-BBMoB8OuMR8v5ndBgZlWDSEgIuJzOh5ja3WxH3w2uaT3VWnFMS00DURhYnfNnBOqnWbGWz7v8eX56GuZfIhUbQ==
-
-"@itwin/itwinui-css@^0.61.0":
-  version "0.61.0"
-  resolved "https://registry.yarnpkg.com/@itwin/itwinui-css/-/itwinui-css-0.61.0.tgz#2b05e5a74384b67358ee876a7ecf937e47a2c3af"
-  integrity sha512-hdbeabfuZSr53ykzCdu+phQdlwMVYninRt+K+1tnUDJCdPVYOx3WFUltnbq1mCDASF/ZQDpbPFsxY4aQ/tx4Hw==
-
-"@itwin/itwinui-css@^0.63.0":
+"@itwin/itwinui-css@0.x", "@itwin/itwinui-css@^0.63.0", "@itwin/itwinui-css@^0.9.0":
   version "0.63.1"
   resolved "https://registry.yarnpkg.com/@itwin/itwinui-css/-/itwinui-css-0.63.1.tgz#2084e62aac16075f1e6f5c3670e280df7e4a9cc2"
   integrity sha512-GWXRaaYBxbmIpXncrf6yOeqvyIaQWmtdx8lJ/UehT+vjahcklO00+dFEzWBboFdE/4ftDOqurqbuiDcNf2lugQ==
-
-"@itwin/itwinui-css@^0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@itwin/itwinui-css/-/itwinui-css-0.9.0.tgz#eb5bec4a6d45927591401cc2d528076f999c857a"
-  integrity sha512-COzR1kJXsP0WA+XTk5qx9BJws3Jxftff+GiwX8EhjYqktgaRZ6VtnEp4GIiGWEt3By/nacIEjnLe6765TcRK7A==
 
 "@itwin/itwinui-icons-color-react@^1.0.1":
   version "1.0.3"
@@ -2011,67 +1996,35 @@
   resolved "https://registry.yarnpkg.com/@itwin/itwinui-icons-react/-/itwinui-icons-react-1.2.0.tgz#82c6f6896639990c31ee806ee2af6a9ed23856fd"
   integrity sha512-yeBIJPWli/iLKaTLmhsd7ZOn9bMRouN3dGHggJjBjAsgJNNtahbfB/NfOS17DcN6Ejt4Z70VAzMdpwzJ/34CKA==
 
-"@itwin/itwinui-icons-react@^1.5.0", "@itwin/itwinui-icons-react@^1.8.0":
-  version "1.10.1"
-  resolved "https://registry.yarnpkg.com/@itwin/itwinui-icons-react/-/itwinui-icons-react-1.10.1.tgz#fb6517089ba964a57cc3fec37a63af3ccd4768e0"
-  integrity sha512-kBxDI1TuKiVtHhGmRVX5oOz1dszKvNUcYcDYOd2RzKVbHA8nMfx6dq3E8n4j2FeYGgxM9/wYpe/4wE0ykS8NuA==
-
 "@itwin/itwinui-icons-react@^1.5.1", "@itwin/itwinui-icons-react@^1.7.0":
   version "1.14.0"
   resolved "https://registry.yarnpkg.com/@itwin/itwinui-icons-react/-/itwinui-icons-react-1.14.0.tgz#61f7799b1eeed35cb9bf41593da080bac5a6db2f"
   integrity sha512-wSRCdKTROzDQ8mvJMZaBTxOBo2Od6YVowAfB5G1vj6I7xRFL/AddT6BzKSDPVnGg21ci6Zxut3dvpV46tquR4Q==
 
-"@itwin/itwinui-illustrations-react@^1.0.1":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@itwin/itwinui-illustrations-react/-/itwinui-illustrations-react-1.0.2.tgz#4b1f04a1c331937ec501dde3a25275bb2d995cec"
-  integrity sha512-sgBmBBOGOLNPuT/G700iQqlPB/QRBBWczSkVZJ7mpCZaktMfJxX2SH1NhUUpJ4emf20dsLEeAo62Gz7ek7DMkA==
+"@itwin/itwinui-icons-react@^1.8.0":
+  version "1.10.1"
+  resolved "https://registry.yarnpkg.com/@itwin/itwinui-icons-react/-/itwinui-icons-react-1.10.1.tgz#fb6517089ba964a57cc3fec37a63af3ccd4768e0"
+  integrity sha512-kBxDI1TuKiVtHhGmRVX5oOz1dszKvNUcYcDYOd2RzKVbHA8nMfx6dq3E8n4j2FeYGgxM9/wYpe/4wE0ykS8NuA==
 
 "@itwin/itwinui-illustrations-react@^1.2.0", "@itwin/itwinui-illustrations-react@^1.3.1":
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/@itwin/itwinui-illustrations-react/-/itwinui-illustrations-react-1.3.1.tgz#f534fa1da707272a4351f3b2bbc240c9ea8e3ae6"
   integrity sha512-hIZwYwd1qmyjt5yiL8Lg6E3CpgeLxGOnb4dVktoM+h3h5zSmgjhm2qFk+RqgsqV+dy0Fb2cs1jH4Jup9jWY9pA==
 
-"@itwin/itwinui-react@^1.11.0", "@itwin/itwinui-react@^1.16.2", "@itwin/itwinui-react@^1.29.2", "@itwin/itwinui-react@^1.32.0", "@itwin/itwinui-react@^1.6.0":
-  version "1.38.1"
-  resolved "https://registry.yarnpkg.com/@itwin/itwinui-react/-/itwinui-react-1.38.1.tgz#16a530f15ef2fca7ee03ffc13eb030ac23afc0bc"
-  integrity sha512-iZPwWF85b0NJ0hI/iK3oWt+bZ5fbIi3/1LLExSyh1Z6IkemZsqbld6Wj8nnGfRQ+V3RU0e9JQUkZC77nM++m1w==
-  dependencies:
-    "@itwin/itwinui-css" "^0.58.0"
-    "@itwin/itwinui-icons-react" "^1.5.0"
-    "@itwin/itwinui-illustrations-react" "^1.0.1"
-    "@tippyjs/react" "^4.2.5"
-    "@types/react-table" "^7.0.18"
-    classnames "^2.2.6"
-    react-table "^7.1.0"
-    react-transition-group "^4.1.1"
-
-"@itwin/itwinui-react@^1.46.0":
-  version "1.46.0"
-  resolved "https://registry.yarnpkg.com/@itwin/itwinui-react/-/itwinui-react-1.46.0.tgz#4bcbb1ae1bc39c89eca1ca1892ca301f9d3ae829"
-  integrity sha512-Leb0KFC7p6Gx9Wx90fYcH8KXeBk9zEvbhrMy5mMhPehA2HnQVvOO/tcwh2SKN+9KZdEB3J8hGArzNeE23Qx85A==
+"@itwin/itwinui-react@^1.11.0", "@itwin/itwinui-react@^1.16.2", "@itwin/itwinui-react@^1.29.2", "@itwin/itwinui-react@^1.32.0", "@itwin/itwinui-react@^1.46.0", "@itwin/itwinui-react@^1.48.1", "@itwin/itwinui-react@^1.6.0", "@itwin/itwinui-react@~1.42.0":
+  version "1.48.1"
+  resolved "https://registry.yarnpkg.com/@itwin/itwinui-react/-/itwinui-react-1.48.1.tgz#14bdc5292767ff7f8211b19dda1b2ab8f2a07b3b"
+  integrity sha512-9xQ2x5/dSOEWZnNuYZtX2RrNSAL9G9cCR6E8chu1vPlzZ4K0Nd0NpCvX56FVPHI05dNdH2LGZdVG3LE/PG7WZA==
   dependencies:
     "@itwin/itwinui-css" "^0.63.0"
     "@itwin/itwinui-icons-react" "^1.10.1"
     "@itwin/itwinui-illustrations-react" "^1.3.1"
-    "@tippyjs/react" "^4.2.5"
+    "@tippyjs/react" "^4.2.6"
     "@types/react-table" "^7.0.18"
     classnames "^2.2.6"
     react-table "^7.1.0"
     react-transition-group "^4.4.2"
-
-"@itwin/itwinui-react@~1.42.0":
-  version "1.42.0"
-  resolved "https://registry.yarnpkg.com/@itwin/itwinui-react/-/itwinui-react-1.42.0.tgz#d12f43eaa905d0dcaa097c5ecaa5a74ae4ac2d65"
-  integrity sha512-mnZXhDodCZK4KsJdvh4KmV94/OzJJycKsWubbmDPOJvtLDjvxBmdJ4hLpJwktNu0B/MTEiDTU227tadZdbXZYQ==
-  dependencies:
-    "@itwin/itwinui-css" "^0.61.0"
-    "@itwin/itwinui-icons-react" "^1.10.1"
-    "@itwin/itwinui-illustrations-react" "^1.3.1"
-    "@tippyjs/react" "^4.2.5"
-    "@types/react-table" "^7.0.18"
-    classnames "^2.2.6"
-    react-table "^7.1.0"
-    react-transition-group "^4.4.2"
+    tippy.js "^6.3.7"
 
 "@itwin/manage-versions-react@^0.7.0":
   version "0.7.0"
@@ -2907,7 +2860,7 @@
   resolved "https://registry.yarnpkg.com/@testing-library/user-event/-/user-event-7.2.1.tgz#2ad4e844175a3738cb9e7064be5ea070b8863a1c"
   integrity sha512-oZ0Ib5I4Z2pUEcoo95cT1cr6slco9WY7yiPpG+RGNkj8YcYgJnM7pXmYmorNOReh8MIGcKSqXyeGjxnr8YiZbA==
 
-"@tippyjs/react@^4.2.5":
+"@tippyjs/react@^4.2.6":
   version "4.2.6"
   resolved "https://registry.yarnpkg.com/@tippyjs/react/-/react-4.2.6.tgz#971677a599bf663f20bb1c60a62b9555b749cc71"
   integrity sha512-91RicDR+H7oDSyPycI13q3b7o4O60wa2oRbjlz2fyRLmHImc4vyDwuUP8NtZaN0VARJY5hybvDYrFzhY9+Lbyw==
@@ -13582,7 +13535,7 @@ react-transition-group@2.9.0:
     prop-types "^15.6.2"
     react-lifecycles-compat "^3.0.4"
 
-react-transition-group@^4.1.1, react-transition-group@^4.3.0, react-transition-group@^4.4.2:
+react-transition-group@^4.3.0, react-transition-group@^4.4.2:
   version "4.4.2"
   resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-4.4.2.tgz#8b59a56f09ced7b55cbd53c36768b922890d5470"
   integrity sha512-/RNYfRAMlZwDSr6z4zNKV6xu53/e2BuaBbGhbyYIXTrmgu/bGHzmqOs7mJSJBHy9Ud+ApHx3QjrkKSp1pxvlFg==
@@ -15718,7 +15671,7 @@ tiny-warning@^1.0.0:
   resolved "https://registry.yarnpkg.com/tiny-warning/-/tiny-warning-1.0.3.tgz#94a30db453df4c643d0fd566060d60a875d84754"
   integrity sha512-lBN9zLN/oAf68o3zNXYrdCt1kP8WsiGW8Oo2ka41b2IM5JL/S1CTyX1rW0mb/zSuJun0ZUrDxx4sqvYS2FWzPA==
 
-tippy.js@^6.3.1:
+tippy.js@^6.3.1, tippy.js@^6.3.7:
   version "6.3.7"
   resolved "https://registry.yarnpkg.com/tippy.js/-/tippy.js-6.3.7.tgz#8ccfb651d642010ed9a32ff29b0e9e19c5b8c61c"
   integrity sha512-E1d3oP2emgJ9dRQZdf3Kkn0qJgI6ZLpyS5z6ZkY1DF3kaQaBsGZsndEpHwx+eC+tYM41HaSNvNtLx8tU57FzTQ==

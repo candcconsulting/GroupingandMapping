@@ -58,6 +58,16 @@ export const CarbonTrend = ({
   const [data, setData] = React.useState<any[]>([]);
   const [graphObjects, setGraphObjects] = React.useState<any[]>([]);
 
+  useEffect(() => {
+    return () => {
+      setData([]);
+      setGraphObjects([]);
+      if (IModelApp) {
+        void IModelApp.shutdown()
+      }
+    };
+  }, []);
+
   React.useEffect(() => {
     setClaims(getClaimsFromToken(accessToken ?? "") ?? {});
   }, [accessToken]);
@@ -142,9 +152,10 @@ export const CarbonTrend = ({
           new Date(objA.storeDate).getTime() -
           new Date(objB.storeDate).getTime()
       );
+      let counter = 1;
       for (const aMaterial in materials) {
         tempObjects.push(
-          <Line
+          <Line key={counter}
             name={materials[aMaterial]}
             strokeDasharray={dashes[aMaterial]}
             yAxisId={0}
@@ -160,6 +171,7 @@ export const CarbonTrend = ({
         );
         tempObjects.push(
           <Line
+            key={counter+1}
             name={materials[aMaterial]}
             strokeDasharray={dashes[aMaterial]}
             yAxisId={1}
@@ -174,6 +186,7 @@ export const CarbonTrend = ({
             })}
           />
         );
+        counter = counter + 1;
       }
       setGraphObjects(tempObjects);
     }

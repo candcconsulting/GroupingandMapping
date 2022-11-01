@@ -4,7 +4,7 @@
  *
  * This code is for demonstration purposes and should not be considered production ready.
  *--------------------------------------------------------------------------------------------*/
-.app-dashboard-grid {
+.esg-app-dashboard-grid {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
@@ -16,7 +16,12 @@
   }
 }
 
-.dashboard-toolbar {
+esg-p {
+  display: flex;
+  justify-content: space-between;
+}
+
+.esg-dashboard-toolbar {
   display: flex;
   margin-bottom: 15;
   width: 100%;
@@ -28,16 +33,16 @@
   }
 }
 
-.dashboard-tabs {
+.esg-dashboard-tabs {
   width: 100%;
 }
 
-.panel-header {
+.esg-panel-header {
   padding: 4px;
   background-color: #a8b1ba;
 }
 
-.panel-header-row {
+.esg-panel-header-row {
   padding: 4px;
   background-color: #a8b1ba;
   display: flex;
@@ -48,7 +53,7 @@
   }
 }
 
-.row {
+.esg-row {
   display: flex;
   flex-grow: 1;
 
@@ -57,25 +62,22 @@
   }
 }
 
-.column {
+.esg-column {
   flex: 50%;
 }
 
-.column-right {
-  text-align: right;
-}
 
-.column-right-row {
-  display: flex;
-  flex-direction: row;
-  margin: 5px;
-  justify-content: space-between;
-}
-
-.icon {
+.esg-icon {
   width: 36px;
   display: flex;
   flex-direction: row;
   flex-grow: 2;
   justify-content: space-between;
+}
+
+.esg-text-left {
+  float:left
+}
+.esg-text-right {
+  float:right
 }

@@ -22,19 +22,27 @@ import {
   toaster,
   ToggleSwitch,
 } from "@itwin/itwinui-react";
-import React, { useCallback, useEffect, useLayoutEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
 
 import { iTwinAPI } from "../../../api/iTwinAPI";
-import mongoAppApi from "../../../api/mongoAppApi";
+import mongoAppApi, { IMaterial } from "../../../api/mongoAppApi";
 import { ProjectsClient } from "../../../api/projects/projectsClient";
 import { sqlAPI } from "../../../api/queryAPI";
 import { useApiData } from "../../../api/useApiData";
 import { useApiPrefix } from "../../../api/useApiPrefix";
-import { getRGBColor } from "../../../routers/CarbonRouter/components/CarbonbyCategory";
+import { getRGBColor } from "../../../routers/CarbonRouter/components/CarbonList";
 import { SkeletonCell } from "../../../routers/SynchronizationRouter/components/SkeletonCell";
 import AuthClient from "../../../services/auth/AuthClient";
 import { getClaimsFromToken } from "../../../services/auth/authUtil";
 import { useCommonPathPattern } from "../../MainLayout/useCommonPathPattern";
+
+import {getSettings} from "../../../config/index"
+import { NumericCell, NumericCell0, numericCellRenderer } from "../../../routers/SynchronizationRouter/components/NumericCell";
+import { coloredCellRenderer } from "../../../routers/CarbonRouter/components/ColoredCell";
+import { CellRendererProps } from "react-table";
+
+
+// import "./carbonWidget.scss"
 
 interface IMapping {
   id: string;
@@ -64,6 +72,7 @@ interface ISummary {
   min: number;
   unit: string;
   userLabel?: string;
+  groupName?: string;
 }
 
 const findMapping = (epdMapping: any, searchString: string): string => {
@@ -104,7 +113,7 @@ export const CarbonWidget = () => {
   const [EPDMappingLoaded, setEPDMappingLoaded] = React.useState(
     epdMapping !== undefined
   );
-  const [epd, setEPD] = React.useState<any[]>([]);
+  const [epd, setEPD] = React.useState<IMaterial[] | undefined>([]);
   const [mappingLoaded, setMappingLoaded] = React.useState(false);
   const [groupsLoaded, setGroupsLoaded] = React.useState(false);
   const isLoading = React.useRef(false);
@@ -112,6 +121,8 @@ export const CarbonWidget = () => {
   const [showDetails, setShowDetails] = React.useState(false);
   const [columns, setColumns] = React.useState<any[]>([]);
   const [claims, setClaims] = React.useState<Record<string, string>>({});
+  const [minGWP, setMinGWP] = useState(0);
+  const [maxGWP, setMaxGWP] = useState(1);
 
   const [error, setError] = React.useState("");
   const urlPrefix = useApiPrefix();
@@ -142,7 +153,7 @@ export const CarbonWidget = () => {
     url: `https://api.bentley.com/insights/reporting/datasources/imodels/${iModelId}/mappings`,
   });
 
-  const groupColumns = React.useMemo(
+  const groupColumns = React.useCallback(
     () => [
       {
         Header: "Table",
@@ -170,35 +181,45 @@ export const CarbonWidget = () => {
           },
           {
             accessor: "quantity",
-            Cell: SkeletonCell,
+            Cell: NumericCell,
+            cellRenderer: (props: CellRendererProps<any>) =>
+            numericCellRenderer(props),
             Header: "Quantity",
             disableResizing: false,
             Filter: tableFilters.NumberRangeFilter(),
           },
           {
             accessor: "gwp",
-            Cell: SkeletonCell,
+            Cell: NumericCell,
+            cellRenderer: (props: CellRendererProps<any>) =>
+              coloredCellRenderer(props, minGWP, maxGWP),
             Header: "GWP",
             disableResizing: false,
             Filter: tableFilters.NumberRangeFilter(),
           },
           {
             accessor: "max",
-            Cell: SkeletonCell,
+            Cell: NumericCell,
+            cellRenderer: (props: CellRendererProps<any>) =>
+            numericCellRenderer(props),
             Header: "Max",
             disableResizing: false,
             Filter: tableFilters.NumberRangeFilter(),
           },
           {
             accessor: "min",
-            Cell: SkeletonCell,
+            Cell: NumericCell,
+            cellRenderer: (props: CellRendererProps<any>) =>
+            numericCellRenderer(props),
             Header: "Min",
             disableResizing: false,
             Filter: tableFilters.NumberRangeFilter(),
           },
           {
             accessor: "count",
-            Cell: SkeletonCell,
+            Cell: NumericCell0,
+            cellRenderer: (props: CellRendererProps<any>) =>
+            numericCellRenderer(props),
             Header: "Count",
             disableResizing: false,
             Filter: tableFilters.NumberRangeFilter(),
@@ -213,9 +234,9 @@ export const CarbonWidget = () => {
         ],
       },
     ],
-    []
+    [minGWP, maxGWP]
   );
-  const allColumns = React.useMemo(
+  const allColumns = React.useCallback(
     () => [
       {
         Header: "Table",
@@ -224,6 +245,14 @@ export const CarbonWidget = () => {
             accessor: "id",
             Cell: SkeletonCell,
             Header: "Id",
+            disableResizing: false,
+            Filter: tableFilters.TextFilter(),
+            sortType: "string"
+          },
+          {
+            accessor: "groupName",
+            Cell: SkeletonCell,
+            Header: "Grouping",
             disableResizing: false,
             Filter: tableFilters.TextFilter(),
           },
@@ -243,28 +272,36 @@ export const CarbonWidget = () => {
           },
           {
             accessor: "quantity",
-            Cell: SkeletonCell,
+            Cell: NumericCell,
+            cellRenderer: (props: CellRendererProps<any>) =>
+            numericCellRenderer(props),
             Header: "Quantity",
             disableResizing: false,
             Filter: tableFilters.NumberRangeFilter(),
           },
           {
             accessor: "gwp",
-            Cell: SkeletonCell,
+            Cell: NumericCell,
+            cellRenderer: (props: CellRendererProps<any>) =>
+              coloredCellRenderer(props, minGWP, maxGWP),
             Header: "GWP",
             disableResizing: false,
             Filter: tableFilters.NumberRangeFilter(),
           },
           {
             accessor: "max",
-            Cell: SkeletonCell,
+            Cell: NumericCell,
+            cellRenderer: (props: CellRendererProps<any>) =>
+            numericCellRenderer(props),
             Header: "Max",
             disableResizing: false,
             Filter: tableFilters.NumberRangeFilter(),
           },
           {
             accessor: "min",
-            Cell: SkeletonCell,
+            Cell: NumericCell,
+            cellRenderer: (props: CellRendererProps<any>) =>
+            numericCellRenderer(props),
             Header: "Min",
             disableResizing: false,
             Filter: tableFilters.NumberRangeFilter(),
@@ -279,7 +316,7 @@ export const CarbonWidget = () => {
         ],
       },
     ],
-    []
+    [minGWP, maxGWP]
   );
 
   React.useEffect(() => {
@@ -289,7 +326,7 @@ export const CarbonWidget = () => {
   useEffect(() => {
     if (iModelId && claims.email && accessToken) {
       void mongoAppApi
-        .getEPDMapping(claims.email, iModelId, accessToken)
+        .getEPDMapping(claims.email, iModelId, accessToken, "")
         .then((theMapping) => {
           if (theMapping?.iModelId !== iModelId) {
             console.log(`EPD Mapping for ${iModelId} not found using default`);
@@ -304,7 +341,7 @@ export const CarbonWidget = () => {
 
   useEffect(() => {
     if (iModelId) {
-      void mongoAppApi.getAllEPD().then((allEPD) => {
+      void mongoAppApi.getAllICE().then((allEPD) => {
         setEPD(allEPD);
       });
     }
@@ -395,15 +432,14 @@ export const CarbonWidget = () => {
         for (const aGroup of groups) {
           // console.log(aGroup);
           const iModelConnection = vp.iModel;
-          const aMaterial = epd.find(
-            (aMaterial) => aMaterial.material === aGroup.material
+          const aMaterial = epd?.find(
+            (aMaterial) => aMaterial.uniqueId === aGroup.material
           );
           const tempInstances = await sqlAPI.getVolumeforGroupWidget(
             iModelConnection,
             aGroup.groupSQL,
-            aGroup.material,
-            aMaterial?.carbonFactor ?? 0,
-            aMaterial.unitType
+            aMaterial,
+            aGroup.groupName
           );
           const max = Math.max(...tempInstances.gwpList.map((o) => o.gwp));
           const min = Math.min(...tempInstances.gwpList.map((o) => o.gwp));
@@ -426,6 +462,8 @@ export const CarbonWidget = () => {
         console.log("Loaded");
         if (showDetails) {
           setElements(allInstances);
+          setMaxGWP(Math.max(...allInstances.map((o) => o.gwp)));
+          setMinGWP(Math.min(...allInstances.map((o) => o.gwp)));
           setElementsLoaded(true);
           isLoading.current = false;
           setColumns(allColumns);
@@ -438,11 +476,11 @@ export const CarbonWidget = () => {
               if (summary) {
                 summarizeElements.push({
                   material: summary.material,
-                  quantity: +summary.quantity.toFixed(2),
-                  gwp: +summary.gwp.toFixed(2) ?? 0,
+                  quantity: +summary.quantity.toFixed(getSettings.decimalAccuracy),
+                  gwp: +summary.gwp.toFixed(getSettings.decimalAccuracy) ?? 0,
                   elements: summary.id,
-                  max: +summary.gwp.toFixed(2) ?? 0,
-                  min: +summary.gwp.toFixed(2) ?? 0,
+                  max: +summary.gwp.toFixed(getSettings.decimalAccuracy) ?? 0,
+                  min: +summary.gwp.toFixed(getSettings.decimalAccuracy) ?? 0,
                   count: 1,
                   unit: summary.unit,
                 });
@@ -453,10 +491,10 @@ export const CarbonWidget = () => {
               if (index >= 0) {
                 summarizeElements[index].quantity = +(
                   summarizeElements[index].quantity + value.quantity
-                ).toFixed(2);
+                ).toFixed(getSettings.decimalAccuracy);
                 summarizeElements[index].gwp = +(
                   summarizeElements[index].gwp + value.gwp
-                ).toFixed(2);
+                ).toFixed(getSettings.decimalAccuracy);
                 summarizeElements[index].elements =
                   summarizeElements[index].elements + "," + value.id;
                 if (value.gwp > summarizeElements[index].max && value.gwp > 0) {
@@ -483,6 +521,8 @@ export const CarbonWidget = () => {
             // setElements(allInstances);
             setElementsLoaded(true);
             setElements(summarizeElements);
+            setMaxGWP(Math.max(...summarizeElements.map((o) => o.gwp)));
+            setMinGWP(Math.min(...summarizeElements.map((o) => o.gwp)));
             isLoading.current = false;
           } else {
             setElements([]);
@@ -617,17 +657,19 @@ export const CarbonWidget = () => {
   return (
     <div>
       <div className="idp-content-margins idp-scrolling-content">
-        <div className="panel-header-row">
-          <div className="column">Carbon by Category</div>
-          <div className="column-right-row">
-            <ToggleSwitch
-              label="Show Details"
-              checked={showDetails}
-              onChange={() => {
-                setShowDetails(!showDetails);
-                setElementsLoaded(false);
-              }}
-            ></ToggleSwitch>
+        <div className="esg-panel-header-row">
+          <div className="esg-column">Carbon by Category</div>
+          <div className="esg-column-right-row">
+            { !elementsLoaded ? <></> : 
+              <ToggleSwitch style = {{float : "left"}}
+                label="Show Details"
+                checked={showDetails}
+                onChange={() => {
+                  setShowDetails(!showDetails);
+                  setElementsLoaded(false);                  
+                }}
+              ></ToggleSwitch>
+            }
             <IconButton
               onClick={() => showCarbonElements()}
               styleType={"borderless"}

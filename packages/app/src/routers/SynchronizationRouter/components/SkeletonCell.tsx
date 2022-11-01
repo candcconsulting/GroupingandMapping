@@ -4,6 +4,7 @@
  *
  * This code is for demonstration purposes and should not be considered production ready.
  *--------------------------------------------------------------------------------------------*/
+import { AnySolidPrimitive } from "@itwin/core-geometry";
 import { Body } from "@itwin/itwinui-react";
 import React, { PropsWithChildren } from "react";
 
@@ -14,7 +15,9 @@ export type SkeletonCellProps = PropsWithChildren<{
   row: {
     original: any;
   };
+
 }>;
+
 export type ColouredCellProps = PropsWithChildren<{
   value: any;
   row: {
@@ -23,6 +26,7 @@ export type ColouredCellProps = PropsWithChildren<{
   max: number;
   min: number;
 }>;
+
 
 export const SkeletonCell = (props: SkeletonCellProps) => {
   if (Object.keys(props.row.original).length !== 0) {

@@ -137,6 +137,9 @@ jspm_packages/
 # dotenv environment variables file
 **/.env.*.local
 **/.env.local
+.env
+**/.env
+
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -181,4 +184,3 @@ bin
 lib/
 
 .npmrc
-packages/app/src/api/mongoDBapi.ts

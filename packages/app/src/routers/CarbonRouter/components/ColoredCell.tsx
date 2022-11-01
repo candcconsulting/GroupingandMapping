@@ -4,7 +4,8 @@
  *
  * This code is for demonstration purposes and should not be considered production ready.
  *--------------------------------------------------------------------------------------------*/
-import { DefaultCell } from "@itwin/itwinui-react";
+import { FilteredType } from "@itwin/components-react";
+import { DefaultCell, tableFilters } from "@itwin/itwinui-react";
 import React from "react";
 import { CellRendererProps } from "react-table";
 
@@ -16,10 +17,11 @@ export const coloredCellRenderer = (
   return (
     <DefaultCell
       {...props}
-      style={{ background: getColor(props.cellProps.value, min, max) }}
+      style={{ background: getColor(props.cellProps.value, min, max), justifyContent: "flex-end" }}
     />
   );
 };
+
 
 export const getColor = (value: number, min: number, max: number) => {
   const normalizedValue = value - min;

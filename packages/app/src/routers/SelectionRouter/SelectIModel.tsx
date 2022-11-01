@@ -17,6 +17,7 @@ import React from "react";
 import { useApiPrefix } from "../../api/useApiPrefix";
 import { useDemoFlags } from "../../components/LaunchDarkly/LaunchDarklyProvider";
 import { ai, trackEvent } from "../../services/telemetry";
+import { useCarbonIModelAction } from "../CarbonRouter/useCarbonRouter";
 import { useCreateIModelAction } from "../CRUDRouter/useCreateIModelAction";
 import { useDeleteIModelAction } from "../CRUDRouter/useDeleteIModelAction";
 import { useEditIModelAction } from "../CRUDRouter/useEditIModelAction";
@@ -50,6 +51,7 @@ const SelectIModel = ({
   const { deleteAction, deleteDialog, refreshKey } = useDeleteIModelAction({
     accessToken,
   });
+  const { carbonAction } = useCarbonIModelAction()
   const { createIconButton } = useCreateIModelAction({ navigate });
   const { synchronizeAction } = useSynchronizeIModelAction();
   const { manageVersionsAction } = useManageVersionsIModelAction();
@@ -64,6 +66,7 @@ const SelectIModel = ({
       editAction,
       synchronizeAction,
       manageVersionsAction,
+      carbonAction,
     ];
 
     if (flags["delete-imodel"]) {
@@ -80,6 +83,7 @@ const SelectIModel = ({
     manageVersionsAction,
     synchronizeAction,
     viewAction,
+    carbonAction,
   ]);
 
   const apiOverrides = React.useMemo<ApiOverrides>(

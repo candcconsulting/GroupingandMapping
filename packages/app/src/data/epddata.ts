@@ -53,4 +53,19 @@ export const materialMapping = {
   ],
 };
 
+export const categoryMapping = {
+  "_id": {
+    "$oid": "634e99210c5e4453798c197f"
+  },
+  "iModelId" : "9902d569-59f9-44ef-a2a5-00c6f432ce20",
+  "mappingName"  : "categories",
+  "categories" :
+  [
+    {    
+    "category" : "CV-CV-Bracing-G-P",
+    "material" : "steelwork"    
+    }    
+  ]    
+    
+}
 export default {};

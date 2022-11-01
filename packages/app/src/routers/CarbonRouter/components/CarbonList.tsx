@@ -11,37 +11,39 @@ import {
 } from "@itwin/core-common";
 import { CheckpointConnection, IModelApp } from "@itwin/core-frontend";
 import { FrontendIModelsAccess } from "@itwin/imodels-access-frontend";
+import { SvgSave } from "@itwin/itwinui-icons-react";
 import {
+  IconButton,
   Table,
   tableFilters,
-  TablePaginator, 
+  TablePaginator,
   TablePaginatorRendererProps,
-   
 } from "@itwin/itwinui-react";
 import { RouteComponentProps } from "@reach/router";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CellRendererProps } from "react-table";
-import { Cell as ChartCell, Legend, Pie, PieChart, Tooltip } from "recharts";
+import { Cell, Legend, Pie, PieChart, Tooltip } from "recharts";
 
-// import { displayNegativeToast } from "../../../api/helperfunctions/messages";
+import { displayNegativeToast, displayWarningToast } from "../../../api/helperfunctions/messages";
 import { iTwinAPI } from "../../../api/iTwinAPI";
 // import mongoDBapi, { IGWP } from "../../../api/mongoDBapi";
-import mongoAppApi, { } from "../../../api/mongoAppApi";
+import mongoAppApi, { IGWP, IMaterial } from "../../../api/mongoAppApi";
 import { ProjectsClient } from "../../../api/projects/projectsClient";
 import { sqlAPI } from "../../../api/queryAPI";
 import { useApiData } from "../../../api/useApiData";
 import { useApiPrefix } from "../../../api/useApiPrefix";
+import { getSettings } from "../../../config";
 import AuthClient from "../../../services/auth/AuthClient";
 import { getClaimsFromToken } from "../../../services/auth/authUtil";
+import { NumericCell, NumericCell0, numericCellRenderer } from "../../SynchronizationRouter/components/NumericCell";
 // import { epd, materialMapping } from "../../../data/epddata";
 // import {mongoDBapi} from "../../../api/mongoDBapi";
 import {
   ColouredCell,
   SkeletonCell,
 } from "../../SynchronizationRouter/components/SkeletonCell";
-import {   NumericCell, NumericCell0, numericCellRenderer } from "../../SynchronizationRouter/components/NumericCell"
 import { coloredCellRenderer, getColor } from "./ColoredCell";
-import { getSettings } from "../../../config";
+
 
 interface ElementCountProps extends RouteComponentProps {
   accessToken: string;
@@ -77,8 +79,21 @@ interface ISummary {
   unit: string;
   max: number;
   min: number;
-  category: string;
 }
+// const mMapping = materialMapping;
+// const mEPD = epd;
+// const mongoEPD = mongoDBapi.getAllEPD();
+
+/*
+const getColor = (value: number, min: number, max: number) => {
+  const normalizedValue = value - min;
+  const normalizedMax = max - min;
+  const percentage = normalizedValue / normalizedMax;
+  // const hue = ((1 - percentage) * 120).toString(10);
+  const hue = Math.floor((1 - percentage) * 120); // go from green to red
+  const saturation = Math.abs(percentage - 0.5) * 100;
+  return `hsl(${hue},50%,60%)`
+} */
 
 const findMapping = (epdMapping: any, searchString: string): string => {
   let returnString = "";
@@ -99,24 +114,90 @@ const makeGroupStrings = (epdMapping: any): string => {
   return groupString;
 };
 
-export const CarbonByCategory = ({
+export const getRGBColor = (value: number, min: number, max: number) => {
+  const normalizedValue = value - min;
+  const normalizedMax = max - min;
+  const percentage = normalizedValue / normalizedMax;
+  // const hue = ((1 - percentage) * 120).toString(10);
+  const hue = Math.floor((1 - percentage) * 120); // go from green to red
+  // const saturation = Math.abs(percentage - 0.5) * 100;
+  return getRGB(hue, 50, 60);
+};
+
+const getRGB = (h: number, s: number, l: number) => {
+  s /= 100;
+  l /= 100;
+
+  const c = (1 - Math.abs(2 * l - 1)) * s,
+    x = c * (1 - Math.abs(((h / 60) % 2) - 1)),
+    m = l - c / 2;
+  let r = 0,
+    g = 0,
+    b = 0;
+
+  if (0 <= h && h < 60) {
+    r = c;
+    g = x;
+    b = 0;
+  } else if (60 <= h && h < 120) {
+    r = x;
+    g = c;
+    b = 0;
+  } else if (120 <= h && h < 180) {
+    r = 0;
+    g = c;
+    b = x;
+  } else if (180 <= h && h < 240) {
+    r = 0;
+    g = x;
+    b = c;
+  } else if (240 <= h && h < 300) {
+    r = x;
+    g = 0;
+    b = c;
+  } else if (300 <= h && h < 360) {
+    r = c;
+    g = 0;
+    b = x;
+  }
+  r = Math.round((r + m) * 255);
+  g = Math.round((g + m) * 255);
+  b = Math.round((b + m) * 255);
+  let rh = r.toString(16);
+  let gh = g.toString(16);
+  let bh = b.toString(16);
+
+  if (rh.length === 1) {
+    rh = "0" + r;
+  }
+  if (gh.length === 1) {
+    gh = "0" + g;
+  }
+  if (bh.length === 1) {
+    bh = "0" + b;
+  }
+
+  return "#" + rh + gh + bh;
+};
+
+export const CarbonList = ({
   accessToken,
   projectId,
   iModelId,
 }: ElementCountProps) => {
   const [elements, setElements] = React.useState<any[]>([]);
-  const [elementCount, setElementCount] = React.useState(0);
-  const [gwpTotal, setGWPTotal] = React.useState(0);
   const [epdMapping, setEPDMapping] = React.useState<any>(undefined);
   const [EPDMappingLoaded, setEPDMappingLoaded] = React.useState(
     epdMapping !== undefined
   );
-  const [epd, setEPD] = React.useState<any[] | undefined>([]);
+  const [epd, setEPD] = React.useState<IMaterial[]| undefined>([]);
   const [mapping, setMapping] = React.useState<IMapping>();
   const [groups, setGroups] = React.useState<any[]>([]);
   const [mappingLoaded, setMappingLoaded] = React.useState(false);
   const [groupsLoaded, setGroupsLoaded] = React.useState(false);
   const [elementsLoaded, setElementsLoaded] = React.useState(false);
+  const [elementCount, setElementCount] = React.useState(0);
+  const [gwpTotal, setGWPTotal] = React.useState(0);
   const [pieDataLoaded, setPieDataLoaded] = React.useState(false);
   const [pieData, setPieData] = React.useState<any[]>([]);
   const isLoading = React.useRef(false);
@@ -126,20 +207,55 @@ export const CarbonByCategory = ({
   const [minGWP, setMinGWP] = useState(0);
   const [maxGWP, setMaxGWP] = useState(1);
   const [claims, setClaims] = React.useState<Record<string, string>>({});
+  const displayToaster = useRef(true);
+  const intervalId : any = useRef(undefined);
+  const toasterCount  = useRef(0);
 
-    useEffect(() => {
-      return () => {
-        setElements([]);
-        setEPDMapping(undefined);
-        setEPD([]);
-        setMapping(undefined);
-        setGroups([]);
-        setPieData([]);
-        if (IModelApp) {
-          void IModelApp.shutdown()
+
+  const {
+    results: { mappings },
+  } = useApiData<{ mappings: IMapping[] }>({
+    accessToken,
+    url: `https://api.bentley.com/insights/reporting/datasources/imodels/${iModelId}/mappings`,
+  });
+
+  useEffect(() => {
+    return () => {
+      setElements([]);
+      setEPDMapping(undefined);
+      setEPD([]);
+      setMapping(undefined);
+      setPieData([]);
+      setGroups([]);
+      if (IModelApp) {
+        void IModelApp.shutdown()
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    const checkMappings = () => {
+      toasterCount.current = toasterCount.current + 1
+      if (toasterCount.current > 3) {
+        clearInterval(intervalId.current);
+        displayToaster.current = false;
+        return
+      }
+      if (displayToaster.current)
+        if (!mappings) {
+          displayWarningToast("Mappings not loaded : Please ensure this iModel has Mappings defined")
+          return
         }
-      };
-    }, []);
+        else
+         if(mappings.length <= 0) {
+          displayWarningToast("Mappings not loaded : Please ensure this iModel has Mappings defined")
+          return
+        }
+      clearInterval(intervalId.current);
+    }
+  
+    intervalId.current = setInterval(checkMappings, 5000);
+  },[mappings])
 
   React.useEffect(() => {
     setClaims(getClaimsFromToken(accessToken ?? "") ?? {});
@@ -160,16 +276,10 @@ export const CarbonByCategory = ({
     };
     BentleyCloudRpcManager.initializeClient(cloudRpcParams, rpcInterfaces);
   }, [rpcInterfaces]);
-  
 
   console.log("CarbonByCategory");
 
-  const {
-    results: { mappings },
-  } = useApiData<{ mappings: IMapping[] }>({
-    accessToken,
-    url: `https://api.bentley.com/insights/reporting/datasources/imodels/${iModelId}/mappings`,
-  });
+
 
   useEffect(() => {
     if (iModelId && claims.email && accessToken) {
@@ -178,8 +288,6 @@ export const CarbonByCategory = ({
         .then((theMapping) => {
           if (theMapping?.iModelId !== iModelId) {
             console.log(`EPD Mapping for ${iModelId} not found using default`);
-          } else {
-            console.log(`Using EPD Mapping ${theMapping.mappingName}`)
           }
           setEPDMapping(theMapping);
           if (theMapping) {
@@ -198,15 +306,20 @@ export const CarbonByCategory = ({
   }, [iModelId]);
 
   useEffect(() => {
-    // console.log("setMappingLoaded");
-    if (mappings) {
-      setMappingLoaded(mappings.length > 0);
+    // 
+    if (mappings) {      
+      setMappingLoaded(mappings.length > 0);      
+      console.log("setMappingLoaded");
+      displayToaster.current = (mappings.length <= 0);
     }
   }, [mappings]);
 
   useEffect(() => {
     const loadGroups = async () => {
       if (mappings && EPDMappingLoaded) {
+        let wasProcessed = false;
+        displayToaster.current = false;
+        clearInterval(intervalId.current)
         for (const aMapping of mappings) {
           //      mappings.forEach(async (mapping: IMapping) => {
           if (aMapping.mappingName === epdMapping.mappingName) {
@@ -214,6 +327,7 @@ export const CarbonByCategory = ({
             console.log(
               "Found in getMappings" + aMapping.mappingName + aMapping.id
             );
+            wasProcessed = true;
             setMappingLoaded(true);
             if (AuthClient.client) {
               void (await iTwinAPI
@@ -235,6 +349,9 @@ export const CarbonByCategory = ({
             }
           }
         } //);
+        if (!wasProcessed) {
+          displayWarningToast(`Trying to fetch elements with no groups found - this list will not complete`)
+        }
       } else {
         // console.log("mappings not loaded so skipping : " + mappingLoaded);
       }
@@ -254,10 +371,20 @@ export const CarbonByCategory = ({
     iModelId,
   ]);
 
+  const elementsLength = useCallback(() => {
+    try
+    {
+      return (elements.length)
+    }
+    catch(e) {
+      return 0
+    }
+  },[elements])
+
   useEffect(() => {
     setGroupsLoaded(groups.length > 0);
-    setElementsLoaded(false);
-  }, [groups]);
+    setElementsLoaded(elementsLength() > 0);
+  }, [groups, elementsLength]);
 
   useEffect(() => {
     const fetchElements = async () => {
@@ -271,6 +398,7 @@ export const CarbonByCategory = ({
       // setElements([]);
       console.log(`Groups Loaded Length = ${groups.length}`);
 
+
       const iModelConnection = await CheckpointConnection.openRemote(
         projectId,
         iModelId
@@ -281,86 +409,93 @@ export const CarbonByCategory = ({
 
       const client = new ProjectsClient(urlPrefix, accessToken);
       try {
-            if (elementsLoaded) {
-              return;
+        if (elementsLoaded) {
+          return;
+        }
+        const allInstances: any[] = [];
+        // allInstances = [];
+        // groups.forEach(async (aGroup: any) => {
+        for (const aGroup of groups) {
+          // console.log(aGroup);
+          // we should not be here if epd and mappings are not loaded
+          const aMaterial = epd?.find(
+            (aMaterial) => aMaterial.uniqueId === aGroup.material
+          );
+          const tempInstances = await sqlAPI.getVolumeforGroup(
+            iModelConnection,
+            aGroup.groupSQL,
+            aMaterial,
+            aGroup.groupName
+          );
+          allInstances.push(...tempInstances.gwpList);
+          allInstances.push(...tempInstances.errorList);
+          // setElements(allInstances);
+        } //);
+        console.log("Loaded");
+        isLoading.current = false;
+        const summarizeElements: ISummary[] = [];
+        const tempElements = allInstances;
+        void tempElements.reduce((summary, value) => {
+          if (summary) {
+            summarizeElements.push({
+              material: summary.material,
+              quantity: +summary.quantity.toFixed(getSettings.decimalAccuracy),
+              gwp: +summary.gwp.toFixed(getSettings.decimalAccuracy) ?? 0,
+              elements: summary.id,
+              unit: summary.unit,
+              max: +summary.gwp.toFixed(getSettings.decimalAccuracy) ?? 0,
+              min: +summary.gwp.toFixed(getSettings.decimalAccuracy) ?? 0,
+              count: 1,
+            });
+          }
+          const index = summarizeElements.findIndex(
+            (aElement) => aElement.material === value.material
+          );
+          if (index >= 0) {
+            summarizeElements[index].quantity = +(
+              summarizeElements[index].quantity + value.quantity
+            ).toFixed(getSettings.decimalAccuracy);
+            summarizeElements[index].gwp = +(
+              summarizeElements[index].gwp + value.gwp
+            ).toFixed(getSettings.decimalAccuracy);
+            summarizeElements[index].elements =
+              summarizeElements[index].elements + "," + value.id;
+            if (value.gwp > summarizeElements[index].max && value.gwp > 0) {
+              summarizeElements[index].max = value.gwp;
             }
-            const allInstances: any[] = [];
-            // allInstances = [];
-            // groups.forEach(async (aGroup: any) => {
-            for (const aGroup of groups) {
-              // console.log(aGroup);
-              const aMaterial = epd?.find(
-                (aMaterial) => aMaterial.uniqueId === aGroup.material
-              );
-              const tempInstances = await sqlAPI.getVolumeForGroupByCategory(
-                iModelConnection,
-                aGroup.groupSQL,
-                aMaterial,
-                aGroup.groupName
-              );
-              allInstances.push(...tempInstances.gwpList);
-              allInstances.push(...tempInstances.errorList);
-              // setElements(allInstances);
-            } //);
-            console.log("Loaded");
-            isLoading.current = false;
-            const summarizeElements: ISummary[] = [];
-            const tempElements = allInstances;
-            for (const element of tempElements) {
-              const index = summarizeElements.findIndex(
-                (aElement) =>
-                  aElement.material === element.material &&
-                  aElement.category === element.category
-              );
-              if (index >= 0) {
-                summarizeElements[index].quantity = +(
-                  summarizeElements[index].quantity + element.quantity
-                ).toFixed(2);
-                summarizeElements[index].gwp = +(
-                  summarizeElements[index].gwp + element.gwp
-                ).toFixed(2);
-                summarizeElements[index].elements =
-                  summarizeElements[index].elements + "," + element.id;
-                if (
-                  element.gwp > summarizeElements[index].max &&
-                  element.gwp > 0
-                ) {
-                  summarizeElements[index].max = element.gwp;
-                }
-                if (
-                  (element.gwp < summarizeElements[index].min &&
-                    element.gwp > 0) ||
-                  (summarizeElements[index].min === 0 && element.gwp > 0)
-                ) {
-                  summarizeElements[index].min = element.gwp;
-                }
-                summarizeElements[index].count += 1;
-              } else {
-                summarizeElements.push({
-                  material: element.material,
-                  category: element.category,
-                  quantity: element.quantity,
-                  gwp: element.gwp ?? 0,
-                  elements: element.id,
-                  unit: element.unit,
-                  max: element.gwp ?? 0,
-                  min: element.gwp ?? 0,
-                  count: 1,
-                });
-              }
+            if (
+              (value.gwp < summarizeElements[index].min && value.gwp > 0) ||
+              (summarizeElements[index].min === 0 && value.gwp > 0)
+            ) {
+              summarizeElements[index].min = value.gwp;
             }
-            // console.log(summarizeElements);
-            setElements(summarizeElements);
-            // setElements(allInstances)
-            setMaxGWP(Math.max(...summarizeElements.map((o) => o.gwp)));
-            setMinGWP(Math.min(...summarizeElements.map((o) => o.gwp)));
-            setElementsLoaded(true);
-            setElementCount(allInstances.length)
-            const total = summarizeElements.reduce((accumulator, obj) => {
-              return accumulator + obj.gwp;
-            }, 0)
-            setGWPTotal(total);
-          } catch (error) {
+            summarizeElements[index].count += 1;
+          } else {
+            summarizeElements.push({
+              material: value.material,
+              quantity: value.quantity,
+              gwp: value.gwp ?? 0,
+              elements: value.id,
+              unit: value.unit,
+              max: summary.gwp ?? 0,
+              min: summary.gwp ?? 0,
+              count: 1,
+            });
+          }
+          return "";
+        });
+        // console.log(summarizeElements);
+        setElements(summarizeElements);
+        // setElements(allInstances)
+        setMaxGWP(Math.max(...summarizeElements.map((o) => o.gwp)));
+        setMinGWP(Math.min(...summarizeElements.map((o) => o.gwp)));
+        setElementCount(allInstances.length)
+        const total = allInstances.reduce((accumulator, obj) => {
+          return accumulator + obj.gwp;
+        }, 0)
+        setGWPTotal(total);        
+        setElementsLoaded(true);
+      } catch (error) {
         const errorResponse = error as Response;
         setError(await client.extractAPIErrorMessage(errorResponse));
       }
@@ -411,7 +546,7 @@ export const CarbonByCategory = ({
             let pieEntry = {};
             for await (const entry of elements) {
               pieEntry = {
-                name: entry.material + "/" + entry.category,
+                name: entry.material,
                 value: entry.gwp,
               };
               result.push(pieEntry);
@@ -437,6 +572,7 @@ export const CarbonByCategory = ({
     };
     console.log("Elements :", elements);
     if (elementsLoaded && !pieDataLoaded) {
+
       void fetchPieData();
     }
   }, [
@@ -464,13 +600,33 @@ export const CarbonByCategory = ({
     if (active) {
       return (
         <div className="custom-tooltip">
-          <p className="label">{`${payload[0].name} : ${payload[0].value}`}</p>
+          <p className="esg-p">{`${payload[0].name} : ${payload[0].value}`}</p>
         </div>
       );
     }
 
     return null;
   };
+
+  const storeGWP = useCallback(async ()   => {
+    if (!elementsLoaded) {
+      displayNegativeToast("Please wait for Index to load fully");
+      return;
+    }
+    const aDate = new Date();
+    aDate.setHours(0,0,0,0)
+    for (const element of elements) {
+      const gwpStore: IGWP = {
+        iModelId: iModelId,
+        storeDate: aDate,
+        volume: element.volume,
+        gwp: element.gwp,
+        material: element.material,
+        count: element.count,
+      };
+      void mongoAppApi.putGWP(claims.email, iModelId, accessToken, gwpStore);
+    }
+  },[elementsLoaded, elements, iModelId, accessToken, claims.email]);
 
   const pageSizeList = useMemo(() => [10, 25, 50], []);
   const paginator = useCallback(
@@ -481,11 +637,22 @@ export const CarbonByCategory = ({
   );
 
   return (
-    <div className="row">
+    <div className="esg-row">
       <div>
-        <div className="panel-header">
-          <div className="row">
-            <div className="column">Carbon by Material & Category</div>
+        <div className="esg-panel-header">
+          <div className="esg-row">
+            <div className="esg-column">Carbon by Material</div>
+            <div className="esg-column-right">
+              <IconButton
+                className="esg-icon"
+                styleType="borderless"
+                onClick={async () => {
+                  await storeGWP();
+                }}
+              >
+                <SvgSave />
+              </IconButton>
+            </div>
           </div>
         </div>
 
@@ -520,37 +687,22 @@ export const CarbonByCategory = ({
                     Filter: tableFilters.TextFilter(),
                   },
                   {
-                    accessor: "category",
-                    Cell: SkeletonCell,
-                    Header: "Category",
-                    disableResizing: false,
-                    Filter: tableFilters.TextFilter(),
-                  },
-                  {
                     accessor: "quantity",
                     Cell: NumericCell,
+                    cellRenderer: (props: CellRendererProps<any>) =>
+                    numericCellRenderer(props),
                     Header: "Quantity",
                     disableResizing: false,
-                    sortType: 'number',
-                    filterType:'number',
-                    fieldType: 'number',
                     Filter: tableFilters.NumberRangeFilter(),
-                    cellRenderer: (props: CellRendererProps<any>) =>
-                      numericCellRenderer(props),
                   },
                   {
                     accessor: "gwp",
-                    // eslint-disable-next-line no-restricted-globals
                     Cell: NumericCell,
                     cellRenderer: (props: CellRendererProps<any>) =>
                       coloredCellRenderer(props, minGWP, maxGWP),
                     Header: (<div><p>GWP</p><p style={{justifyContent : "flex-end"}}>{new Intl.NumberFormat('en-EN', { minimumFractionDigits: getSettings.decimalAccuracy, maximumFractionDigits: getSettings.decimalAccuracy }).format(gwpTotal)}&nbsp;&nbsp;</p></div>),
-                    fieldType: 'number',
-                    sortType: 'number',
-                    filterType:'number',
                     disableResizing: false,
                     Filter: tableFilters.NumberRangeFilter(),
-                    
                   },
                   {
                     accessor: "max",
@@ -559,11 +711,7 @@ export const CarbonByCategory = ({
                     numericCellRenderer(props),
                     Header: "Max",
                     disableResizing: false,
-                    fieldType: 'number',
-                    sortType: 'number',
-                    filterType:'number',
                     Filter: tableFilters.NumberRangeFilter(),
-                    style : {justifyContent: "flex-end"}
                   },
                   {
                     accessor: "min",
@@ -572,10 +720,7 @@ export const CarbonByCategory = ({
                     numericCellRenderer(props),
                     Header: "Min",
                     disableResizing: false,
-                    fieldType: 'number',
-                    sortType: 'number',
                     Filter: tableFilters.NumberRangeFilter(),
-                    style : {justifyContent: "flex-end"}
                   },
                   {
                     accessor: "count",
@@ -584,10 +729,7 @@ export const CarbonByCategory = ({
                     numericCellRenderer(props),
                     Header: (<div><p>Count</p><p>{elementCount}</p></div>),
                     disableResizing: false,
-                    fieldType: 'number',
-                    sortType: 'number',
                     Filter: tableFilters.NumberRangeFilter(),
-                    style : {justifyContent: "flex-end"}
                   },
                   {
                     accessor: "unit",
@@ -599,7 +741,7 @@ export const CarbonByCategory = ({
                 ],
               },
             ],
-            [maxGWP, minGWP, gwpTotal, elementCount]
+            [maxGWP, minGWP, elementCount, gwpTotal]
           )}
           pageSize={25}
           paginatorRenderer={paginator}
@@ -621,7 +763,7 @@ export const CarbonByCategory = ({
           fill="#8884d8"
         >
           {pieData.map((entry, index) => (
-            <ChartCell
+            <Cell
               key={`cell-${index}`}
               fill={getColor(entry.value, minGWP, maxGWP)}
             />
@@ -630,7 +772,7 @@ export const CarbonByCategory = ({
         <Tooltip
           content={<CustomTooltip active={false} payload={[]} label={""} />}
         />
-        <Legend layout="vertical" verticalAlign="top" align="right" />
+        <Legend layout="vertical" verticalAlign="top" align="left" />
       </PieChart>
     </div>
   );

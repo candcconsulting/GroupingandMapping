@@ -17,3 +17,16 @@ export const displayNegativeToast = (content: string) => {
     type: "temporary",
   });
 };
+
+export const displayWarningToast = (content: string) => {
+  toaster.setSettings({
+    placement: "top",
+    order: "descending",
+  });
+  toaster.warning(content, {
+    duration: 7000,
+    hasCloseButton: false,
+    type: "temporary",
+  });
+};
+

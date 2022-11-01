@@ -33,6 +33,11 @@ interface EnvConfig {
   envConfig: DemoPortalConfig;
 }
 
+export const getSettings = 
+{
+  decimalAccuracy : 3
+}
+
 export const getConfig = async (): Promise<DemoPortalConfig> => {
   const fetchedConfig = (await (
     await fetch(`${process.env.PUBLIC_URL}/env-config.json`)
