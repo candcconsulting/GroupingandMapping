@@ -68,7 +68,7 @@ const RoutedHeader = ({
     <IuiHeader
       appLogo={
         <HeaderLogo logo={<SvgImodelHollow />} onClick={() => navigate?.("/")}>
-          iTwin Demo
+          ESG Insights
         </HeaderLogo>
       }
       isSlim={!!slimMatch}

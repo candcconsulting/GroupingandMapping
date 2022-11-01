@@ -1,0 +1,50 @@
+/*---------------------------------------------------------------------------------------------
+ * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+ * See LICENSE.md in the project root for license terms and full copyright notice.
+ *
+ * This code is for demonstration purposes and should not be considered production ready.
+ *--------------------------------------------------------------------------------------------*/
+.app-dashboard-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  &-tile {
+    @media (max-width: 1024px) {
+      width: 230px;
+    }
+  }
+}
+
+.dashboard-toolbar {
+  display: flex;
+  margin-bottom: 15;
+  width: 100%;
+
+  &-searchbar {
+    margin-left: 15;
+    margin-right: auto;
+    max-width: 1024;
+  }
+}
+
+.dashboard-tabs {
+  width:100%
+}
+
+.panel-header {
+  padding: 4px;
+  background-color: #a8b1ba;
+}
+
+.row {
+  display: flex;
+  flex-grow: 1;
+  > div:first-child {
+    flex-grow: 1;
+  }
+}
+
+.column {
+  flex: 50%;
+}
