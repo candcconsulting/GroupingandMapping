@@ -31,12 +31,16 @@ import {
 } from "@itwin/web-viewer-react";
 import { RouteComponentProps, Router } from "@reach/router";
 import React, { useCallback, useEffect, useState } from "react";
+import { displayNegativeToast } from "../../api/helperfunctions/messages";
 
 import { useApiData } from "../../api/useApiData";
 import { useApiPrefix } from "../../api/useApiPrefix";
+import { ErrorBoundary } from "../../components/ErrorBoundary/ErrorBoundary";
 import { CarbonUIProvider } from "../../components/Providers/CarbonUIProvider";
+import { ResultsWidgetProvider } from "../../components/Providers/Widgets/ResultsWidgetProvider";
 import AuthClient from "../../services/auth/AuthClient";
 import { SelectionRouter } from "../SelectionRouter/SelectionRouter";
+// import "../../components/Providers/Widgets/carbonWidget.scss"
 
 const useThemeWatcher = () => {
   const [theme, setTheme] = React.useState(() =>
@@ -80,46 +84,66 @@ const View = (props: ViewProps) => {
   const theme = useThemeWatcher();
   const changesetId = props.versionId ? fetchedVersion?.changesetId : undefined;
   const onIModelAppInit = useCallback(async () => {
-    await TreeWidget.initialize();
-    await PropertyGridManager.initialize();
-    await MeasureTools.startup();
+    try {
+      await TreeWidget.initialize();
+      await PropertyGridManager.initialize();
+      await MeasureTools.startup();
+    } 
+    catch(error) 
+    {
+      displayNegativeToast("Error Initializing viewer - Try refresh")
+    }
   }, []);
   const [reportsConfigInitialized, setReportsConfigInitialized] = useState(
     false
   );
   useEffect(() => {
     const init = async () => {
-      await ReportsConfigWidget.initialize();
-      setReportsConfigInitialized(true);
+      try {
+        await ReportsConfigWidget.initialize();
+        setReportsConfigInitialized(true);
+      } 
+      catch(error) 
+      {
+        displayNegativeToast("Error Initializing viewer - Try refresh")
+      }
+  
     };
 
     void init();
   }, []);
-
   const uiProviders: UiItemsProvider[] = [];
-  if (reportsConfigInitialized) {
-    uiProviders.push(new GroupingMappingProvider());
-    uiProviders.push(new OneClickLCAProvider());
-    uiProviders.push(new ReportsConfigProvider());
-    uiProviders.push(new ViewerNavigationToolsProvider());
-    uiProviders.push(
-      new ViewerContentToolsProvider({
-        vertical: {
-          measureGroup: false,
-        },
-      })
-    );
-    uiProviders.push(new ViewerStatusbarItemsProvider());
-    uiProviders.push(new TreeWidgetUiItemsProvider());
-    uiProviders.push(
-      new PropertyGridUiItemsProvider({
-        enableCopyingPropertyText: true,
-      })
-    );
-    uiProviders.push(new MeasureToolsUiItemsProvider());
-    uiProviders.push(new CarbonUIProvider());
+  try {
+    if (reportsConfigInitialized) {
+      uiProviders.push(new GroupingMappingProvider());
+      uiProviders.push(new OneClickLCAProvider());
+      uiProviders.push(new ReportsConfigProvider());
+      uiProviders.push(new ViewerNavigationToolsProvider());
+      uiProviders.push(new ResultsWidgetProvider());
+      uiProviders.push(
+        new ViewerContentToolsProvider({
+          vertical: {
+            measureGroup: false,
+          },
+        })
+      );
+      uiProviders.push(new ViewerStatusbarItemsProvider());
+      uiProviders.push(new TreeWidgetUiItemsProvider());
+      uiProviders.push(
+        new PropertyGridUiItemsProvider({
+          enableCopyingPropertyText: true,
+        })
+      );
+      uiProviders.push(new MeasureToolsUiItemsProvider());
+      uiProviders.push(new CarbonUIProvider());
+    }
+  } 
+  catch(error) 
+  {
+    displayNegativeToast("Error Initializing viewer - Try refresh")
   }
 
+try {
   return (state || !props.versionId) && AuthClient.client ? (
     <Viewer
       changeSetId={changesetId}
@@ -132,6 +156,11 @@ const View = (props: ViewProps) => {
       uiProviders={uiProviders}
     />
   ) : null;
+}
+catch(error) {
+  displayNegativeToast("Something went wrong with the viewer ... please try refresh")
+  return <p>Please refresh the browser</p>
+}
 };
 
 interface ViewRouterProps extends RouteComponentProps {
@@ -140,17 +169,19 @@ interface ViewRouterProps extends RouteComponentProps {
 
 export const ViewRouter = ({ accessToken }: ViewRouterProps) => {
   return (
-    <Router className="full-height-container">
-      <SelectionRouter
-        accessToken={accessToken}
-        path="*"
-        hideIModelActions={["view"]}
-      />
-      <View path="project/:projectId/imodel/:iModelId" />
-      <View
-        path="project/:projectId/imodel/:iModelId/version/:versionId"
-        accessToken={accessToken}
-      />
-    </Router>
+    <ErrorBoundary>
+      <Router className="full-height-container">
+        <SelectionRouter
+          accessToken={accessToken}
+          path="*"
+          hideIModelActions={["view"]}
+        />
+        <View path="project/:projectId/imodel/:iModelId" />
+        <View
+          path="project/:projectId/imodel/:iModelId/version/:versionId"
+          accessToken={accessToken}
+        />
+      </Router>
+    </ErrorBoundary>
   );
 };

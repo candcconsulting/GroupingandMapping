@@ -45,7 +45,7 @@ export const RoutedSidebar = ({ navigate }: RouteComponentProps) => {
           View iModel
         </SidenavButton>,
         <SidenavButton
-          key="esg-insights"
+          key="esg"
           startIcon={<SvgCloudUpload />}
           onClick={() => navigate?.(`/esg${selectionPath}`)}
           isActive={section === "esg"}

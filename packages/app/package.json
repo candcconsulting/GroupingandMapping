@@ -1,6 +1,6 @@
 {
-  "name": "itwin-demo-portal",
-  "version": "0.1.0",
+  "name": "itwin-ESG-portal",
+  "version": "0.2.0",
   "private": true,
   "dependencies": {
     "@bentley/bentleyjs-core": "^2.19.3",
@@ -22,7 +22,7 @@
     "@itwin/core-react": "^3.2.0",
     "@itwin/create-imodel-react": "^0.4.1",
     "@itwin/delete-imodel-react": "^0.2.0",
-    "@itwin/grouping-mapping-widget": "^0.5.8",
+    "@itwin/grouping-mapping-widget": "^0.8.1",
     "@itwin/imodel-browser-react": "^0.11.0",
     "@itwin/imodel-components-react": "^3.2.0",
     "@itwin/imodels-access-frontend": "^1.0.1",
@@ -37,7 +37,7 @@
     "@itwin/presentation-frontend": "^3.2.0",
     "@itwin/property-grid-react": "^0.8.0",
     "@itwin/reality-data-client": "^0.9.0",
-    "@itwin/reports-config-widget-react": "^0.0.6",
+    "@itwin/reports-config-widget-react": "^0.0.8",
     "@itwin/tree-widget-react": "^0.4.7",
     "@itwin/web-viewer-react": "^3.0.6",
     "@itwin/webgl-compatibility": "^3.2.0",
@@ -54,7 +54,8 @@
     "react-dom": "^17.0.2",
     "react-intersection-observer": "^8.32.0",
     "recharts": "^2.1.13",
-    "bootstrap-table": "^1.21.1"
+    "bootstrap-table": "^1.21.1",
+    "realm-web": "^1.7.1"
   },
   "devDependencies": {
     "@bentley/react-scripts": "^4.0.7",

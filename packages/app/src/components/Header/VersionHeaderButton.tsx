@@ -43,7 +43,7 @@ export const VersionHeaderButton = ({
     : {
         displayName: "Latest checkpoint",
       };
-  return section === "view" ? (
+  return section === "view" || (section = "esg") ? (
     <HeaderButton
       key="namedVersion"
       name={namedVersion ? namedVersion?.displayName : "Fetching version"}

@@ -10,7 +10,12 @@ Select All : Select All elements that are emphasized to be selected for useful c
 Hide All : will cycle through all groups and Hide All elements which are part of a grouping thus allowing users to view what part of the model is not reported on.
 Show All : Emphasize all elements that are part of a group, thus allowing a user to review what is already selected across all groups
 
+## MongoDB
 
+The MongoDB Tag indicates that the epd and epdMapping have moved to MongoDB
+Instructions on how to configure this and a MongoDB template will be forthcoming and listed in the mongoDB readme
+Sample MongoDB Atlas template is here
+https://github.com/candcconsulting/AtlasCarbon
 
 ## Environment Variables
 
@@ -36,11 +41,11 @@ IMJS_ITWIN_ID = ""
 IMJS_IMODEL_ID = ""
 ```
 
-- For the IMJS_ITWIN_ID variable, you can use the id of one of your existing Projects or Assets. 
+- For the IMJS_ITWIN_ID variable, you can use the id of one of your existing Projects or Assets.
 
-- For the IMJS_IMODEL_ID variable, use the id of an iModel that belongs to the iTwin that you specified in the IMJS_ITWIN_ID variable. 
+- For the IMJS_IMODEL_ID variable, use the id of an iModel that belongs to the iTwin that you specified in the IMJS_ITWIN_ID variable.
 
-This project locks down the ProjectId, but allows any iModel in the Project to be used.  There is sample code in the project that shows how to enable project selection.  This is not recommended for public hosting.
+This project locks down the ProjectId, but allows any iModel in the Project to be used. There is sample code in the project that shows how to enable project selection. This is not recommended for public hosting.
 
 ## Available Scripts
 
@@ -54,7 +59,6 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 The page will reload if you make edits.\
 You will also see any lint errors in the console.
 
-
 ### `npm run build`
 
 Builds the app for production to the `build` folder.\
@@ -64,4 +68,3 @@ The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-

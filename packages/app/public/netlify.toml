@@ -2,3 +2,8 @@
   from = "/signin-callback"
   to = "/"
   status = 200
+  
+[context.production.environment]
+IMJS_ITWIN_ID = "1e354d91-1cc2-403d-8d99-38e1b2a364a8"
+IMJS_IMODEL_ID = "dc0f9b69-d21f-4c7b-b459-1134b4b7ab83"
+IMJS_VALID_ITWIN_IDS = "0d1c22c7-6e78-47e8-a13c-97141667dfd1, ac6a7626-8bb1-494e-8bd9-b7ce7d40c3d5, 274343c1-7baf-4176-82c2-5acffc93e8fa,0600606b-c56a-44cc-8a40-044b7a943078"

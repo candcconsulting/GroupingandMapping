@@ -118,7 +118,7 @@ export const Members = ({ accessToken, projectId, navigate }: MembersProps) => {
                         </IconButton>
                       </div>
                     ),
-                    Cell: (props) => (
+                    Cell: (props : any) => (
                       <EditMemberRoleCell
                         {...props}
                         projectId={projectId ?? ""}
@@ -134,7 +134,7 @@ export const Members = ({ accessToken, projectId, navigate }: MembersProps) => {
                     accessor: "userId",
                     maxWidth: 75,
                     disableSortBy: true,
-                    Cell: (props) => {
+                    Cell: (props : any) => {
                       return (
                         <RemoveMemberCell
                           userId={props.value}
