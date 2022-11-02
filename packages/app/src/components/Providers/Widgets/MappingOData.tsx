@@ -3,7 +3,7 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import { Alert, Code, LabeledSelect, Table, tableFilters, ToggleSwitch } from "@itwin/itwinui-react";
+import { Alert, Code, LabeledSelect, ProgressRadial, Table, tableFilters, ToggleSwitch } from "@itwin/itwinui-react";
 import { Column } from "react-table";
 import * as React from "react";
 import { useActiveIModelConnection } from "@itwin/appui-react";
@@ -11,6 +11,7 @@ import { EmphasizeElements, IModelApp } from "@itwin/core-frontend";
 import { OData } from "../../../api/OData";
 import { ReportingClient } from "@itwin/insights-client";
 import "./MappingOData.scss";
+import { ODataClient } from "@itwin/grouping-mapping-widget";
 
 const fetchOData = async (
   iModelId: string,
@@ -28,21 +29,22 @@ const fetchOData = async (
     }),
   };
   const odata = new OData(url, requestInit);
-  const odataResponse = await odata.get(groupName);
-
-  setColumns([
-    {
-      Header: "Header name",
-      columns: Object.keys(odataResponse[0]).map((x) => ({
-        id: x,
-        Header: x,
-        accessor: x,
-        width: 200,
-        Filter: tableFilters.TextFilter(),
-        sortType: "string"        
-      })).filter(x => (x.accessor.substring(0,4) !== 'BBox')),
-    },
-  ]);
+  const odataResponse = await odata.getPages(setColumns, setData, groupName);
+  if (odataResponse.length > 0) {
+    setColumns([
+      {
+        Header: "Header name",
+        columns: Object.keys(odataResponse[0]).map((x) => ({
+          id: x,
+          Header: x,
+          accessor: x,
+          width: 200,          
+          Filter: (typeof odataResponse[0][x] === 'string') ? tableFilters.TextFilter() : (typeof odataResponse[0][x] === 'number') ? tableFilters.NumberRangeFilter() : undefined,
+          sortType: typeof odataResponse[0][x]       
+        })).filter(x => (x.accessor.substring(0,4) !== 'BBox')),
+      },
+    ]);
+  }
   setData(odataResponse);
   setIsLoading(false);
 };
@@ -97,6 +99,7 @@ export const MappingOData = () => {
   const [groups, setGroups] = React.useState<any[]>([]);
   const [odata, setOData] = React.useState<any[]>([]);
   const [columns, setColumns] = React.useState<Column<any>[]>([]);
+  const [odataCount, setODataCount] = React.useState(0);
 
   const [selectMapping, setSelectMapping] = React.useState<string>();
   const [selectGroup, setSelectGroup] = React.useState<string>();
@@ -108,14 +111,21 @@ export const MappingOData = () => {
   React.useEffect(() => {
     if (selectMapping !== undefined) {
       void fetchGroups(iModelId, changeset, selectMapping, setGroups, setSelectGroup);
+      setODataCount(0);
     }
   }, [iModelId, changeset, selectMapping]);
 
   React.useEffect(() => {
     if (selectMapping !== undefined && selectGroup !== undefined) {
       void fetchOData(iModelId, changeset, selectMapping, selectGroup, setColumns, setOData, setIsLoading);
+
     }
   }, [iModelId, changeset, selectMapping, selectGroup]);
+
+  React.useEffect(() => {
+    if (!isLoading && selectMapping !== undefined && selectGroup !== undefined && (odata.length !== odataCount)  )
+      setODataCount(odata.length)
+  })
 
   const onSelect = React.useCallback(async (selectedData: any[] | undefined) => {
     if (!IModelApp.viewManager.selectedView) {
@@ -140,6 +150,13 @@ export const MappingOData = () => {
   return (
     <div className="mapping-odata-sample">
       <div className="mapping-group-selection">
+      <ToggleSwitch
+          label="Zoom to Selection"
+          labelPosition="left"
+          defaultChecked
+          onChange={() => setApplyZoom(!applyZoom)}
+          style = {{width:"115px"}}
+        />
         <LabeledSelect
           label="Select Mapping"
           displayStyle="inline"
@@ -158,15 +175,13 @@ export const MappingOData = () => {
           onShow={undefined}
           onHide={undefined}
         />
-        <ToggleSwitch
-          label="Zoom to Selection"
-          labelPosition="left"
-          defaultChecked
-          onChange={() => setApplyZoom(!applyZoom)}
-        />
+        {isLoading && <ProgressRadial indeterminate = {true}></ProgressRadial>}
+        {(odataCount > 0) &&<p>{odataCount}: Records</p>}
+
       </div>
       <div className="odata-table">
         <Table
+          enableVirtualization
           columns={columns}
           data={odata}
           emptyTableContent="No data."
