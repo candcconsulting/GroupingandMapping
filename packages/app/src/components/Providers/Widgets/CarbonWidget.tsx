@@ -105,6 +105,15 @@ const displayNegativeToast = (content: string) => {
     type: "temporary",
   });
 };
+
+const customFilterFn = (rows: any, columnId: string[], filterString : string) => {
+  const regExp = ( filterString.replace('*', '.*'))
+  const filteredRows = rows.filter((o : any) => o.values[columnId[0]].match(regExp, 'i'))
+  if (filteredRows && filteredRows.length > 0)
+    return filteredRows;
+    return [];
+}
+
 export const CarbonWidget = () => {
   const [elements, setElements] = React.useState<any[]>([]);
   const [mapping, setMapping] = React.useState<IMapping>();
@@ -262,6 +271,7 @@ export const CarbonWidget = () => {
             Header: "Userlabel",
             disableResizing: false,
             Filter: tableFilters.TextFilter(),
+            filter: customFilterFn
           },
           {
             accessor: "material",
@@ -366,7 +376,7 @@ export const CarbonWidget = () => {
             if (AuthClient.client) {
               void iTwinAPI
                 .getGroups(AuthClient.client, iModelId, aMapping.id)
-                .then((allGroups) => {
+                .then((allGroups : any) => {
                   const ourGroups: IGroup[] = [];
                   // console.log(allGroups);
                   for (const aGroup of allGroups) {

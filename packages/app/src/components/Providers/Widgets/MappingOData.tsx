@@ -28,6 +28,16 @@ const fetchOData = async (
       Authorization: await IModelApp.authorizationClient!.getAccessToken(),
     }),
   };
+  const customFilterFn = (rows: any, columnId: string[], filterString : string) => {
+
+    const regExp = ( filterString.replace('*', '.*'))
+    const filteredRows = rows.filter((o : any) => o.values[columnId[0]].match(regExp, 'i'))
+    if (filteredRows && filteredRows.length > 0)
+      return filteredRows;
+      return [];
+
+
+  }
   const odata = new OData(url, requestInit);
   const odataResponse = await odata.getPages(setColumns, setData, groupName);
   if (odataResponse.length > 0) {
@@ -40,7 +50,8 @@ const fetchOData = async (
           accessor: x,
           width: 200,          
           Filter: (typeof odataResponse[0][x] === 'string') ? tableFilters.TextFilter() : (typeof odataResponse[0][x] === 'number') ? tableFilters.NumberRangeFilter() : undefined,
-          sortType: typeof odataResponse[0][x]       
+          sortType: typeof odataResponse[0][x],
+          filter: (typeof odataResponse[0][x] === 'string') ? customFilterFn : undefined
         })).filter(x => (x.accessor.substring(0,4) !== 'BBox')),
       },
     ]);
