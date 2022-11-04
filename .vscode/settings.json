@@ -10,5 +10,11 @@
     "obj": true,
     "bin": true
   },
-  "cSpell.words": ["IGWP", "imodels", "itwin", "itwinui"]
+  "cSpell.words": [
+    "IGWP",
+    "imodels",
+    "itwin",
+    "itwinui",
+    "uniclass"
+  ]
 }

@@ -483,6 +483,22 @@ export class sqlAPI {
     return rows[0];
   };
 
+  public static getUniclass = async (iModelConnection : IModelConnection, uniclassSystems : string, _updateProgress : any, min : number, max : number) => {
+    const sql = `select distinct name, ec_classname(class.id, 's.c') as className from meta.ecpropertydef pd join bis.geometricelement3d ge on pd.class.id = ge.ecclassId  where name in (${uniclassSystems}) group by class.id`
+    const classes = await _executeQuery(iModelConnection, sql)
+    const returnInstances = []
+    let counter = 1
+    console.log("loading ", classes.length)
+    for (const aClass of classes) {
+      const classSQL = `select coalesce(${aClass.name}, '<null>') as uniclassSystem, ecInstanceid, userLabel from ${aClass.className}`
+      const instances = await _executeQuery(iModelConnection, classSQL)
+      returnInstances.push(...instances);
+      counter = counter + 1
+      _updateProgress(min + ((max - min) / classes.length * counter))
+    }
+    return returnInstances
+    
+  }
   public static getVolumeforGroupWidget = async (
     iModel: IModelConnection,
     groupSQL: string,

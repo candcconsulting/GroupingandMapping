@@ -12,6 +12,7 @@ import {
 import React from "react";
 
 import CarbonWidget from "./Widgets/CarbonWidget";
+import Uniclass from "./Widgets/Uniclass";
 
 // Provides custom widgets to support validation workflow.
 export class CarbonUIProvider implements UiItemsProvider {
@@ -35,6 +36,21 @@ export class CarbonUIProvider implements UiItemsProvider {
         label: "Carbon Results",
         getWidgetContent: () => {
           return <CarbonWidget />;
+        },
+      };
+
+      widgets.push(widget);
+    }
+
+    if (
+      stageId === "DefaultFrontstage" &&
+      location === StagePanelLocation.Right
+    ) {
+      const widget: AbstractWidgetProps = {
+        id: "Uniclass",
+        label: "Uniclass",
+        getWidgetContent: () => {
+          return <Uniclass />;
         },
       };
 
