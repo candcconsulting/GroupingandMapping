@@ -40,6 +40,7 @@ import {getSettings} from "../../../config/index"
 import { NumericCell, NumericCell0, numericCellRenderer } from "../../../routers/SynchronizationRouter/components/NumericCell";
 import { coloredCellRenderer } from "../../../routers/CarbonRouter/components/ColoredCell";
 import { CellRendererProps } from "react-table";
+import { colourElements } from "../../../api/helperfunctions/elements";
 
 
 // import "./carbonWidget.scss"
@@ -136,6 +137,17 @@ export const CarbonWidget = () => {
   const [error, setError] = React.useState("");
   const urlPrefix = useApiPrefix();
   const rpcInterfaces = [IModelReadRpcInterface];
+
+  useEffect(() => {
+    return () => {
+      setElements([]);
+      setColumns([])
+      setEPDMapping(undefined);
+      setEPD([]);
+      setMapping(undefined);      
+      setGroups([]);
+    };
+  }, []);
 
   const useAccessToken = () => {
     const [accessToken, setAccessToken] = React.useState<string>();
@@ -579,31 +591,7 @@ export const CarbonWidget = () => {
     [pageSizeList]
   );
 
-  const colourElements = (
-    vp: any,
-    elementSet: any,
-    clear?: boolean,
-    colour?: any
-  ) => {
-    const emph = EmphasizeElements.getOrCreate(vp);
-    if (clear) {
-      emph.clearEmphasizedElements(vp);
-      emph.clearOverriddenElements(vp);
-    }
-    if (!colour) {
-      colour = ColorDef.fromString("yellow");
-    }
-    //const allElements = ecResult;
-    const allElements = elementSet.split(",");
-    emph.overrideElements(
-      allElements,
-      vp,
-      colour,
-      FeatureOverrideType.ColorOnly,
-      true
-    );
-    emph.emphasizeElements(allElements, vp, undefined, true);
-  };
+
 
   useEffect(() => {
     const vp = IModelApp.viewManager.selectedView;

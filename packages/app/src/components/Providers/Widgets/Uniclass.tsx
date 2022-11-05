@@ -1,12 +1,14 @@
 import { asInstanceOf } from "@bentley/bentleyjs-core";
+import { StatusBarItemsManager } from "@itwin/appui-abstract";
 import { ThemeManager } from "@itwin/appui-react";
-import { BentleyCloudRpcManager, BentleyCloudRpcParams, IModelReadRpcInterface } from "@itwin/core-common";
+import { BentleyCloudRpcManager, BentleyCloudRpcParams, ColorDef, IModelReadRpcInterface } from "@itwin/core-common";
 import { IModelApp } from "@itwin/core-frontend";
 import { SvgPlaceholder } from "@itwin/itwinui-icons-react";
 import { Button, NodeData, ProgressRadial, ProgressRadialProps, Tree, TreeNode } from "@itwin/itwinui-react"
 import { consoleDiagnosticsHandler } from "@itwin/presentation-frontend";
 import { RouteComponentProps } from "@reach/router";
-import React from "react"
+import React, { useEffect } from "react"
+import { colourElements } from "../../../api/helperfunctions/elements";
 import { sqlAPI } from "../../../api/queryAPI";
 import {uniclassProductLookup, uniclassSystemLookup} from "../../../data/uniclass"
 
@@ -28,21 +30,32 @@ const Uniclass =() => {
   const [selectedNodes, setSelectedNodes] = React.useState<any>({});
   const [progressStatus, setProgressStatus] = React.useState<ProgressRadialProps>({status: 'negative'})
   const [progressValue, setProgressValue] = React.useState(0)
+  const selectedElements = React.useRef<any[]>([]);
+  const [uniclassEnabled, setUniclassEnabled] = React.useState(true);
   
-  const treeNodes = React.useRef<TreeData[]>([{
-    id: "0",
-    parentId : "",
-    label: "empty",
-    sublabel: "<null>",
-    subItems: []}]);
+  const treeNodes = React.useRef<TreeData[]>([]);
   const [expandedNodes, setExpandedNodes] = React.useState<Record<string, boolean>>({})
+
+  useEffect(() => {
+    return () => {
+      setLoadedNodes([]);
+      setSelectedNodes({});
+      selectedElements.current = [];
+      treeNodes.current = [];
+      setExpandedNodes({});
+    };
+  }, []);
 
   const onSelectedNodeChange = React.useCallback(
     (nodeId: string, isSelected: boolean) => 
     {
       // console.log(findNode(nodeId))
+      selectedElements.current = [];
+      const searchNode = (nodeId.substring(0,2).toLowerCase() === 'ss') ? 0 : 1
+      const currentNode = (searchTree(treeNodes.current[searchNode], nodeId))
+      findElements(currentNode)       
+      colourElements(vp, selectedElements.current, false);
 
-      console.log(searchTree(treeNodes.current[1], nodeId))
       if (isSelected) {
           setSelectedNodes((oldSelected : any) => ({ ...oldSelected, [nodeId]: true }));    
       } else {
@@ -56,7 +69,7 @@ const Uniclass =() => {
   
   const onNodeExpanded = React.useCallback(
     (nodeId: string, isExpanded: boolean) => {
-      console.log(`expanding ${nodeId}`)
+      // console.log(`expanding ${nodeId}`)
       if (isExpanded) {
         setExpandedNodes((oldExpanded) => ({ ...oldExpanded, [nodeId]: true }));        
       } else {
@@ -86,11 +99,9 @@ const Uniclass =() => {
   }
   const iModelConnection = vp.iModel;
   
-  const registerNode = (node : string, childNode : string, parentId : string) => {
+  const registerNode = (node : string, suffix : string, parentId : string) => {
     let subLabel = "Invalid Uniclass Code"
     if (node.substring(0,2).toLowerCase() === "ss") {
-      const tempLookup = uniclassSystemLookup
-
       const subId = uniclassSystemLookup.findIndex((o) => o.id === node)
       if (subId >= 0) 
         subLabel = uniclassSystemLookup[subId].title;
@@ -108,11 +119,29 @@ const Uniclass =() => {
       id : node,
       parentId ,
       label : node,
-      sublabel : subLabel,
+      sublabel : subLabel + (suffix === "<Elements>" ? suffix : ""),
       subItems : []
     }
     treeNodes.current = [...treeNodes.current, aNode] 
     return node;
+  }
+
+  const findElements = (node: any ) => {
+    try {
+      if (node.subItems[node.subItems.length - 1].sublabel === "<Element>") {
+        const tempElements = node.subItems;
+        const elements = tempElements.filter((o: any) => o.sublabel === "<Element>").map((o: any ) => o.id)
+        selectedElements.current.push(...elements)
+        return      
+      }
+      else if (node.subItems != null){
+        for (let i= 0; i< node.subItems.length; i++) {
+          void findElements(node.subItems[i])
+        }
+      }
+    }
+    catch (e) {return}
+    
   }
 
   const searchTree : any = (element : any, matchingId : string) => {
@@ -140,7 +169,7 @@ const Uniclass =() => {
       if (id < 0) {
         let suffix = "_" + sections[i+1]
         if (!sections[i+1])
-          suffix = " <Elements>"
+          suffix = "<Elements>"
         currentId = registerNode(prefix, prefix + suffix, parentId)
         if (parentId !== "") {
           const pid = treeNodes.current.findIndex((o) => o.id === parentId)
@@ -157,7 +186,7 @@ const Uniclass =() => {
       id : instance.id,
       parentId ,
       label : instance.userLabel,
-      sublabel : "",
+      sublabel : "<Element>",
       subItems : []
     }
     const checkId = treeNodes.current.findIndex((o) => o.id === instance.id);
@@ -171,20 +200,6 @@ const Uniclass =() => {
     }
 
   }
-  const findNode = (nodeId : string) => {
-    const parents = nodeId.split('_');
-    let parentId = treeNodes.current.findIndex((o) => o.id === parents[0]);
-    let nextLevel = parents[0];
-    for (let i= 1; i < parents.length; i++) {
-      nextLevel = nextLevel + "_" + parents[i];
-      const nextId = treeNodes.current[parentId].subItems.findIndex((o) => o.id === nextLevel);
-      if (nextId)
-        parentId = nextId
-    }
-    console.log(treeNodes.current[parentId]);
-    return treeNodes.current[parentId]
-  }
-
 
 
   const updateProgress = (value : number) => {
@@ -196,19 +211,20 @@ const Uniclass =() => {
     // export uniclass system and ecinstances
     // find all classes that have uniclass Product
     // export uniclass product and ecinstances
+    setProgressStatus({status: undefined})
+    setUniclassEnabled(false)
     const uniclassProducts = "'Uniclass_Product','Classification__x002E__Uniclass__x002E__Pr__x002E__Number', 'Identity_Classification_Uniclass_2015_Pr', 'Identity_Classification_Uniclass_2015_Pr_Code' "
     const uniclassSystems = "'Uniclass_System','Classification__x002E__Uniclass__x002E__Ss__x002E__Number', 'Identity_Classification_Uniclass_2015_Ss', 'Identity_Classification_Uniclass_2015_Ss_Code' "
     
     const tempSystemInstances = await sqlAPI.getUniclass(iModelConnection, uniclassSystems, updateProgress, 0,50)
     // we need to tidy up uniclass System
-    console.log(`Systems : ${tempSystemInstances.length}`)
+    //console.log(`Systems : ${tempSystemInstances.length}`)
     // first of all drop everything after a space
 
     const tempProductInstances = await sqlAPI.getUniclass(iModelConnection, uniclassProducts, updateProgress, 50, 100)
-    console.log(`Systems : ${tempProductInstances.length}`)
+    //console.log(`Systems : ${tempProductInstances.length}`)
 
-    const treeInstances: any[] = [];
-    const productInstances:any[] = [];
+    const treeInstances: any[] = [];    
     for (const aInstance of tempSystemInstances) {
       // get rid of the spaces
       let nodeString = aInstance.uniclassSystem
@@ -230,7 +246,8 @@ const Uniclass =() => {
       }
       treeInstances.push({...aInstance, uniclassSystem: nodeString})
     }
-    
+    treeInstances.filter((o) => (o.id.substring(0,2).toLowerCase !== "ss" || o.id.substring(0,2).toLowerCase !== "pr" ))
+    // only handle ss and pr
     for (const instance of treeInstances){ 
       buildTree(instance)
     }
@@ -249,7 +266,7 @@ const Uniclass =() => {
   return (
     <div>
       <div style={{display: 'flex', alignItems:"center"}}>
-        <Button onClick={exportUniclass}>Build Uniclass</Button>
+        <Button onClick={exportUniclass} disabled = {!uniclassEnabled}>Build Uniclass</Button>
         <ProgressRadial status={progressStatus.status} value={progressValue} />
       </div>
       <Tree<TreeData>
