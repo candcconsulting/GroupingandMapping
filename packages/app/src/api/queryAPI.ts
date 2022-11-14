@@ -7,6 +7,7 @@
 import { CompressedId64Set } from "@bentley/bentleyjs-core";
 import { QueryRowFormat } from "@itwin/core-common";
 import { CheckpointConnection, IModelConnection } from "@itwin/core-frontend";
+
 import { getSettings } from "../config";
 import { gwpCalculation } from "../routers/CarbonRouter/components/Carbon";
 import { displayWarningToast } from "./helperfunctions/messages";
@@ -22,8 +23,8 @@ const singleReturnSQL = (sql: string) => {
 
   return returnSQL;
 };
-export const lookupUnitType = (unit : string)  => {
-  let unitType = ""
+export const lookupUnitType = (unit: string) => {
+  let unitType = "";
   switch (unit) {
     case "m3": {
       unitType = "volume";
@@ -52,9 +53,9 @@ export const lookupUnitType = (unit : string)  => {
     }
   }
   return unitType;
-}
-export const lookupUnit = (unitType : string)  => {
-  let unit = ""
+};
+export const lookupUnit = (unitType: string) => {
+  let unit = "";
   switch (unitType) {
     case "volume": {
       unit = "m3";
@@ -79,7 +80,7 @@ export const lookupUnit = (unitType : string)  => {
     }
   }
   return unit;
-}
+};
 const getOperationType = (unitType: string) => {
   let operation = 2;
   switch (unitType) {
@@ -104,14 +105,14 @@ const _executeQuery = async (imodel: IModelConnection, query: string) => {
   try {
     const result = imodel.query(query, undefined, {
       rowFormat: QueryRowFormat.UseJsPropertyNames,
-    })
+    });
     if (result) {
       for await (const row of result) {
         rows.push(row);
       }
+    } else {
+      console.log("no records returned");
     }
-    else 
-      console.log("no records returned")
     return rows;
   } catch (e) {
     const _e = e as Error;
@@ -120,42 +121,68 @@ const _executeQuery = async (imodel: IModelConnection, query: string) => {
   return rows;
 };
 
-const indexMassProperties = (listMass: any, operation : number)  => {
-  const returnValue: { [id: string]: {quantity : number, status : number}; } = {}; ;
+const indexMassProperties = (listMass: any, operation: number) => {
+  const returnValue: {
+    [id: string]: { quantity: number; status: number };
+  } = {};
 
   for (const mass of listMass) {
     switch (operation) {
-      case 2 : returnValue[mass.candidate] = {"quantity" : mass.volume, "status" : mass.status}; break;
-      case 1 : returnValue[mass.candidate] = {"quantity" : mass.area, "status" : mass.status}; break;
-      case 0 : returnValue[mass.candidate] = {"quantity" : mass.length, "status" : mass.status}; break;
+      case 2:
+        returnValue[mass.candidate] = {
+          quantity: mass.volume,
+          status: mass.status,
+        };
+        break;
+      case 1:
+        returnValue[mass.candidate] = {
+          quantity: mass.area,
+          status: mass.status,
+        };
+        break;
+      case 0:
+        returnValue[mass.candidate] = {
+          quantity: mass.length,
+          status: mass.status,
+        };
+        break;
     }
   }
-  return returnValue
-}
+  return returnValue;
+};
 
-
-const processRows = async (rows : any, material: any, iModel: IModelConnection, groupName : string) => {
+const processRows = async (
+  rows: any,
+  material: any,
+  iModel: IModelConnection,
+  groupName: string
+) => {
   const returnList: IVolume[] = [];
   const errorList: IVolume[] = [];
   const operation = getOperationType(material.unitType);
 
-  const ids = rows.filter((aRow: any) => aRow.qtoQuantity <= 0).map((aRow : any) => aRow.id);    
+  const ids = rows
+    .filter((aRow: any) => aRow.qtoQuantity <= 0)
+    .map((aRow: any) => aRow.id);
   let massProperties = undefined;
   let indexedMassProperties = undefined;
-  if (ids.length > 0)
-      { 
-        // it would seem that not every element is returned when we pass them in
+  if (ids.length > 0) {
+    // it would seem that not every element is returned when we pass them in
     massProperties = await iModel.getMassPropertiesPerCandidate({
       candidates: CompressedId64Set.compressIds(ids),
       operations: [operation],
     });
-    indexedMassProperties = indexMassProperties(massProperties, operation)
+    indexedMassProperties = indexMassProperties(massProperties, operation);
   }
   let counter = 0;
   for await (const row of rows) {
     let unit = "";
-    let quantity = 0;      
-    const mpQuantity =  (indexedMassProperties?.[row.id] && (indexedMassProperties[row.id].status === 0)) ? indexedMassProperties[row.id].quantity : undefined
+    let quantity = 0;
+    const mpQuantity =
+      indexedMassProperties?.[row.id] &&
+      indexedMassProperties[row.id].status === 0
+        ? indexedMassProperties[row.id].quantity
+        : undefined;
     switch (material.unitType) {
       case "volume": {
         unit = "m3";
@@ -189,7 +216,7 @@ const processRows = async (rows : any, material: any, iModel: IModelConnection, 
         break;
       }
     }
-    const gwpUnit = {[material.unitType] : quantity}
+    const gwpUnit = { [material.unitType]: quantity };
 
     const aVolume: IVolume = {
       id: row.id,
@@ -199,10 +226,12 @@ const processRows = async (rows : any, material: any, iModel: IModelConnection, 
       unit: unit,
       gwp: gwpCalculation(material, gwpUnit),
       groupName: groupName,
-      category: row.category ?? ""
+      category: row.category ?? "",
+      description: material.description,
     };
     if (aVolume.quantity <= 0) {
       aVolume.material = "Invalid " + material.material;
+      aVolume.description = "Invalid " + material.description;
       aVolume.gwp = 0;
       errorList.push(aVolume);
     } else {
@@ -213,12 +242,12 @@ const processRows = async (rows : any, material: any, iModel: IModelConnection, 
   //console.timeLog(groupName)
 
   return { gwpList: returnList, errorList: errorList };
+};
 
-}
-
-export const sleep = (ms : number) => new Promise<void>((resolve) => {
-  setTimeout(() => resolve(), ms);
-});
+export const sleep = (ms: number) =>
+  new Promise<void>((resolve) => {
+    setTimeout(() => resolve(), ms);
+  });
 
 export interface classCount {
   class: string;
@@ -270,65 +299,72 @@ export interface IVolume {
   min?: number;
   category?: string;
   groupName?: string;
+  description?: string;
 }
 
 export interface IReturnList {
-  gwpList : IVolume[];
-  errorList : IVolume[];
+  gwpList: IVolume[];
+  errorList: IVolume[];
 }
 
 export class sqlAPI {
-  private static  _checkVolumeAspect: any = ""
-  private static  _checkAreaAspect: any = ""
-  private static  _checkLengthAspect: any = ""
+  private static _checkVolumeAspect: any = "";
+  private static _checkAreaAspect: any = "";
+  private static _checkLengthAspect: any = "";
 
-  private static _runCheckVolumeAspect = async (iModel : IModelConnection)  => {
+  private static _runCheckVolumeAspect = async (iModel: IModelConnection) => {
     if (sqlAPI._checkVolumeAspect === "") {
-      const sql = "select name from meta.ecClassDef where name like 'VolumeAspect'"
-      const rows = await _executeQuery(iModel, sql)
+      const sql =
+        "select name from meta.ecClassDef where name like 'VolumeAspect'";
+      const rows = await _executeQuery(iModel, sql);
       if (rows.length > 0) {
-        sqlAPI._checkVolumeAspect = true
-        return true
+        sqlAPI._checkVolumeAspect = true;
+        return true;
       } else {
-        sqlAPI._checkVolumeAspect = false 
-        return false
+        sqlAPI._checkVolumeAspect = false;
+        return false;
       }
     }
     return sqlAPI._checkVolumeAspect;
-  }
-  private static _runCheckAreaAspect = async (iModel : IModelConnection)  => {
+  };
+  private static _runCheckAreaAspect = async (iModel: IModelConnection) => {
     if (sqlAPI._checkAreaAspect === "") {
-      const sql = "select name from meta.ecClassDef where name like 'SurfaceAreaAspect'"
-      const rows = await _executeQuery(iModel, sql)
+      const sql =
+        "select name from meta.ecClassDef where name like 'SurfaceAreaAspect'";
+      const rows = await _executeQuery(iModel, sql);
       if (rows.length > 0) {
-        sqlAPI._checkAreaAspect = true
-        return true
+        sqlAPI._checkAreaAspect = true;
+        return true;
       } else {
-        sqlAPI._checkAreaAspect = false 
-        return false
+        sqlAPI._checkAreaAspect = false;
+        return false;
       }
     }
     return sqlAPI._checkAreaAspect;
-  }
-  private static _runCheckLengthAspect = async (iModel : IModelConnection)  => {
+  };
+  private static _runCheckLengthAspect = async (iModel: IModelConnection) => {
     if (sqlAPI._checkLengthAspect === "") {
-      const sql = "select name from meta.ecClassDef where name like 'DimensionsAspect'"
-      const rows = await _executeQuery(iModel, sql)
+      const sql =
+        "select name from meta.ecClassDef where name like 'DimensionsAspect'";
+      const rows = await _executeQuery(iModel, sql);
       if (rows.length > 0) {
-        sqlAPI._checkLengthAspect = true
-        return true
+        sqlAPI._checkLengthAspect = true;
+        return true;
       } else {
-        sqlAPI._checkLengthAspect = false 
-        return false
+        sqlAPI._checkLengthAspect = false;
+        return false;
       }
     }
     return sqlAPI._checkLengthAspect;
-  }
+  };
 
-  private static _setQuantityAspect = async (material : any, iModel : IModelConnection) => {
+  private static _setQuantityAspect = async (
+    material: any,
+    iModel: IModelConnection
+  ) => {
     const operation = getOperationType(material.unitType);
-    let aspectJoin = ""
-    let aspectProperty = ""
+    let aspectJoin = "";
+    let aspectProperty = "";
     switch (operation) {
       case 0: {
         // length
@@ -375,22 +411,24 @@ export class sqlAPI {
             " left join qto.VolumeAspect qtov on ge.ecinstanceId = qtov.Element.id";
         } else {
           aspectProperty = ",0 as qtoQuantity ";
-          displayWarningToast("QTO.VolumeAspect not available for calculations");
+          displayWarningToast(
+            "QTO.VolumeAspect not available for calculations"
+          );
         }
       }
     }
-    return {aspectJoin : aspectJoin, aspectProperty: aspectProperty}
-  }
-  
+    return { aspectJoin: aspectJoin, aspectProperty: aspectProperty };
+  };
 
-
-  public static getCategories = async (iModel: CheckpointConnection, filter : string) => {
+  public static getCategories = async (
+    iModel: CheckpointConnection,
+    filter: string
+  ) => {
     console.log(filter);
-    const sql = `select distinct ca.codevalue as categoryName from bis.category ca join bis.geometricelement3d ge on ca.ecinstanceid = ge.category.id` // where coalesce(ca.userlabel, ca.codevalue) like '${filter}'`
+    const sql = `select distinct ca.codevalue as categoryName from bis.category ca join bis.geometricelement3d ge on ca.ecinstanceid = ge.category.id`; // where coalesce(ca.userlabel, ca.codevalue) like '${filter}'`
     const rows = await _executeQuery(iModel, sql);
     return rows;
-
-  }
+  };
   public static getClassIndex = async (
     iModel: CheckpointConnection,
     className: string,
@@ -483,35 +521,52 @@ export class sqlAPI {
     return rows[0];
   };
 
-  public static getUniclass = async (iModelConnection : IModelConnection, uniclassSystems : string, _updateProgress : any, min : number, max : number) => {
-    const sql = `select distinct name, ec_classname(class.id, 's.c') as className from meta.ecpropertydef pd join bis.geometricelement3d ge on pd.class.id = ge.ecclassId  where name in (${uniclassSystems}) group by class.id`
-    const classes = await _executeQuery(iModelConnection, sql)
-    const returnInstances = []
-    let counter = 1
-    console.log("loading ", classes.length)
+  public static getUniclass = async (
+    iModelConnection: IModelConnection,
+    uniclassSystems: string,
+    _updateProgress: any,
+    min: number,
+    max: number
+  ) => {
+    const sql = `select distinct name, ec_classname(class.id, 's.c') as className from meta.ecpropertydef pd join bis.geometricelement3d ge on pd.class.id = ge.ecclassId  where lower(name) in (${uniclassSystems.toLowerCase()}) group by class.id`;
+    const classes = await _executeQuery(iModelConnection, sql);
+    const returnInstances = [];
+    let counter = 1;
+    console.log("loading ", classes.length);
     for (const aClass of classes) {
-      const classSQL = `select coalesce(${aClass.name}, '<null>') as uniclassSystem, ecInstanceid, userLabel from ${aClass.className}`
-      const instances = await _executeQuery(iModelConnection, classSQL)
+      const classSQL = `select coalesce(${aClass.name}, '<null>') as uniclassSystem, ecInstanceid, userLabel from ${aClass.className}`;
+      const instances = await _executeQuery(iModelConnection, classSQL);
       returnInstances.push(...instances);
-      counter = counter + 1
-      _updateProgress(min + ((max - min) / classes.length * counter))
+      counter = counter + 1;
+      _updateProgress(min + ((max - min) / classes.length) * counter);
     }
-    return returnInstances
-    
-  }
+    return returnInstances;
+  };
   public static getVolumeforGroupWidget = async (
     iModel: IModelConnection,
     groupSQL: string,
-    material: IMaterial = {material : "unmapped", "carbonFactor" : 0, unit:"-", unitType: "unknown", uniqueId : "unmapped", density : 0, "description" : "", "ICECarbonFactor" : 0},
-    groupName : string
+    material: IMaterial = {
+      material: "unmapped",
+      carbonFactor: 0,
+      unit: "-",
+      unitType: "unknown",
+      uniqueId: "unmapped",
+      density: 0,
+      description: "",
+      ICECarbonFactor: 0,
+    },
+    groupName: string
   ) => {
     // console.time(groupName)
     const newSQL = singleReturnSQL(groupSQL);
     // this needs upgrading to get the quantity based upon the material
-    const {aspectJoin, aspectProperty} = await sqlAPI._setQuantityAspect(material, iModel)
+    const { aspectJoin, aspectProperty } = await sqlAPI._setQuantityAspect(
+      material,
+      iModel
+    );
     const sql = `select ge.ecInstanceId as id, ge.userlabel as userlabel ${aspectProperty} from bis.geometricelement3d ge ${aspectJoin} where ge.ecinstanceid in (${newSQL})`;
     const rows = await _executeQuery(iModel, sql);
-    const gwpInstances = await processRows(rows, material, iModel, groupName)
+    const gwpInstances = await processRows(rows, material, iModel, groupName);
 
     return gwpInstances;
   };
@@ -519,81 +574,113 @@ export class sqlAPI {
   public static getVolumeforGroup = async (
     iModel: CheckpointConnection,
     groupSQL: string,
-    material: IMaterial | undefined = {material : "unmapped", "carbonFactor" : 0, unit:"-", unitType: "unknown", uniqueId : "unmapped", density : 0, "description" : "", "ICECarbonFactor" : 0},
-    groupName : string
+    material: IMaterial | undefined = {
+      material: "unmapped",
+      carbonFactor: 0,
+      unit: "-",
+      unitType: "unknown",
+      uniqueId: "unmapped",
+      density: 0,
+      description: "",
+      ICECarbonFactor: 0,
+    },
+    groupName: string
   ) => {
     /* Update to enable unitType.  qto is not sufficiently populated so use calculateMassProperties which will return area / length / volume and Invalid Elements */
     const newSQL = singleReturnSQL(groupSQL);
-    // this needs upgrading to get the quantity based upon the material    
-    const {aspectJoin, aspectProperty} = await sqlAPI._setQuantityAspect(material, iModel)
+    // this needs upgrading to get the quantity based upon the material
+    const { aspectJoin, aspectProperty } = await sqlAPI._setQuantityAspect(
+      material,
+      iModel
+    );
     const sql = `select ge.ecInstanceId as id, ge.userlabel as userlabel ${aspectProperty} from bis.geometricelement3d ge ${aspectJoin} where ge.ecinstanceid in (${newSQL})`;
     const rows = await _executeQuery(iModel, sql);
-    const gwpInstances= await processRows(rows, material, iModel, groupName)
+    const gwpInstances = await processRows(rows, material, iModel, groupName);
     return gwpInstances;
   };
 
   public static getVolumeForGroupByCategory = async (
     iModel: CheckpointConnection,
     groupSQL: string,
-    material: IMaterial | undefined = {material : "unmapped", "carbonFactor" : 0, unit:"-", unitType: "unknown", uniqueId : "unmapped", density : 0, "description" : "", "ICECarbonFactor" : 0},
-    groupName : string
+    material: IMaterial | undefined = {
+      material: "unmapped",
+      carbonFactor: 0,
+      unit: "-",
+      unitType: "unknown",
+      uniqueId: "unmapped",
+      density: 0,
+      description: "",
+      ICECarbonFactor: 0,
+    },
+    groupName: string
   ) => {
     /* Update to enable unitType.  qto is not sufficiently populated so use calculateMassProperties which will return area / length / volume and Invalid Elements */
     const newSQL = singleReturnSQL(groupSQL);
-    const {aspectJoin, aspectProperty} = await sqlAPI._setQuantityAspect(material, iModel)
+    const { aspectJoin, aspectProperty } = await sqlAPI._setQuantityAspect(
+      material,
+      iModel
+    );
     const sql = `select ge.ecInstanceId as id, ge.userlabel as userlabel, coalesce(ca.userlabel, ca.codevalue) as category ${aspectProperty} from bis.geometricelement3d ge join bis.category ca on ca.ecinstanceid = ge.category.id ${aspectJoin} where ge.ecinstanceid in (${newSQL})`;
     const rows = await _executeQuery(iModel, sql);
-    const gwpInstances= await processRows(rows, material, iModel, groupName)
+    const gwpInstances = await processRows(rows, material, iModel, groupName);
     return gwpInstances;
   };
 
-  public static getVolumeForCategory = async (
-    iModel: CheckpointConnection,
-  ) => {
+  public static getVolumeForCategory = async (iModel: CheckpointConnection) => {
     /* Update to enable unitType.  qto is not sufficiently populated so use calculateMassProperties which will return area / length / volume and Invalid Elements */
     // multiple calls to getMassPropertiesPerCandidate is not stable so only use this when the category is mapped
-    const volumeAspect = await sqlAPI._runCheckVolumeAspect(iModel)
-    let volumeAspectJoin = ""
-    let volumeAspectProperty = ""
+    const volumeAspect = await sqlAPI._runCheckVolumeAspect(iModel);
+    let volumeAspectJoin = "";
+    let volumeAspectProperty = "";
     if (volumeAspect) {
-      volumeAspectProperty = ", sum(coalesce(qtov.netVolume, qtov.GrossVolume, 0)) as qtoVolume "
-      volumeAspectJoin = " left join qto.VolumeAspect qtov on qtov.Element.id = ge.ecinstanceId "
+      volumeAspectProperty =
+        ", sum(coalesce(qtov.netVolume, qtov.GrossVolume, 0)) as qtoVolume ";
+      volumeAspectJoin =
+        " left join qto.VolumeAspect qtov on qtov.Element.id = ge.ecinstanceId ";
     } else {
-      volumeAspectProperty = ",0 as qtoVolume "
-      displayWarningToast("QTO.VolumeAspect not available for calculations")
+      volumeAspectProperty = ",0 as qtoVolume ";
+      displayWarningToast("QTO.VolumeAspect not available for calculations");
     }
-    const areaAspect = await sqlAPI._runCheckAreaAspect(iModel)
-    let areaAspectJoin = ""
-    let areaAspectProperty = ""
+    const areaAspect = await sqlAPI._runCheckAreaAspect(iModel);
+    let areaAspectJoin = "";
+    let areaAspectProperty = "";
     if (areaAspect) {
-      areaAspectProperty = ", sum(coalesce(qtoa.netSurfaceArea, qtoa.GrossSurfaceArea, 0)) as qtoArea "
-      areaAspectJoin = " left join qto.SurfaceAreaAspect qtoa on qtoa.Element.id = ge.ecinstanceId "
+      areaAspectProperty =
+        ", sum(coalesce(qtoa.netSurfaceArea, qtoa.GrossSurfaceArea, 0)) as qtoArea ";
+      areaAspectJoin =
+        " left join qto.SurfaceAreaAspect qtoa on qtoa.Element.id = ge.ecinstanceId ";
     } else {
-      areaAspectProperty = ",0 as qtoArea "
-      displayWarningToast("QTO.SurfaceAreaAspect not available for calculations")
+      areaAspectProperty = ",0 as qtoArea ";
+      displayWarningToast(
+        "QTO.SurfaceAreaAspect not available for calculations"
+      );
     }
-    const lengthAspect = await sqlAPI._runCheckLengthAspect(iModel)
-    let lengthAspectJoin = ""
-    let lengthAspectProperty = ""
+    const lengthAspect = await sqlAPI._runCheckLengthAspect(iModel);
+    let lengthAspectJoin = "";
+    let lengthAspectProperty = "";
     if (lengthAspect) {
       // we should be able to use max ... but for some reason does not work ...
       // lengthAspectProperty = ", sum(max(qtod.Length, qtod.Height,qtod.Width, 0)) as qtoLength "
       // need to check with developers
-      lengthAspectProperty = ", sum(coalesce(qtod.Length, qtod.Height,qtod.Width, 0)) as qtoLength "
-      lengthAspectJoin = " left join qto.DimensionsAspect qtod on qtod.Element.id = ge.ecinstanceId "
+      lengthAspectProperty =
+        ", sum(coalesce(qtod.Length, qtod.Height,qtod.Width, 0)) as qtoLength ";
+      lengthAspectJoin =
+        " left join qto.DimensionsAspect qtod on qtod.Element.id = ge.ecinstanceId ";
     } else {
-      lengthAspectProperty = ",0 as qtoLength "
-      displayWarningToast("QTO.DimensionsAspect not available for calculations")
+      lengthAspectProperty = ",0 as qtoLength ";
+      displayWarningToast(
+        "QTO.DimensionsAspect not available for calculations"
+      );
     }
 
     const sql = `select ge.ecclassid, count(ge.ecInstanceId) as elementCount, coalesce(ca.userlabel, ca.codevalue) as category, sum(iModel_bbox_areaxy(iModel_bbox(BBoxLow.x,BBoxLow.y, BBoxLow.z, BBoxHigh.x, BBoxHigh.y, BBoxHigh.z ))) as rangeArea, sum(iModel_bbox_volume(iModel_bbox(BBoxLow.x,BBoxLow.y, BBoxLow.z, BBoxHigh.x, BBoxHigh.y, BBoxHigh.z ))) as rangeVolume ${lengthAspectProperty} ${areaAspectProperty} ${volumeAspectProperty} from bis.geometricelement3d ge join bis.category ca on ca.ecinstanceid = ge.category.id ${lengthAspectJoin} ${areaAspectJoin} ${volumeAspectJoin} group by coalesce(ca.userlabel, ca.codevalue)`;
     const rows = await _executeQuery(iModel, sql);
-    return (rows)
-  }
+    return rows;
+  };
 
   public static getVolumeForCategory_NotWorking = async (
     iModel: CheckpointConnection,
-    category : string,
+    category: string,
     material: string,
     carbonFactor: number,
     unitType: string,
@@ -601,68 +688,71 @@ export class sqlAPI {
   ) => {
     /* Update to enable unitType.  qto is not sufficiently populated so use calculateMassProperties which will return area / length / volume and Invalid Elements */
     // multiple calls to getMassPropertiesPerCandidate is not stable so only use this when the category is mapped
-    const volumeAspect = await sqlAPI._runCheckVolumeAspect(iModel)
-    let volumeAspectJoin = ""
-    let volumeAspectProperty = ""
+    const volumeAspect = await sqlAPI._runCheckVolumeAspect(iModel);
+    let volumeAspectJoin = "";
+    let volumeAspectProperty = "";
     if (volumeAspect) {
-      volumeAspectProperty = ", qto.netVolume as netVolume"
-      volumeAspectJoin = " join qto.VolumeAspect qto on qto.Element.id = ge.ecinstanceId "
+      volumeAspectProperty = ", qto.netVolume as netVolume";
+      volumeAspectJoin =
+        " join qto.VolumeAspect qto on qto.Element.id = ge.ecinstanceId ";
     }
     let sql = `select ge.ecInstanceId as id, ge.userlabel as userlabel, coalesce(ca.userlabel, ca.codevalue) as category, 0 as rangeVolume ${volumeAspectProperty} from bis.geometricelement3d ge join bis.category ca on ca.ecinstanceid = ge.category.id ${volumeAspectJoin} where coalesce(ca.userlabel, ca.codevalue) = '${category}'`;
-    if (material === "unmapped") {            
+    if (material === "unmapped") {
       sql = `select ge.ecInstanceId as id, ge.userlabel as userlabel, coalesce(ca.userlabel, ca.codevalue) as category, iModel_bbox_volume(iModel_bbox(BBoxLow.x,BBoxLow.y, BBoxLow.z, BBoxHigh.x, BBoxHigh.y, BBoxHigh.z )) as rangeVolume ${volumeAspectProperty} from bis.geometricelement3d ge join bis.category ca on ca.ecinstanceid = ge.category.id ${volumeAspectJoin} where coalesce(ca.userlabel, ca.codevalue) = '${category}'`;
-    }    
+    }
     const rows = await _executeQuery(iModel, sql);
     if (!carbonFactor) {
       carbonFactor = 0;
-    }    
-    let result : IReturnList = {gwpList: [], errorList: []}
-    if (!rows)
+    }
+    let result: IReturnList = { gwpList: [], errorList: [] };
+    if (!rows) {
       return result;
+    }
     const operation = getOperationType(unitType);
     const ids = rows.map((aRow) => aRow.id);
-    let massProperties : any = {};    
+    let massProperties: any = {};
     try {
       const allProperties = await iModel.elements.getProps(ids);
       console.log(`AllProperties : ${allProperties}`);
+    } catch (error) {
+      console.log(`Error getting allProperties ${error}`);
     }
-    catch (error)
-      {console.log (`Error getting allProperties ${error}`)}
-    
+
     const getQuantities = () => {
       return iModel.getMassPropertiesPerCandidate({
         candidates: CompressedId64Set.compressIds(ids),
         operations: [operation],
-      
-      })
-    }
-    const retryWithDelay = (fn : any, retries = 1) => new Promise((resolve, reject) => {      
-        console.log("Attempt ", retries)
+      });
+    };
+    const retryWithDelay = (fn: any, retries = 1) =>
+      new Promise((resolve, reject) => {
+        console.log("Attempt ", retries);
         const returnValue = getQuantities();
         // now we have
         // array of mass Properties massProperties[1].area / .length / .volume / .status
-        
-        return returnValue
-      .then(resolve)
-      .catch(async (_reason) : Promise<any> => {
-        if (retries <= 3) {
-          console.log(`Sleeping for ${5000 * retries}`)
-          return sleep(5000 * retries)
-            .then(retryWithDelay.bind(null,fn, retries + 1))
-            .then(resolve)
-            .catch(reject)          
-        } else return reject();
 
-      })
-    })
-    if (material !== "unmapped")
+        return returnValue.then(resolve).catch(
+          async (_reason): Promise<any> => {
+            if (retries <= 3) {
+              console.log(`Sleeping for ${5000 * retries}`);
+              return sleep(5000 * retries)
+                .then(retryWithDelay.bind(null, fn, retries + 1))
+                .then(resolve)
+                .catch(reject);
+            } else {
+              return reject();
+            }
+          }
+        );
+      });
+    if (material !== "unmapped") {
       massProperties = await retryWithDelay(getQuantities, 1);
-    else
+    } else {
       massProperties = [];
-    result = await processRows(rows,material,iModel, "NotWorking" );
+    }
+    result = await processRows(rows, material, iModel, "NotWorking");
     return result;
   };
-
 
   public static getPropertyInstances = async (
     iModel: CheckpointConnection,

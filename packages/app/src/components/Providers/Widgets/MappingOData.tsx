@@ -1,17 +1,28 @@
 /*---------------------------------------------------------------------------------------------
-* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
-* See LICENSE.md in the project root for license terms and full copyright notice.
-*--------------------------------------------------------------------------------------------*/
+ * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+ * See LICENSE.md in the project root for license terms and full copyright notice.
+ *
+ * This code is for demonstration purposes and should not be considered production ready.
+ *--------------------------------------------------------------------------------------------*/
 
-import { Alert, Code, LabeledSelect, ProgressRadial, Table, tableFilters, ToggleSwitch } from "@itwin/itwinui-react";
-import { Column } from "react-table";
-import * as React from "react";
 import { useActiveIModelConnection } from "@itwin/appui-react";
 import { EmphasizeElements, IModelApp } from "@itwin/core-frontend";
-import { OData } from "../../../api/OData";
-import { ReportingClient } from "@itwin/insights-client";
-import "./MappingOData.scss";
 import { ODataClient } from "@itwin/grouping-mapping-widget";
+import { ReportingClient } from "@itwin/insights-client";
+import {
+  Alert,
+  Code,
+  LabeledSelect,
+  ProgressRadial,
+  Table,
+  tableFilters,
+  ToggleSwitch,
+} from "@itwin/itwinui-react";
+import * as React from "react";
+import { Column } from "react-table";
+
+import { OData } from "../../../api/OData";
+import "./MappingOData.scss";
 
 const fetchOData = async (
   iModelId: string,
@@ -28,31 +39,49 @@ const fetchOData = async (
       Authorization: await IModelApp.authorizationClient!.getAccessToken(),
     }),
   };
-  const customFilterFn = (rows: any, columnId: string[], filterString : string) => {
-
-    const regExp = ( filterString.replace('*', '.*'))
-    const filteredRows = rows.filter((o : any) => o.values[columnId[0]].match(regExp, 'i'))
-    if (filteredRows && filteredRows.length > 0)
+  const customFilterFn = (
+    rows: any,
+    columnId: string[],
+    filterString: string
+  ) => {
+    const regExp = filterString.replace("*", ".*");
+    const filteredRows = rows.filter((o: any) =>
+      o.values[columnId[0]].match(regExp, "i")
+    );
+    if (filteredRows && filteredRows.length > 0) {
       return filteredRows;
-      return [];
-
-
-  }
+    }
+    return [];
+  };
   const odata = new OData(url, requestInit);
   const odataResponse = await odata.getPages(setColumns, setData, groupName);
   if (odataResponse.length > 0) {
     setColumns([
       {
         Header: "Header name",
-        columns: Object.keys(odataResponse[0]).map((x) => ({
-          id: x,
-          Header: x,
-          accessor: x,
-          width: 200,          
-          Filter: (typeof odataResponse[0][x] === 'string') ? tableFilters.TextFilter() : (typeof odataResponse[0][x] === 'number') ? tableFilters.NumberRangeFilter() : undefined,
-          sortType: typeof odataResponse[0][x],
-          filter: (typeof odataResponse[0][x] === 'string') ? customFilterFn : undefined
-        })).filter(x => (x.accessor.substring(0,4) !== 'BBox')),
+        columns: Object.keys(odataResponse[0])
+          .map((x) => ({
+            id: x,
+            Header: x,
+            accessor: x,
+            width: 200,
+            Filter:
+              typeof odataResponse[0][x] === "string"
+                ? tableFilters.TextFilter()
+                : typeof odataResponse[0][x] === "number"
+                ? tableFilters.NumberRangeFilter()
+                : undefined,
+            sortType:
+              typeof odataResponse[0][x] === "object" ||
+              typeof odataResponse[0][x] === "undefined"
+                ? "string"
+                : typeof odataResponse[0][x],
+            filter:
+              typeof odataResponse[0][x] === "string"
+                ? customFilterFn
+                : undefined,
+          }))
+          .filter((x) => x.accessor.substring(0, 4) !== "BBox"),
       },
     ]);
   }
@@ -93,7 +122,9 @@ const fetchMappings = async (
 
   const mappings = await reportingClient.getMappings(accessToken, iModelId);
 
-  setMappings(mappings.map((x: any) => ({ value: x.id, label: x.mappingName })));
+  setMappings(
+    mappings.map((x: any) => ({ value: x.id, label: x.mappingName }))
+  );
 
   if (mappings.length > 0) {
     setSelectMapping(mappings[0].id);
@@ -116,64 +147,102 @@ export const MappingOData = () => {
   const [selectGroup, setSelectGroup] = React.useState<string>();
 
   React.useEffect(() => {
+    return () => {
+      setMappings([]);
+      setGroups([]);
+      setOData([]);
+      setColumns([]);
+    };
+  }, []);
+
+  React.useEffect(() => {
     void fetchMappings(iModelId, setMappings, setSelectMapping);
   }, [iModelId]);
 
   React.useEffect(() => {
     if (selectMapping !== undefined) {
-      void fetchGroups(iModelId, changeset, selectMapping, setGroups, setSelectGroup);
+      void fetchGroups(
+        iModelId,
+        changeset,
+        selectMapping,
+        setGroups,
+        setSelectGroup
+      );
       setODataCount(0);
     }
   }, [iModelId, changeset, selectMapping]);
 
   React.useEffect(() => {
     if (selectMapping !== undefined && selectGroup !== undefined) {
-      void fetchOData(iModelId, changeset, selectMapping, selectGroup, setColumns, setOData, setIsLoading);
-
+      void fetchOData(
+        iModelId,
+        changeset,
+        selectMapping,
+        selectGroup,
+        setColumns,
+        setOData,
+        setIsLoading
+      );
     }
   }, [iModelId, changeset, selectMapping, selectGroup]);
 
   React.useEffect(() => {
-    if (!isLoading && selectMapping !== undefined && selectGroup !== undefined && (odata.length !== odataCount)  )
-      setODataCount(odata.length)
-  })
-
-  const onSelect = React.useCallback(async (selectedData: any[] | undefined) => {
-    if (!IModelApp.viewManager.selectedView) {
-      return;
+    if (
+      !isLoading &&
+      selectMapping !== undefined &&
+      selectGroup !== undefined &&
+      odata.length !== odataCount
+    ) {
+      setODataCount(odata.length);
     }
-    const hasSelection = selectedData !== undefined && selectedData.length > 0;
+  });
 
-    const vp = IModelApp.viewManager.selectedView;
-    const emph = EmphasizeElements.getOrCreate(vp);
-    emph.clearEmphasizedElements(vp);
-    emph.wantEmphasis = hasSelection;
-
-    if (hasSelection) {
-      const selected = selectedData!.map((x: any) => (x.ECInstanceId as string));
-      emph.emphasizeElements(selected, vp);
-      if (applyZoom) {
-        await vp.zoomToElements(selected, { animateFrustumChange: true });
+  const onSelect = React.useCallback(
+    async (selectedData: any[] | undefined) => {
+      if (!IModelApp.viewManager.selectedView) {
+        return;
       }
-    }
-  }, [applyZoom]);
+      const hasSelection =
+        selectedData !== undefined && selectedData.length > 0;
+
+      const vp = IModelApp.viewManager.selectedView;
+      const emph = EmphasizeElements.getOrCreate(vp);
+      emph.clearEmphasizedElements(vp);
+      emph.wantEmphasis = hasSelection;
+
+      if (hasSelection) {
+        const selected = selectedData!.map(
+          (x: any) => x.ECInstanceId as string
+        );
+        emph.emphasizeElements(selected, vp);
+        if (applyZoom) {
+          await vp.zoomToElements(selected, { animateFrustumChange: true });
+        }
+      }
+    },
+    [applyZoom]
+  );
 
   return (
     <div className="mapping-odata-sample">
       <div className="mapping-group-selection">
-      <ToggleSwitch
+        <ToggleSwitch
           label="Zoom to Selection"
           labelPosition="left"
           defaultChecked
           onChange={() => setApplyZoom(!applyZoom)}
-          style = {{width:"115px"}}
+          style={{ width: "115px" }}
         />
         <LabeledSelect
           label="Select Mapping"
           displayStyle="inline"
           options={mappings}
           value={selectMapping}
-          onChange={(value : any) => { setSelectMapping(value); setOData([]); setIsLoading(true); }}
+          onChange={(value: any) => {
+            setSelectMapping(value);
+            setOData([]);
+            setIsLoading(true);
+          }}
           onShow={undefined}
           onHide={undefined}
         />
@@ -182,13 +251,16 @@ export const MappingOData = () => {
           displayStyle="inline"
           options={groups}
           value={selectGroup}
-          onChange={(value : any) => { setSelectGroup(value); setOData([]); setIsLoading(true); }}
+          onChange={(value: any) => {
+            setSelectGroup(value);
+            setOData([]);
+            setIsLoading(true);
+          }}
           onShow={undefined}
           onHide={undefined}
         />
-        {isLoading && <ProgressRadial indeterminate = {true}></ProgressRadial>}
-        {(odataCount > 0) &&<p>{odataCount}: Records</p>}
-
+        {isLoading && <ProgressRadial indeterminate={true}></ProgressRadial>}
+        {odataCount > 0 && <p>{odataCount}: Records</p>}
       </div>
       <div className="odata-table">
         <Table

@@ -1,0 +1,91 @@
+/*---------------------------------------------------------------------------------------------
+ * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+ * See LICENSE.md in the project root for license terms and full copyright notice.
+ *
+ * This code is for demonstration purposes and should not be considered production ready.
+ *--------------------------------------------------------------------------------------------*/
+@import "~@itwin/itwinui-css/scss/variables";
+
+.ec3 {
+  &-signin {
+    display: flex;
+    flex-direction: column;
+    align-items: right;
+    padding-bottom: 1 * $iui-baseline;
+    padding-top: 2 * $iui-baseline;
+    width: 350px;
+    row-gap: 4px;
+    grid-template-columns: auto 1fr;
+
+    &-icon {
+      width: 2 * $iui-icons-3xl;
+      height: 1 * $iui-icons-3xl;
+    }
+
+    &-prompt {
+      margin: $iui-l 0;
+      font-size: medium;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    &-form {
+      width: 70%;
+    }
+
+    &-input {
+      width: 100%;
+      margin: $iui-xs 0;
+    }
+
+    &-button-container {
+      margin: $iui-sm 0;
+    }
+
+    &-button {
+      width: 100%;
+    }
+
+    &-error {
+      height: $iui-xl;
+      font-size: small;
+    }
+
+    &-wait {
+      vertical-align: middle;
+      line-height: normal;
+    }
+  }
+
+  &-report-button {
+    margin: $iui-l;
+    text-decoration: none;
+
+    :hover {
+      cursor: pointer;
+    }
+  }
+
+  &-status-text {
+    margin: $iui-s;
+  }
+
+  &-progress-radial-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: $iui-l;
+    height: $iui-3xl;
+    place-content: space-evenly;
+  }
+
+  &-progress-linear-container {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    margin: $iui-l;
+    height: $iui-3xl;
+    place-content: space-evenly;
+  }
+}
