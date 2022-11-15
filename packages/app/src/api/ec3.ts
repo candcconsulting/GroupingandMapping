@@ -62,6 +62,10 @@ export class EC3Api {
       );
       const data = response;
       const json = await data.json();
+      if (json.detail) {
+        displayNegativeToast(JSON.stringify(json.validation_errors));
+        return
+      }
       this.token = json;
       this.setLoggedIn(true);
     } catch (error) {
@@ -109,31 +113,36 @@ export class EC3Api {
     // for some reason EC3 does not store the density but stores the GWP per kg which we may not need ...
     for (const aMaterial of materials) {
       const epd = await this.getMaterial(aMaterial);
-      if (epd === "Not Authorised") {
+      if (epd === "Not Authorised" || epd === "Invalid token.") {
         return epds;
       }
-      if (typeof epd !== "string" && epd) {
-        let carbonFactor = +epd.gwp.split(" ")[0];
-        let epdUnit = epd.declared_unit.split(" ")[1];
-        switch (epdUnit) {
-          case "t": {
-            carbonFactor = carbonFactor * 1000;
-            epdUnit = "kg";
-            break;
+      try {
+        if (typeof epd !== "string" && epd) {
+          let carbonFactor = +epd.gwp.split(" ")[0];
+          let epdUnit = epd.declared_unit.split(" ")[1];
+          switch (epdUnit) {
+            case "t": {
+              carbonFactor = carbonFactor * 1000;
+              epdUnit = "kg";
+              break;
+            }
           }
+          const aEPD: IMaterial = {
+            material: aMaterial,
+            carbonFactor: carbonFactor,
+            ICECarbonFactor: 0,
+            description: epd.category.openepd,
+            density: +parseFloat(epd.density).toFixed(4) ?? 0.0,
+            unit: epd.declared_unit.split(" ")[1],
+            uniqueId: aMaterial,
+            unitType: lookupUnitType(epd.declared_unit.split(" ")[1]),
+          };
+          epds.push(aEPD);
         }
-        const aEPD: IMaterial = {
-          material: aMaterial,
-          carbonFactor: carbonFactor,
-          ICECarbonFactor: 0,
-          description: epd.category.openepd,
-          density: +parseFloat(epd.density).toFixed(4) ?? 0.0,
-          unit: epd.declared_unit.split(" ")[1],
-          uniqueId: aMaterial,
-          unitType: lookupUnitType(epd.declared_unit.split(" ")[1]),
-        };
-        epds.push(aEPD);
       }
+      catch (e) {
+        displayWarningToast(`There was a problem getting Material : ${aMaterial}`)
+      }      
     }
     return epds;
   }
