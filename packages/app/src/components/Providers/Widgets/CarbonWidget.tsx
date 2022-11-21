@@ -22,26 +22,34 @@ import {
   toaster,
   ToggleSwitch,
 } from "@itwin/itwinui-react";
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from "react";
+import { CellRendererProps } from "react-table";
 
+import { colourElements } from "../../../api/helperfunctions/elements";
 import { iTwinAPI } from "../../../api/iTwinAPI";
 import mongoAppApi, { IMaterial } from "../../../api/mongoAppApi";
 import { ProjectsClient } from "../../../api/projects/projectsClient";
 import { sqlAPI } from "../../../api/queryAPI";
 import { useApiData } from "../../../api/useApiData";
 import { useApiPrefix } from "../../../api/useApiPrefix";
+import { getSettings } from "../../../config/index";
 import { getRGBColor } from "../../../routers/CarbonRouter/components/CarbonList";
+import { coloredCellRenderer } from "../../../routers/CarbonRouter/components/ColoredCell";
+import {
+  NumericCell,
+  NumericCell0,
+  numericCellRenderer,
+} from "../../../routers/SynchronizationRouter/components/NumericCell";
 import { SkeletonCell } from "../../../routers/SynchronizationRouter/components/SkeletonCell";
 import AuthClient from "../../../services/auth/AuthClient";
 import { getClaimsFromToken } from "../../../services/auth/authUtil";
 import { useCommonPathPattern } from "../../MainLayout/useCommonPathPattern";
-
-import {getSettings} from "../../../config/index"
-import { NumericCell, NumericCell0, numericCellRenderer } from "../../../routers/SynchronizationRouter/components/NumericCell";
-import { coloredCellRenderer } from "../../../routers/CarbonRouter/components/ColoredCell";
-import { CellRendererProps } from "react-table";
-import { colourElements } from "../../../api/helperfunctions/elements";
-
 
 // import "./carbonWidget.scss"
 
@@ -107,13 +115,20 @@ const displayNegativeToast = (content: string) => {
   });
 };
 
-const customFilterFn = (rows: any, columnId: string[], filterString : string) => {
-  const regExp = ( filterString.replace('*', '.*'))
-  const filteredRows = rows.filter((o : any) => o.values[columnId[0]].match(regExp, 'i'))
-  if (filteredRows && filteredRows.length > 0)
+const customFilterFn = (
+  rows: any,
+  columnId: string[],
+  filterString: string
+) => {
+  const regExp = filterString.replace("*", ".*");
+  const filteredRows = rows.filter((o: any) =>
+    o.values[columnId[0]].match(regExp, "i")
+  );
+  if (filteredRows && filteredRows.length > 0) {
     return filteredRows;
-    return [];
-}
+  }
+  return [];
+};
 
 export const CarbonWidget = () => {
   const [elements, setElements] = React.useState<any[]>([]);
@@ -141,10 +156,10 @@ export const CarbonWidget = () => {
   useEffect(() => {
     return () => {
       setElements([]);
-      setColumns([])
+      setColumns([]);
       setEPDMapping(undefined);
       setEPD([]);
-      setMapping(undefined);      
+      setMapping(undefined);
       setGroups([]);
     };
   }, []);
@@ -204,7 +219,7 @@ export const CarbonWidget = () => {
             accessor: "quantity",
             Cell: NumericCell,
             cellRenderer: (props: CellRendererProps<any>) =>
-            numericCellRenderer(props),
+              numericCellRenderer(props),
             Header: "Quantity",
             disableResizing: false,
             Filter: tableFilters.NumberRangeFilter(),
@@ -222,7 +237,7 @@ export const CarbonWidget = () => {
             accessor: "max",
             Cell: NumericCell,
             cellRenderer: (props: CellRendererProps<any>) =>
-            numericCellRenderer(props),
+              numericCellRenderer(props),
             Header: "Max",
             disableResizing: false,
             Filter: tableFilters.NumberRangeFilter(),
@@ -231,7 +246,7 @@ export const CarbonWidget = () => {
             accessor: "min",
             Cell: NumericCell,
             cellRenderer: (props: CellRendererProps<any>) =>
-            numericCellRenderer(props),
+              numericCellRenderer(props),
             Header: "Min",
             disableResizing: false,
             Filter: tableFilters.NumberRangeFilter(),
@@ -240,7 +255,7 @@ export const CarbonWidget = () => {
             accessor: "count",
             Cell: NumericCell0,
             cellRenderer: (props: CellRendererProps<any>) =>
-            numericCellRenderer(props),
+              numericCellRenderer(props),
             Header: "Count",
             disableResizing: false,
             Filter: tableFilters.NumberRangeFilter(),
@@ -268,7 +283,7 @@ export const CarbonWidget = () => {
             Header: "Id",
             disableResizing: false,
             Filter: tableFilters.TextFilter(),
-            sortType: "string"
+            sortType: "string",
           },
           {
             accessor: "groupName",
@@ -283,7 +298,7 @@ export const CarbonWidget = () => {
             Header: "Userlabel",
             disableResizing: false,
             Filter: tableFilters.TextFilter(),
-            filter: customFilterFn
+            filter: customFilterFn,
           },
           {
             accessor: "material",
@@ -296,7 +311,7 @@ export const CarbonWidget = () => {
             accessor: "quantity",
             Cell: NumericCell,
             cellRenderer: (props: CellRendererProps<any>) =>
-            numericCellRenderer(props),
+              numericCellRenderer(props),
             Header: "Quantity",
             disableResizing: false,
             Filter: tableFilters.NumberRangeFilter(),
@@ -314,7 +329,7 @@ export const CarbonWidget = () => {
             accessor: "max",
             Cell: NumericCell,
             cellRenderer: (props: CellRendererProps<any>) =>
-            numericCellRenderer(props),
+              numericCellRenderer(props),
             Header: "Max",
             disableResizing: false,
             Filter: tableFilters.NumberRangeFilter(),
@@ -323,7 +338,7 @@ export const CarbonWidget = () => {
             accessor: "min",
             Cell: NumericCell,
             cellRenderer: (props: CellRendererProps<any>) =>
-            numericCellRenderer(props),
+              numericCellRenderer(props),
             Header: "Min",
             disableResizing: false,
             Filter: tableFilters.NumberRangeFilter(),
@@ -388,7 +403,7 @@ export const CarbonWidget = () => {
             if (AuthClient.client) {
               void iTwinAPI
                 .getGroups(AuthClient.client, iModelId, aMapping.id)
-                .then((allGroups : any) => {
+                .then((allGroups: any) => {
                   const ourGroups: IGroup[] = [];
                   // console.log(allGroups);
                   for (const aGroup of allGroups) {
@@ -498,7 +513,9 @@ export const CarbonWidget = () => {
               if (summary) {
                 summarizeElements.push({
                   material: summary.material,
-                  quantity: +summary.quantity.toFixed(getSettings.decimalAccuracy),
+                  quantity: +summary.quantity.toFixed(
+                    getSettings.decimalAccuracy
+                  ),
                   gwp: +summary.gwp.toFixed(getSettings.decimalAccuracy) ?? 0,
                   elements: summary.id,
                   max: +summary.gwp.toFixed(getSettings.decimalAccuracy) ?? 0,
@@ -591,8 +608,6 @@ export const CarbonWidget = () => {
     [pageSizeList]
   );
 
-
-
   useEffect(() => {
     const vp = IModelApp.viewManager.selectedView;
     if (vp) {
@@ -653,21 +668,24 @@ export const CarbonWidget = () => {
   };
 
   return (
-    <div>
+    <div className="gw_flex">
       <div className="idp-content-margins idp-scrolling-content">
         <div className="esg-panel-header-row">
           <div className="esg-column">Carbon by Category</div>
           <div className="esg-column-right-row">
-            { !elementsLoaded ? <></> : 
-              <ToggleSwitch style = {{float : "left"}}
+            {!elementsLoaded ? (
+              <></>
+            ) : (
+              <ToggleSwitch
+                style={{ float: "left" }}
                 label="Show Details"
                 checked={showDetails}
                 onChange={() => {
                   setShowDetails(!showDetails);
-                  setElementsLoaded(false);                  
+                  setElementsLoaded(false);
                 }}
               ></ToggleSwitch>
-            }
+            )}
             <IconButton
               onClick={() => showCarbonElements()}
               styleType={"borderless"}

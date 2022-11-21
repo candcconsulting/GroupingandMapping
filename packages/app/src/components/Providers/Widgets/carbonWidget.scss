@@ -1,14 +1,24 @@
+/*---------------------------------------------------------------------------------------------
+ * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+ * See LICENSE.md in the project root for license terms and full copyright notice.
+ *
+ * This code is for demonstration purposes and should not be considered production ready.
+ *--------------------------------------------------------------------------------------------*/
 // hack to fix lost dialog in oneclick LCA awaiting fix from itwin ui team
 #iui-react-portal-container {
   .iui-dialog-default {
-    max-width:100%;
+    max-width: 100%;
   }
+
   .iui-dialog-visible {
     .iui-dialog {
-      visibility : visible;
+      visibility: visible;
       opacity: 1;
     }
   }
- }
+}
 
+.gw_flex {
+  display: flex;
+}
 
