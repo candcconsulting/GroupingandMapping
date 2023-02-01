@@ -1883,10 +1883,10 @@
     "@itwin/itwinui-icons-react" "^0.1.0"
     "@itwin/itwinui-react" "^1.6.0"
 
-"@itwin/grouping-mapping-widget@^0.8.1":
-  version "0.8.1"
-  resolved "https://registry.yarnpkg.com/@itwin/grouping-mapping-widget/-/grouping-mapping-widget-0.8.1.tgz#13bcc8e703c4601c39d5b8cf4f27db5ab098cb5a"
-  integrity sha512-88p41qCjb7s2ilMgR8pskQnsPSCh/ysKZyXWvhf5nvfM8DvHdaAcZKb3pYASvqeaorld3nTa5I3vElZ/I1iRXQ==
+"@itwin/grouping-mapping-widget@^0.9.1":
+  version "0.9.1"
+  resolved "https://registry.yarnpkg.com/@itwin/grouping-mapping-widget/-/grouping-mapping-widget-0.9.1.tgz#22be83a51e9fc714b7e7897429a7e9a44ba85e9c"
+  integrity sha512-hVerJsglE4mpHw7GslNGvOCGGgCx26Hvmwue5Rx7V8nO2v2Yfx3Iga97GFRUaoaBkJAv/GkwSTfANbPGRZu5fA==
   dependencies:
     "@dnd-kit/core" "^6.0.5"
     "@dnd-kit/sortable" "7.0.1"
@@ -1950,13 +1950,6 @@
   integrity sha512-HzwegaR7krCXY1I2UPGGjxp4tttcU4RD5kZoHFpA+Nit3jrsvoXR0CieH7H0GUSKmgoV0Go5KN1YvbBUgqruRg==
   dependencies:
     axios "~0.21.1"
-
-"@itwin/insights-client@0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@itwin/insights-client/-/insights-client-0.1.0.tgz#5374c8bec701c0bd46bc80ea70e3292cf6ea2baa"
-  integrity sha512-CpK9EhEKF+yXdwUpf/J7HyYs453twEM49qQchZ4lL2x54sSNQ8P4KXZhEdMxz9BMpob/7f/xImolTLd3HnY/Bg==
-  dependencies:
-    cross-fetch "^3.1.4"
 
 "@itwin/insights-client@^0.3.0":
   version "0.3.2"
@@ -2037,12 +2030,12 @@
   dependencies:
     "@bentley/icons-generic-webfont" "^1.0.29"
 
-"@itwin/one-click-lca-react@^0.1.5":
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/@itwin/one-click-lca-react/-/one-click-lca-react-0.1.5.tgz#2887ef72fb7b5f984946d5d545abd99e4e7d5aa1"
-  integrity sha512-9a2jtIgKrsVFtjYFMByLpkDIb3+BRB85NZEmToqKGKYQr9MwnpeifHD4nzi3f/39Jue0B7RMVO0s2H5jl6Eufw==
+"@itwin/one-click-lca-react@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@itwin/one-click-lca-react/-/one-click-lca-react-0.2.0.tgz#d919d78adaf5557bcb30d82140c7b707f30d0ca8"
+  integrity sha512-NZrInG0hA4R4fkvmhW6YByTTdwWbbccxvBlmfqykE5RYCSO/554wDrJKk/104Dwtpt0u9z7uVYBLrbtRlcyJvg==
   dependencies:
-    "@itwin/insights-client" "0.1.0"
+    "@itwin/insights-client" "^0.3.0"
     "@itwin/itwinui-icons-react" "^1.5.1"
     "@itwin/itwinui-react" "^1.29.2"
 
@@ -2083,10 +2076,10 @@
     "@itwin/core-geometry" "^3.0.0"
     axios "^0.25.0"
 
-"@itwin/reports-config-widget-react@^0.0.8":
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/@itwin/reports-config-widget-react/-/reports-config-widget-react-0.0.8.tgz#859298c8e083948b262b3ce0a2f1aa81f6f7cce5"
-  integrity sha512-orNjMwuT3d/sgjlrIWs39a1I98LqbueQhdaP1BIkMlt9xTPqYBMGjZH/slVzjV7bb38xivQ2FS0i34Aqf9MBTA==
+"@itwin/reports-config-widget-react@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@itwin/reports-config-widget-react/-/reports-config-widget-react-0.1.0.tgz#ea921aa0fb6a3d3e10ed2654ee12d87b9cebf56f"
+  integrity sha512-rkV+zk0EhkXWBUbF00ASd1aM3Jes4WuTAdDrQjPWNQ18BdtZoH5hOuyzqQCC7sI0dWbZeaXEooKyn7A7k5tBTg==
   dependencies:
     "@itwin/imodels-access-frontend" "^1.0.1"
     "@itwin/imodels-client-management" "^1.0.1"
@@ -2094,34 +2087,36 @@
     "@itwin/itwinui-icons-color-react" "^1.0.1"
     "@itwin/itwinui-icons-react" "^1.7.0"
     "@itwin/itwinui-react" "~1.42.0"
+    classnames "^2.3.1"
     simple-react-validator "^1.6.1"
 
-"@itwin/tree-widget-react@^0.4.7":
-  version "0.4.7"
-  resolved "https://registry.yarnpkg.com/@itwin/tree-widget-react/-/tree-widget-react-0.4.7.tgz#31d16998ce923baee6e6327717a477869de89f2e"
-  integrity sha512-Y6GqtpJBNoMOKOJeswUwkl+RWL652mqvld4QH3RrmYMh2LQil79rNp8K2naiiNY86pTCgoNJxLl2M34gExW1tw==
+"@itwin/tree-widget-react@^0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@itwin/tree-widget-react/-/tree-widget-react-0.5.0.tgz#c71788499fae081002901f8b9b3e8156fd89f851"
+  integrity sha512-K06MptZ3MrEu+xBp0Ate1VoDvHiwUZ28OCo9nJ7HR1YvSaUp1UcGYPUef8p6WaHeA/rA0PU+LkGFGwiLVR0EBg==
   dependencies:
     classnames "^2.3.1"
     i18next "^10.2.2"
     react-redux "^7.2.0"
     redux "^4.0.3"
 
-"@itwin/viewer-react@3.2.1":
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/@itwin/viewer-react/-/viewer-react-3.2.1.tgz#08cbdeb5ec274631d72e5321b10f8ee7af3bef2f"
-  integrity sha512-IU8qRr2q0EMFaXHybfXQUjjdLozk/isE9y8DBjnmmzcrOKSPwIUckF6+vZPnlpXdiZWXsSv0AsH4nVTlJk/k8w==
+"@itwin/viewer-react@3.3.1":
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/@itwin/viewer-react/-/viewer-react-3.3.1.tgz#6d0624ae9e054def6bd42363165ddbfbfea284c7"
+  integrity sha512-XZEAndJNhWzQNosf0/BbGVIAcuBrL8CCfmnIoeuO9kF/JiUxCk0hmGEcWKzxbReVOdSN4MY6Dz+Iw2eh/ZOyeQ==
   dependencies:
     "@bentley/icons-generic-webfont" "^1.0.15"
     "@itwin/itwinui-illustrations-react" "^1.2.0"
     "@itwin/itwinui-react" "^1.16.2"
     "@itwin/reality-data-client" "^0.9.0"
 
-"@itwin/web-viewer-react@^3.0.6":
-  version "3.0.6"
-  resolved "https://registry.yarnpkg.com/@itwin/web-viewer-react/-/web-viewer-react-3.0.6.tgz#4bbb3f2546addd90d7f7fe773578aa01fd8fde89"
-  integrity sha512-uqQ/nTPlXdN2qJO8s2OspRQcxp+4GtnfaVRuCxZTMxb2CIdOHa357MuXdlwdJPBvmH8NROG3FvvM2FVGMVvIzw==
+"@itwin/web-viewer-react@^3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@itwin/web-viewer-react/-/web-viewer-react-3.1.1.tgz#d8ba1a528da2fdf681e673bbf97c0cf7dfae3f30"
+  integrity sha512-eNBC9XaLABQhC3HGkOdxfuzhmVM/ysROnxXF8rEk4n1YyMMXrFQz9jupqbpnkA4XucB4fc17lpb/Ls+oPNgi6g==
   dependencies:
-    "@itwin/viewer-react" "3.2.1"
+    "@itwin/imodels-client-management" "^1.0.1"
+    "@itwin/viewer-react" "3.3.1"
 
 "@itwin/webgl-compatibility@^3.2.0":
   version "3.2.7"

@@ -8,10 +8,12 @@
 import { useActiveIModelConnection } from "@itwin/appui-react";
 import { EmphasizeElements, IModelApp } from "@itwin/core-frontend";
 import { ODataClient } from "@itwin/grouping-mapping-widget";
-import { ReportingClient } from "@itwin/insights-client";
+import { MappingsClient } from "@itwin/insights-client";
+import { SvgExport } from "@itwin/itwinui-icons-react";
 import {
   Alert,
   Code,
+  IconButton,
   LabeledSelect,
   ProgressRadial,
   Table,
@@ -21,7 +23,9 @@ import {
 import * as React from "react";
 import { Column } from "react-table";
 
+import { displayWarningToast } from "../../../api/helperfunctions/messages";
 import { OData } from "../../../api/OData";
+import { exportCSV } from "../../../api/storage/exportCSV";
 import "./MappingOData.scss";
 
 const fetchOData = async (
@@ -117,10 +121,10 @@ const fetchMappings = async (
   setMappings: React.Dispatch<React.SetStateAction<any[]>>,
   setSelectMapping: React.Dispatch<React.SetStateAction<string | undefined>>
 ) => {
-  const reportingClient = new ReportingClient();
+  const mappingClient = new MappingsClient();
   const accessToken = await IModelApp.authorizationClient!.getAccessToken();
 
-  const mappings = await reportingClient.getMappings(accessToken, iModelId);
+  const mappings = await mappingClient.getMappings(accessToken, iModelId);
 
   setMappings(
     mappings.map((x: any) => ({ value: x.id, label: x.mappingName }))
@@ -195,8 +199,23 @@ export const MappingOData = () => {
     ) {
       setODataCount(odata.length);
     }
-  });
+  }, [isLoading, selectMapping, selectGroup, odata.length, odataCount]);
 
+  const exportCarbonElements = () => {
+    if (odata.length > 0) {
+      if (selectMapping) {
+        console.log(selectMapping, mappings[mappings.indexOf(selectMapping)]);
+      }
+      void exportCSV.makeCsv(
+        odata,
+        (selectMapping ? selectMapping : "Mapping") +
+          (selectGroup ? selectGroup : "Grouping") +
+          "Export.csv"
+      );
+    } else {
+      displayWarningToast("Wait for data to load");
+    }
+  };
   const onSelect = React.useCallback(
     async (selectedData: any[] | undefined) => {
       if (!IModelApp.viewManager.selectedView) {
@@ -226,6 +245,12 @@ export const MappingOData = () => {
   return (
     <div className="mapping-odata-sample">
       <div className="mapping-group-selection">
+        <IconButton
+          onClick={() => exportCarbonElements()}
+          styleType={"borderless"}
+        >
+          <SvgExport />
+        </IconButton>
         <ToggleSwitch
           label="Zoom to Selection"
           labelPosition="left"

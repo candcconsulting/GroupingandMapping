@@ -12,7 +12,7 @@ import {
   IModelReadRpcInterface,
 } from "@itwin/core-common";
 import { EmphasizeElements, IModelApp } from "@itwin/core-frontend";
-import { SvgGroupUngroup } from "@itwin/itwinui-icons-react";
+import { SvgExport, SvgGroupUngroup } from "@itwin/itwinui-icons-react";
 import {
   IconButton,
   Table,
@@ -36,6 +36,7 @@ import { iTwinAPI } from "../../../api/iTwinAPI";
 import mongoAppApi, { IMaterial } from "../../../api/mongoAppApi";
 import { ProjectsClient } from "../../../api/projects/projectsClient";
 import { sqlAPI } from "../../../api/queryAPI";
+import { exportCSV } from "../../../api/storage/exportCSV";
 import { useApiData } from "../../../api/useApiData";
 import { useApiPrefix } from "../../../api/useApiPrefix";
 import { getSettings } from "../../../config/index";
@@ -189,6 +190,9 @@ export const CarbonWidget = () => {
     url: `https://api.bentley.com/insights/reporting/datasources/imodels/${iModelId}/mappings`,
   });
 
+  const exportCarbonElements = () => {
+    void exportCSV.makeCsv(elements, "carbonExport.csv");
+  };
   const groupColumns = React.useCallback(
     () => [
       {
@@ -691,6 +695,12 @@ export const CarbonWidget = () => {
               styleType={"borderless"}
             >
               <SvgGroupUngroup />
+            </IconButton>
+            <IconButton
+              onClick={() => exportCarbonElements()}
+              styleType={"borderless"}
+            >
+              <SvgExport />
             </IconButton>
           </div>
         </div>

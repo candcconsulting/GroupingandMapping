@@ -31,8 +31,8 @@ import {
 } from "@itwin/web-viewer-react";
 import { RouteComponentProps, Router } from "@reach/router";
 import React, { useCallback, useEffect, useState } from "react";
-import { displayNegativeToast } from "../../api/helperfunctions/messages";
 
+import { displayNegativeToast } from "../../api/helperfunctions/messages";
 import { useApiData } from "../../api/useApiData";
 import { useApiPrefix } from "../../api/useApiPrefix";
 import { ErrorBoundary } from "../../components/ErrorBoundary/ErrorBoundary";
@@ -88,10 +88,8 @@ const View = (props: ViewProps) => {
       await TreeWidget.initialize();
       await PropertyGridManager.initialize();
       await MeasureTools.startup();
-    } 
-    catch(error) 
-    {
-      displayNegativeToast("Error Initializing viewer - Try refresh")
+    } catch (error) {
+      displayNegativeToast("Error Initializing viewer - Try refresh");
     }
   }, []);
   const [reportsConfigInitialized, setReportsConfigInitialized] = useState(
@@ -102,12 +100,9 @@ const View = (props: ViewProps) => {
       try {
         await ReportsConfigWidget.initialize();
         setReportsConfigInitialized(true);
-      } 
-      catch(error) 
-      {
-        displayNegativeToast("Error Initializing viewer - Try refresh")
+      } catch (error) {
+        displayNegativeToast("Error Initializing viewer - Try refresh");
       }
-  
     };
 
     void init();
@@ -137,30 +132,29 @@ const View = (props: ViewProps) => {
       uiProviders.push(new MeasureToolsUiItemsProvider());
       uiProviders.push(new CarbonUIProvider());
     }
-  } 
-  catch(error) 
-  {
-    displayNegativeToast("Error Initializing viewer - Try refresh")
+  } catch (error) {
+    displayNegativeToast("Error Initializing viewer - Try refresh");
   }
 
-try {
-  return (state || !props.versionId) && AuthClient.client ? (
-    <Viewer
-      changeSetId={changesetId}
-      iTwinId={props.projectId ?? ""}
-      iModelId={props.iModelId ?? ""}
-      authClient={AuthClient.client}
-      theme={theme}
-      enablePerformanceMonitors={true}
-      onIModelAppInit={onIModelAppInit}
-      uiProviders={uiProviders}
-    />
-  ) : null;
-}
-catch(error) {
-  displayNegativeToast("Something went wrong with the viewer ... please try refresh")
-  return <p>Please refresh the browser</p>
-}
+  try {
+    return (state || !props.versionId) && AuthClient.client ? (
+      <Viewer
+        changeSetId={changesetId}
+        iTwinId={props.projectId ?? ""}
+        iModelId={props.iModelId ?? ""}
+        authClient={AuthClient.client}
+        theme={theme}
+        enablePerformanceMonitors={true}
+        onIModelAppInit={onIModelAppInit}
+        uiProviders={uiProviders}
+      />
+    ) : null;
+  } catch (error) {
+    displayNegativeToast(
+      "Something went wrong with the viewer ... please try refresh"
+    );
+    return <p>Please refresh the browser</p>;
+  }
 };
 
 interface ViewRouterProps extends RouteComponentProps {
