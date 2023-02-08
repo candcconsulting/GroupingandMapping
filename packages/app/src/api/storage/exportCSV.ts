@@ -27,11 +27,17 @@ export class exportCSV {
    * @param rows
    * @param filename
    */
-  static makeCsv = async (rows: any[], filename: string) => {
-    const separator = ";";
+  static makeCsv = async (
+    rows: any[],
+    filename: string,
+    separator = ";",
+    header = ""
+  ) => {
     const keys: string[] = Object.keys(rows[0]);
-
-    const csvContent = `${keys.join(separator)}\n${rows
+    if (header === "") {
+      header = keys.join(separator);
+    }
+    const csvContent = `${header}\n${rows
       .map((row) =>
         keys
           .map((k) => {
