@@ -35,11 +35,18 @@ export const IModelHeaderButton = ({
   });
   const serverEnvironmentPrefix = useApiPrefix();
 
- 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  while (!((process.env.IMJS_ITWIN_ID  + process.env.IMJS_VALID_ITWIN_IDS! + "").includes(projectId!))) {
+  while (
+    !(
+      process.env.IMJS_ITWIN_ID +
+      process.env.IMJS_VALID_ITWIN_IDS! +
+      ""
+    ).includes(projectId!)
+  ) {
     // allowed
-    alert("This application is restricted to use only authorised iTwinId.  Please ensure you select the correct one")
+    alert(
+      "This application is restricted to use only authorised iTwinId.  Please ensure you select the correct one, this application has been restricted due to processing costs.  You can deploy this application from the github source code"
+    );
   }
   return (
     <HeaderButton

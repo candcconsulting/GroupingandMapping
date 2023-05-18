@@ -75,7 +75,7 @@ export class MoataApi {
     }
   }
 
-  public async getEPDMapping(
+  public static async getEPDMapping(
     userName: string,
     iModel: string,
     accessToken: string,
@@ -90,12 +90,18 @@ export class MoataApi {
     try {
       const user = await mongoAppApi.app.logIn(credentials);
       console.log("getEPD Mapping User Logged in ", user.id);
-      let epdMapping = await user.functions.getEC3Mapping(iModel, mappingName);
+      let epdMapping = await user.functions.getMoataMapping(
+        iModel,
+        mappingName
+      );
       if (epdMapping === null) {
         displayWarningToast(
           `EC3 Mapping iModel {${iModel}} could not be located - loading default mapping`
         );
-        epdMapping = await user.functions.getEC3Mapping("default", mappingName);
+        epdMapping = await user.functions.getMoataMapping(
+          "default",
+          mappingName
+        );
       }
       // we only want the first mapping if there is more than one
       return epdMapping;
@@ -210,18 +216,18 @@ export class MoataApi {
       console.log("getAllMoataEPD User Logged in ", user.id);
       const projection = {
         assetCode: 1,
-        metricName: 1,
+        name: 1,
         unit: 1,
         carbonPerUnit: 1,
-        carbonperKg: 1,
+        density: 1,
       };
       const epd = await user.functions.getAllMoataEPD(projection);
       const reshapeEPD = [];
       for await (const aEpd of epd) {
         const aTempEPD = {
-          material: aEpd.metricName,
-          description: aEpd.metricName,
-          density: 0.0,
+          material: aEpd.name,
+          description: aEpd.name,
+          density: aEpd.density,
           ICECarbonFactor: aEpd.carbonPerUnit,
           carbonFactor: aEpd.carbonPerUnit,
           unit: aEpd.unit,

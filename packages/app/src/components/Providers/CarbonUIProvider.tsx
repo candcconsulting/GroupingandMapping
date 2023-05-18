@@ -12,8 +12,8 @@ import {
 import React from "react";
 
 import CarbonWidget from "./Widgets/CarbonWidget";
-import EC3 from "./Widgets/EC3";
 import EC3Widget from "./Widgets/EC3Widget";
+import Moata from "./Widgets/Moata";
 import Uniclass from "./Widgets/Uniclass";
 
 // Provides custom widgets to support validation workflow.
@@ -71,10 +71,10 @@ export class CarbonUIProvider implements UiItemsProvider {
       location === StagePanelLocation.Left
     ) {
       const widget: AbstractWidgetProps = {
-        id: "EC3_View",
-        label: "EC3_View",
+        id: "Moata_Export",
+        label: "Moata",
         getWidgetContent: () => {
-          return <EC3 />;
+          return <Moata />;
         },
       };
       widgets.push(widget);

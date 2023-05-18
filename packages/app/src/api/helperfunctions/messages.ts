@@ -29,4 +29,3 @@ export const displayWarningToast = (content: string) => {
     type: "temporary",
   });
 };
-
