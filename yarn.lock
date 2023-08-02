@@ -1883,6 +1883,17 @@
     "@itwin/itwinui-icons-react" "^0.1.0"
     "@itwin/itwinui-react" "^1.6.0"
 
+"@itwin/ec3-widget-react@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@itwin/ec3-widget-react/-/ec3-widget-react-0.1.0.tgz#d4894ed0329039bd79bf89999fc164a20584b22c"
+  integrity sha512-+mBkv9akE5CmU0KOBjkgSSnrAg0YsjCQ9Hd4nldmmk8o2h3R9QJU64seL3PDz9FAiLCN8f3IKL2Kt5+QKD1Gtw==
+  dependencies:
+    "@itwin/insights-client" "^0.4.0"
+    "@itwin/itwinui-icons-react" "^1.7.0"
+    "@itwin/itwinui-react" "^1.42.0"
+    classnames "^2.3.1"
+    simple-react-validator "^1.6.1"
+
 "@itwin/grouping-mapping-widget@^0.9.1":
   version "0.9.1"
   resolved "https://registry.yarnpkg.com/@itwin/grouping-mapping-widget/-/grouping-mapping-widget-0.9.1.tgz#22be83a51e9fc714b7e7897429a7e9a44ba85e9c"
@@ -1959,6 +1970,14 @@
     cross-fetch "^3.1.4"
     fast-xml-parser "^4.0.9"
 
+"@itwin/insights-client@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@itwin/insights-client/-/insights-client-0.4.0.tgz#2f7b9c63ba4cee4cf9cb16b62e278fe64e50676d"
+  integrity sha512-vOdk5AbcqfnEW0S2VmZzPoBFQPEHIhhUybJqKLajB1/rBSwcK40EIo+JienBrqCgV3KU9N31H4UISEOfRDgqOg==
+  dependencies:
+    cross-fetch "^3.1.4"
+    fast-xml-parser "^4.0.9"
+
 "@itwin/itwinui-css@0.58.0", "@itwin/itwinui-css@0.x", "@itwin/itwinui-css@^0.58.0", "@itwin/itwinui-css@^0.9.0":
   version "0.58.0"
   resolved "https://registry.yarnpkg.com/@itwin/itwinui-css/-/itwinui-css-0.58.0.tgz#e385efc7ce903fc56e955976271e366fa3c0265c"
@@ -1999,7 +2018,7 @@
   resolved "https://registry.yarnpkg.com/@itwin/itwinui-illustrations-react/-/itwinui-illustrations-react-1.3.1.tgz#f534fa1da707272a4351f3b2bbc240c9ea8e3ae6"
   integrity sha512-hIZwYwd1qmyjt5yiL8Lg6E3CpgeLxGOnb4dVktoM+h3h5zSmgjhm2qFk+RqgsqV+dy0Fb2cs1jH4Jup9jWY9pA==
 
-"@itwin/itwinui-react@1.38.1", "@itwin/itwinui-react@^1.11.0", "@itwin/itwinui-react@^1.16.2", "@itwin/itwinui-react@^1.29.2", "@itwin/itwinui-react@^1.32.0", "@itwin/itwinui-react@^1.46.0", "@itwin/itwinui-react@^1.6.0", "@itwin/itwinui-react@~1.42.0":
+"@itwin/itwinui-react@1.38.1", "@itwin/itwinui-react@^1.11.0", "@itwin/itwinui-react@^1.16.2", "@itwin/itwinui-react@^1.29.2", "@itwin/itwinui-react@^1.32.0", "@itwin/itwinui-react@^1.42.0", "@itwin/itwinui-react@^1.46.0", "@itwin/itwinui-react@^1.6.0", "@itwin/itwinui-react@~1.42.0":
   version "1.38.1"
   resolved "https://registry.yarnpkg.com/@itwin/itwinui-react/-/itwinui-react-1.38.1.tgz#16a530f15ef2fca7ee03ffc13eb030ac23afc0bc"
   integrity sha512-iZPwWF85b0NJ0hI/iK3oWt+bZ5fbIi3/1LLExSyh1Z6IkemZsqbld6Wj8nnGfRQ+V3RU0e9JQUkZC77nM++m1w==

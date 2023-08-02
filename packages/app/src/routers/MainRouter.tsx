@@ -8,6 +8,7 @@ import { Redirect, Router } from "@reach/router";
 import React from "react";
 
 import { CarbonRouter } from "./CarbonRouter/CarbonRouter";
+import { EC3Handler } from "./EC3Router/EC3Router";
 import { ManageVersionsRouter } from "./ManageVersionsRouter/ManageVersionsRouter";
 import { MembersRouter } from "./MembersRouter/MembersRouter";
 import { SynchronizationRouter } from "./SynchronizationRouter/SynchronizationRouter";
@@ -28,6 +29,7 @@ export const MainRouter = ({ accessToken }: MainRouterProps) => {
         accessToken={accessToken}
       />
       <MembersRouter path="members/*" accessToken={accessToken} />
+      <EC3Handler path="ec3signin/*" accessToken={accessToken} />
       <Redirect noThrow={true} from="/" to="view" default={true} />
     </Router>
   );

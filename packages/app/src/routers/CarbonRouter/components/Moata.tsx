@@ -207,7 +207,7 @@ export const Moata = ({
     BentleyCloudRpcManager.initializeClient(cloudRpcParams, rpcInterfaces);
   }, [rpcInterfaces]);
 
-  console.log("CarbonByCategory");
+  console.log("MoataByCategory");
 
   const {
     results: { mappings },
@@ -221,9 +221,11 @@ export const Moata = ({
       void MoataApi.getEPDMapping(claims.email, iModelId, accessToken).then(
         (theMapping) => {
           if (theMapping?.iModelId !== iModelId) {
-            console.log(`EPD Mapping for ${iModelId} not found using default`);
+            console.log(
+              `Moata Mapping for ${iModelId} not found using default`
+            );
           } else {
-            console.log(`Using EPD Mapping ${theMapping.mappingName}`);
+            console.log(`Using Moata Mapping ${theMapping.mappingName}`);
           }
           setEPDMapping(theMapping);
           if (theMapping) {

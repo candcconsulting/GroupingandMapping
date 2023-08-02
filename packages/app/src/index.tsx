@@ -5,6 +5,7 @@
  * This code is for demonstration purposes and should not be considered production ready.
  *--------------------------------------------------------------------------------------------*/
 import { BrowserAuthorizationCallbackHandler } from "@itwin/browser-authorization";
+import { handleEC3AuthCallback } from "@itwin/ec3-widget-react";
 import React from "react";
 import ReactDOM from "react-dom";
 
@@ -18,6 +19,12 @@ if (redirectUrl.pathname === window.location.pathname) {
   BrowserAuthorizationCallbackHandler.handleSigninCallback(
     redirectUrl.toString()
   ).catch(console.error);
+} else if (window.location.pathname === "/ec3signin/") {
+  console.log(`handling ${window.location.pathname} callback`);
+  handleEC3AuthCallback({
+    clientId: "uparJq5LyWQOYCo5e4ZF12k5AFXv0voyqf2KkBZJ",
+    redirectUri: "http://localhost:3000/ec3signin",
+  });
 } else {
   ReactDOM.render(
     <React.StrictMode>

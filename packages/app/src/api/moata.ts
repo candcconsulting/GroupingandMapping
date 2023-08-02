@@ -96,7 +96,7 @@ export class MoataApi {
       );
       if (epdMapping === null) {
         displayWarningToast(
-          `EC3 Mapping iModel {${iModel}} could not be located - loading default mapping`
+          `Moata Mapping iModel {${iModel}} could not be located - loading default mapping`
         );
         epdMapping = await user.functions.getMoataMapping(
           "default",
@@ -265,7 +265,7 @@ export class MoataApi {
       const json = await data.json();
       return json;
     } catch (error) {
-      console.log("Loaded EC3 EPD caught Error");
+      console.log("Loaded Moata EPD caught Error");
       console.log(error);
     }
   }

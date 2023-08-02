@@ -5,12 +5,12 @@
  * This code is for demonstration purposes and should not be considered production ready.
  *--------------------------------------------------------------------------------------------*/
 import { UiItemsProvider } from "@itwin/appui-abstract";
+import { EC3Provider } from "@itwin/ec3-widget-react";
 import { GroupingMappingProvider } from "@itwin/grouping-mapping-widget";
 import {
   MeasureTools,
   MeasureToolsUiItemsProvider,
 } from "@itwin/measure-tools-react";
-import { OneClickLCAProvider } from "@itwin/one-click-lca-react";
 import {
   PropertyGridManager,
   PropertyGridUiItemsProvider,
@@ -111,7 +111,7 @@ const View = (props: ViewProps) => {
   try {
     if (reportsConfigInitialized) {
       uiProviders.push(new GroupingMappingProvider());
-      uiProviders.push(new OneClickLCAProvider());
+
       uiProviders.push(new ReportsConfigProvider());
       uiProviders.push(new ViewerNavigationToolsProvider());
       uiProviders.push(new ResultsWidgetProvider());
@@ -131,6 +131,12 @@ const View = (props: ViewProps) => {
       );
       uiProviders.push(new MeasureToolsUiItemsProvider());
       uiProviders.push(new CarbonUIProvider());
+      uiProviders.push(
+        new EC3Provider({
+          clientId: "uparJq5LyWQOYCo5e4ZF12k5AFXv0voyqf2KkBZJ",
+          redirectUri: "http://localhost:3000/ec3signin/",
+        })
+      );
     }
   } catch (error) {
     displayNegativeToast("Error Initializing viewer - Try refresh");
