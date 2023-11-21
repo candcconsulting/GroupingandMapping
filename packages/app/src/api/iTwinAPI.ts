@@ -13,7 +13,7 @@ export class iTwinAPI {
   ) {
     const accessToken = await authClient.getAccessToken();
     const response = await fetch(
-      `https://api.bentley.com/imodels/?projectId=${projectGuid}`,
+      `https://api.bentley.com/imodels/?iTwinId=${projectGuid}`,
       {
         mode: "cors",
         headers: {
@@ -53,7 +53,7 @@ export class iTwinAPI {
     authClient: BrowserAuthorizationClient
   ) {
     const accessToken = await authClient.getAccessToken();
-    const response = await fetch("https://api.bentley.com/projects/recents", {
+    const response = await fetch("https://api.bentley.com/iTwins/recents", {
       mode: "cors",
       headers: {
         "Content-Type": "application/json",
@@ -83,7 +83,7 @@ export class iTwinAPI {
   ) {
     const accessToken = await authClient.getAccessToken();
     const response = await fetch(
-      "https://api.bentley.com/projects/" + projectId,
+      "https://api.bentley.com/iTwins/" + projectId,
       {
         //https://api.bentley.com/projects/favorites?top=1000
         mode: "cors",
